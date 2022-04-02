@@ -5,6 +5,8 @@
     It should exist as a separate layer to any database or data structure that you might be using
     Nothing here should be stateful, if it's stateful let the database handle it
 '''
+import os
+
 import view
 import random
 
@@ -46,6 +48,19 @@ def login_check(username, password):
 
         Returns either a view for valid credentials, or a view for invalid credentials
     '''
+    cur_path = os.path.dirname(__file__)
+    user_db_path = os.path.join(cur_path, 'db/user_database.txt')
+
+    with open(user_db_path, 'r') as user_db:
+        if user_db:
+            lines = [line.rstrip() for line in user_db]
+
+            # Strips the newline character
+            for details in lines:
+                detailsArr = details.split(",")
+                print("Line: {} , {}".format(detailsArr[0], detailsArr[1]))
+
+
 
     # By default assume good creds
     login = True
@@ -57,11 +72,67 @@ def login_check(username, password):
     if password != "password": # Wrong password
         err_str = "Incorrect Password"
         login = False
+
         
     if login: 
         return page_view("valid", name=username)
     else:
         return page_view("invalid", reason=err_str)
+
+#-----------------------------------------------------------------------------
+# Register
+#-----------------------------------------------------------------------------
+
+def register_form():
+    '''
+        login_form
+        Returns the view for the login_form
+    '''
+    return page_view("register")
+
+#-----------------------------------------------------------------------------
+
+# Create new account
+def register_new(username, password, reentered):
+    '''
+        register_new
+        Checks usernames and passwords
+
+        :: username :: The username
+        :: password :: The password
+
+        Returns either a view for valid credentials, or a view for invalid credentials
+    '''
+
+    if not password == reentered:
+        print("password not matching")
+        return page_view("password_not_matching")
+
+    cur_path = os.path.dirname(__file__)
+    user_db_path = os.path.join(cur_path, 'db/user_database.txt')
+
+    user_exists = False
+
+    with open(user_db_path, 'r') as user_db:
+        lines = [line.rstrip() for line in user_db]
+
+        # Strips the newline character
+        for details in lines:
+            detailsArr = details.split(",")
+            if username == detailsArr[0]:
+                user_exists = True
+                break
+
+
+    if user_exists:
+        print("user already exists")
+        return page_view("user_taken")
+
+
+    with open(user_db_path, 'w') as user_db:
+        user_db.write(username + "," + password)
+
+    return page_view("register_success")
 
 #-----------------------------------------------------------------------------
 # About

@@ -100,11 +100,47 @@ def post_login():
     # Handle the form processing
     username = request.forms.get('username')
     password = request.forms.get('password')
+
+    if username and password:
+        return model.login_check(username, password)
     
     # Call the appropriate method
-    return model.login_check(username, password)
+    return model.login_form()
 
+#-----------------------------------------------------------------------------
 
+# Display the login page
+@get('/register')
+def get_register_controller():
+    '''
+        get_login
+
+        Serves the login page
+    '''
+    return model.register_form()
+
+#-----------------------------------------------------------------------------
+
+# Attempt the login
+@post('/register')
+def post_register():
+    '''
+        post_login
+
+        Handles login attempts
+        Expects a form containing 'username' and 'password' fields
+    '''
+
+    # Handle the form processing
+    username = request.forms.get('username')
+    password = request.forms.get('password')
+    reentered = request.forms.get('reentered')
+
+    if username and password:
+        return model.register_new(username, password, reentered)
+
+    # Call the appropriate method
+    return model.register_form()
 
 #-----------------------------------------------------------------------------
 
