@@ -31,6 +31,8 @@ import controller
 
 # It might be a good idea to move the following settings to a config file and then load them
 # Change this to your IP address or 0.0.0.0 when actually hosting
+import no_sql_db
+
 host = '127.0.0.1'
 
 # Test port, change to the appropriate port to host
@@ -55,6 +57,10 @@ def manage_db():
     '''
         Blank function for database support, use as needed
     '''
+    database = no_sql_db.database
+
+    database.print_table("users")
+
     pass
 
 """

@@ -11,6 +11,12 @@ import view
 import random
 
 # Initialise our views, all arguments are defaults for the template
+import no_sql_db
+
+db_path = 'db/user_database.txt'
+cur_path = os.path.dirname(__file__)
+user_db_path = os.path.join(cur_path, db_path)
+
 page_view = view.View()
 
 #-----------------------------------------------------------------------------
@@ -48,30 +54,31 @@ def login_check(username, password):
 
         Returns either a view for valid credentials, or a view for invalid credentials
     '''
-    cur_path = os.path.dirname(__file__)
-    user_db_path = os.path.join(cur_path, 'db/user_database.txt')
-
-    with open(user_db_path, 'r') as user_db:
-        if user_db:
-            lines = [line.rstrip() for line in user_db]
-
-            # Strips the newline character
-            for details in lines:
-                detailsArr = details.split(",")
-                print("Line: {} , {}".format(detailsArr[0], detailsArr[1]))
-
-
 
     # By default assume good creds
     login = True
-    
-    if username != "admin": # Wrong Username
-        err_str = "Incorrect Username"
+
+    database = no_sql_db.database
+    entry = database.search_table("users", "username", username)
+    if entry:
+        if password == entry[2]:
+            print("Password matches")
+        else:
+            err_str = "Incorrect Username or Password"
+            login = False
+    else:
+        err_str = "Incorrect Username or Password"
         login = False
+
+
     
-    if password != "password": # Wrong password
-        err_str = "Incorrect Password"
-        login = False
+    # if username != "admin": # Wrong Username
+    #     err_str = "Incorrect Username"
+    #     login = False
+    #
+    # if password != "password": # Wrong password
+    #     err_str = "Incorrect Password"
+    #     login = False
 
         
     if login: 
@@ -108,29 +115,16 @@ def register_new(username, password, reentered):
         print("password not matching")
         return page_view("password_not_matching")
 
-    cur_path = os.path.dirname(__file__)
-    user_db_path = os.path.join(cur_path, 'db/user_database.txt')
+    database = no_sql_db.database
 
-    user_exists = False
+    entry = database.search_table("users", "username", username)
 
-    with open(user_db_path, 'r') as user_db:
-        lines = [line.rstrip() for line in user_db]
-
-        # Strips the newline character
-        for details in lines:
-            detailsArr = details.split(",")
-            if username == detailsArr[0]:
-                user_exists = True
-                break
-
-
-    if user_exists:
+    # User exists
+    if entry:
         print("user already exists")
         return page_view("user_taken")
-
-
-    with open(user_db_path, 'w') as user_db:
-        user_db.write(username + "," + password)
+    else:
+        database.create_table_entry("users", ["1", username, password])
 
     return page_view("register_success")
 

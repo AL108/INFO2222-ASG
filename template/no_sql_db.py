@@ -7,12 +7,27 @@
 
 # A heads up, this code is for demonstration purposes; you might want to modify it for your own needs
 # Currently it does basic insertions and lookups
+import os
+
+db_path = 'db/user_database.txt'
+cur_path = os.path.dirname(__file__)
+user_db_path = os.path.join(cur_path, db_path)
 
 class Table():
     def __init__(self, table_name, *table_fields):
         self.entries = []
         self.fields = table_fields
         self.name = table_name
+
+    def load_entries(self, user_db_path):
+
+        with open(user_db_path, 'r') as user_db:
+            lines = [line.rstrip() for line in user_db]
+
+            # Strips the newline character
+            for details in lines:
+                detailsArr = details.split(",")
+                self.entries.append(detailsArr)
 
     def create_entry(self, data):
         '''
@@ -24,6 +39,9 @@ class Table():
         if len(data) != len(self.fields):
             raise ValueError('Wrong number of fields for table')
 
+        with open(user_db_path, 'a') as user_db:
+            user_db.write(",".join([str(field) for field in data]) + "\n")
+
         self.entries.append(data)
         return
 
@@ -32,6 +50,7 @@ class Table():
             Search the table given a field name and a target value
             Returns the first entry found that matches
         '''
+
         # Lazy search for matching entries
         for entry in self.entries:
             for field_name, value in zip(self.fields, entry):
@@ -40,6 +59,24 @@ class Table():
 
         # Nothing Found
         return None
+
+    def save_table(self):
+        '''
+            Manual save of whole table
+        :return:
+        '''
+        with open(user_db_path, 'w') as user_db:
+            for entry in self.entries:
+                user_db.write(",".join([str(field) for field in entry]) + "\n")
+
+    def print_table(self):
+        '''
+            Prints table entries
+        '''
+        for entry in self.entries:
+            print(entry)
+
+
 
 
 class DB():
@@ -53,7 +90,10 @@ class DB():
 
         # Setup your tables
         self.add_table('users', "id", "username", "password")
-        
+
+        # Loads user database
+        self.load_data_table("users", user_db_path)
+
         return
 
     def add_table(self, table_name, *table_fields):
@@ -78,6 +118,14 @@ class DB():
         '''
         return self.tables[table_name].create_entry(data)
 
+    def print_table(self, table_name):
+        self.tables[table_name].print_table()
+
+    def save_table(self, table_name):
+        self.tables[table_name].save_table()
+
+    def load_data_table(self, table_name, db_path):
+        self.tables[table_name].load_entries(db_path)
 
 # Our global database
 # Invoke this as needed
