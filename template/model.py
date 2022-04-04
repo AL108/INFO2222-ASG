@@ -6,7 +6,7 @@
     Nothing here should be stateful, if it's stateful let the database handle it
 '''
 import os
-
+import hashlib
 import view
 import random
 
@@ -98,6 +98,12 @@ def register_form():
     return page_view("register")
 
 #-----------------------------------------------------------------------------
+
+def generate_salt64():
+    '''
+        returns a random 64 byte string
+    '''
+    return ''.join(random.choice(string.ascii_letters) for char in range(64))
 
 # Create new account
 def register_new(username, password, reentered):
