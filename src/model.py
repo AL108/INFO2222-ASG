@@ -8,6 +8,7 @@
 import os
 import hashlib
 import view
+import string
 import random
 
 # Initialise our views, all arguments are defaults for the template
@@ -60,8 +61,12 @@ def login_check(username, password):
 
     database = no_sql_db.database
     entry = database.search_table("users", "username", username)
-    if entry:
-        if password == entry[2]:
+
+    if entry: 
+        stored_hash = entry[1]
+        salt = entry[2]
+        computed_hash = hashlib.sha256((password + salt).encode()).hexdigest()
+        if computed_hash == stored_hash:
             print("Password matches")
         else:
             err_str = "Incorrect Username or Password"
@@ -121,6 +126,9 @@ def register_new(username, password, reentered):
         print("password not matching")
         return page_view("password_not_matching")
 
+    salt = generate_salt64()
+    hash_string = hashlib.sha256((password + salt).encode()).hexdigest()
+
     database = no_sql_db.database
 
     entry = database.search_table("users", "username", username)
@@ -130,7 +138,7 @@ def register_new(username, password, reentered):
         print("user already exists")
         return page_view("user_taken")
     else:
-        database.create_table_entry("users", ["1", username, password])
+        database.create_table_entry("users", [username, hash_string, salt])
 
     return page_view("register_success")
 

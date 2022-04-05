@@ -89,7 +89,7 @@ class DB():
         self.tables = {}
 
         # Setup your tables
-        self.add_table('users', "id", "username", "password")
+        self.add_table('users',"username", "hash_string", "salt")
 
         # Loads user database
         self.load_data_table("users", user_db_path)
