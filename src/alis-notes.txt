@@ -1,2 +1,0 @@
-- don't use python's hash() as it is not collision resistant. Instead use sha-256 from hashlib
-- store username, hash(pwd+salt), salt instead of username, pwd

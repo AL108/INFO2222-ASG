@@ -11,6 +11,8 @@ import view
 import string
 import random
 
+MIN_PASSWORD_LENGTH = 8
+
 # Initialise our views, all arguments are defaults for the template
 import no_sql_db
 
@@ -125,7 +127,10 @@ def register_new(username, password, reentered):
     if not password == reentered:
         print("password not matching")
         return page_view("password_not_matching")
-
+    
+    if not len(password) >= MIN_PASSWORD_LENGTH:
+        print(f"password must be longer than {MIN_PASSWORD_LENGTH} characters")
+        return page_view("password_too_short")
     salt = generate_salt64()
     hash_string = hashlib.sha256((password + salt).encode()).hexdigest()
 
