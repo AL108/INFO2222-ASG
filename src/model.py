@@ -77,7 +77,7 @@ def login_check(username, password):
     if login:
         return (True, page_view("msg_window"))
     else:
-        return (False, page_view("login", reason=err_str))
+        return (False, page_view("invalid", reason=err_str))
 
 #-----------------------------------------------------------------------------
 # Register

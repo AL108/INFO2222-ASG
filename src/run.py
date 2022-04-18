@@ -41,75 +41,15 @@ port = 8081
 # Turn this off for production
 debug = True
 
-def run_server():
+def run_server(keyfilepath, certfilepath):
     '''
         run_server
         Runs a bottle server
     '''
     # run(host=host, port=port,debug=debug, keyfile='/home/alien/certs/127.0.0.1-key.pem', certfile='/home/alien/certs/127.0.0.1.pem', server="gunicorn")
-    run(host=host, port=port,debug=debug, keyfile='/home/randomizer/Desktop/INFO2222/certs/info2222.project1.key', certfile='/home/randomizer/Desktop/INFO2222/certs/127.0.0.1.crt', server="gunicorn")
+    run(host=host, port=port,debug=debug, keyfile=keyfilepath, certfile=certfilepath, server="gunicorn")
 
-#-----------------------------------------------------------------------------
-# Optional SQL support
-# Comment out the current manage_db function, and
-# uncomment the following one to load an SQLite3 database
 
-def manage_db():
-    '''
-        Blank function for database support, use as needed
-    '''
-    database = no_sql_db.database
-
-    database.print_table("users")
-
-    pass
-
-"""
-import sql
-
-def manage_db():
-    '''
-        manage_db
-        Starts up and re-initialises an SQL databse for the server
-    '''
-    database_args = ":memory:" # Currently runs in RAM, might want to change this to a file if you use it
-    sql_db = sql.SQLDatabase(database_args=database_args)
-
-    return
-"""
-
-#-----------------------------------------------------------------------------
-
-# What commands can be run with this python file
-# Add your own here as you see fit
-
-command_list = {
-    'manage_db' : manage_db,
-    'server'       : run_server
-}
-
-# The default command if none other is given
-default_command = 'server'
-
-def run_commands(args):
-    '''
-        run_commands
-        Parses arguments as commands and runs them if they match the command list
-
-        :: args :: Command line arguments passed to this function
-    '''
-    commands = args[1:]
-
-    # Default command
-    if len(commands) == 0:
-        commands = [default_command]
-
-    for command in commands:
-        if command in command_list:
-            command_list[command]()
-        else:
-            print("Command '{command}' not found".format(command=command))
-
-#-----------------------------------------------------------------------------
-
-run_commands(sys.argv)
+keyfilepath = sys.argv[1]
+certfilepath = sys.argv[2]
+run_server(keyfilepath, certfilepath)

@@ -1,42 +1,26 @@
-LOGIN TO YOUR ACCOUNT
-</p>
 <head>
-<style>
-input[type=text], input[type=password] {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="css/temp.css">
+<script src="js/script_head.js"></script>
+
+<title>Login</title>
 </head>
 
-<style>
-    .bordered {
-        padding: 20px;
-        border: 5px solid grey;
-        width: 25%;
-        height: 22%;
-        margin: auto;
-    }
-</style>
 
-<div class="bordered">
-    <div style="text-align: center;">
-        <form name="loginForm" action="/login" method="post" onsubmit="return validateLogin()">
-            Username: <input name="username" type="text" placeholder="Enter Username" style="width: 200px;"/>
-            </br>
-            Password: <input name="password" type="password" placeholder="Enter Password" style="width: 200px;"/>
-            </br>
-            <p style="color: red;">${reason}</p>
-            <input value="Login" type="submit" />
-            <a class="button" href="/register">Create Account</a>
-            </br>
-        </form>
-    </div>
+<div class="bordered" style="text-align: center;">
+    <h3>Login</h3>
+    </br>
+    <p style="color:red">    No such account exists.</p>'
+    <form name="loginForm" action="/login" method="post">
+        <input class="loginRegisterTextFields" name="username" type="text" placeholder="Enter Username" style="width: 200px;" required/>
+        </br>
+        <input class="loginRegisterTextFields" name="password" type="password" placeholder="Enter Password" style="width: 200px;" required/>
+        </br>
+        </br>
+        </br>
+        <input class="button" value="Login" type="submit" />
+        <a class="button" href="/register">Create Account</a>
+        </br>
+    </form>
 </div>
 
-<p>
-</p>
+<p></p>
