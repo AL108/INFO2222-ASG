@@ -103,7 +103,14 @@ def post_login():
     password = request.forms.get('password')
 
     if username and password:
-        return model.login_check(username, password)
+        retPage = model.login_check(username, password)
+        if retPage[0]:
+            print("Valid username or password")
+            response.set_cookie("currentUser", username)
+        else:
+            print("Invalid username or password")
+            
+        return retPage[1]
 
     # Call the appropriate method
     return model.login_form()
@@ -139,10 +146,11 @@ def post_register():
 
     if username and password:
         print("Username given: " + username)
-        response.set_cookie("currentUser", username)
 
         retVal = model.register_new(username, password, reentered)
-        print("CurrentUser" + request.get_cookie("currentUser"))
+        # got_cookie = request.get_cookie("currentUser")
+        # if got_cookie:
+        #     print("CurrentUser" + got_cookie)
         return retVal
 
     # Call the appropriate method
@@ -183,13 +191,9 @@ def post_msg_window():
 
     # Handle the form processing
     message = request.forms.get('message')
-    print("Received message: " + message)
 
     # Call the appropriate method
-    # return model.msg_window()
-
-
-
+    return model.msg_window()
 
 
 # Help with debugging

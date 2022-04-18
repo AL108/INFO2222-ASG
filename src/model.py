@@ -59,7 +59,8 @@ def login_check(username, password):
     '''
 
     # By default assume good creds
-    login = True
+    login = False
+    err_str = "Incorrect Username or Password"
 
     database = no_sql_db.database
     entry = database.search_table("users", "username", username)
@@ -70,18 +71,13 @@ def login_check(username, password):
         computed_hash = hashlib.sha256((password + salt).encode()).hexdigest()
         if computed_hash == stored_hash:
             print("Password matches")
-        else:
-            err_str = "Incorrect Username or Password"
-            login = False
-    else:
-        err_str = "Incorrect Username or Password"
-        login = False
+            login = True
 
 
     if login:
-        return page_view("msg_window")
+        return (True, page_view("msg_window"))
     else:
-        return page_view("login", reason=err_str)
+        return (False, page_view("login", reason=err_str))
 
 #-----------------------------------------------------------------------------
 # Register
