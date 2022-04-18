@@ -18,7 +18,7 @@ import sys
 from bottle import run
 
 #-----------------------------------------------------------------------------
-# You may eventually wish to put these in their own directories and then load 
+# You may eventually wish to put these in their own directories and then load
 # Each file separately
 
 # For the template, we will keep them together
@@ -41,16 +41,17 @@ port = 8081
 # Turn this off for production
 debug = True
 
-def run_server():    
+def run_server():
     '''
         run_server
         Runs a bottle server
     '''
-    run(host=host, port=port,debug=debug, keyfile='/home/alien/certs/127.0.0.1-key.pem', certfile='/home/alien/certs/127.0.0.1.pem', server="gunicorn")
+    # run(host=host, port=port,debug=debug, keyfile='/home/alien/certs/127.0.0.1-key.pem', certfile='/home/alien/certs/127.0.0.1.pem', server="gunicorn")
+    run(host=host, port=port,debug=debug, keyfile='/home/randomizer/Desktop/INFO2222/certs/info2222.project1.key', certfile='/home/randomizer/Desktop/INFO2222/certs/127.0.0.1.crt', server="gunicorn")
 
 #-----------------------------------------------------------------------------
 # Optional SQL support
-# Comment out the current manage_db function, and 
+# Comment out the current manage_db function, and
 # uncomment the following one to load an SQLite3 database
 
 def manage_db():
@@ -65,7 +66,7 @@ def manage_db():
 
 """
 import sql
-    
+
 def manage_db():
     '''
         manage_db

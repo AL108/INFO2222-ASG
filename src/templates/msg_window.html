@@ -1,0 +1,34 @@
+<head>
+<link rel="stylesheet" type="text/css" href="css/temp.css">
+<script src="js/script_head.js"></script>
+
+<title>Friends List</title>
+</head>
+
+<div>
+    <!-- <div class="sidepanel">
+        <a><h3>Friends List</h3></a>
+        <a class="sidepanelProfiles"; href="/msg_window">Person B</a>
+    </div> -->
+
+    <div class="msgcontainer">
+        <!-- <div id="msgcontainer">
+            <p id="output">This is some initial text</p>
+        </div> -->
+        <div class="msgInputContainer">
+            <form action="/msg_window" method="post" style="width: 95%; float: right" autocomplete="off">
+                <label>From: *INSERT CURRENT USER*</label>
+                <br><br>
+                <label for="friendsList">To: </label>
+                <select id="friendsList">
+                    <option value="personB">Person B</option>
+                </select>
+                <br><br>
+                <input id="msgTextField" type="text" placeholder="Enter message"/>
+                <br><br>
+                <button id="msgSubmit" onclick="myFunction();">Send</button>
+            </form>
+
+        </div>
+    </div>
+</div>

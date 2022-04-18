@@ -1,10 +1,10 @@
 '''
-    This file will handle our typical Bottle requests and responses 
-    You should not have anything beyond basic page loads, handling forms and 
+    This file will handle our typical Bottle requests and responses
+    You should not have anything beyond basic page loads, handling forms and
     maybe some simple program logic
 '''
 
-from bottle import route, get, post, error, request, static_file
+from bottle import route, get, post, error, request, static_file, response
 
 import model
 
@@ -63,12 +63,12 @@ def serve_js(js):
 #-----------------------------------------------------------------------------
 
 # Redirect to login
-@get('/')
+# @get('/')
 @get('/home')
 def get_index():
     '''
         get_index
-        
+
         Serves the index page
     '''
     return model.index()
@@ -76,11 +76,12 @@ def get_index():
 #-----------------------------------------------------------------------------
 
 # Display the login page
+@get('/')
 @get('/login')
 def get_login_controller():
     '''
         get_login
-        
+
         Serves the login page
     '''
     return model.login_form()
@@ -92,7 +93,7 @@ def get_login_controller():
 def post_login():
     '''
         post_login
-        
+
         Handles login attempts
         Expects a form containing 'username' and 'password' fields
     '''
@@ -103,7 +104,7 @@ def post_login():
 
     if username and password:
         return model.login_check(username, password)
-    
+
     # Call the appropriate method
     return model.login_form()
 
@@ -128,7 +129,7 @@ def post_register():
         post_login
 
         Handles login attempts
-        Expects a form containing 'username' and 'password' fields
+        Expects a form containing 'username', 'password' and 'reentered' fields
     '''
 
     # Handle the form processing
@@ -137,7 +138,12 @@ def post_register():
     reentered = request.forms.get('reentered')
 
     if username and password:
-        return model.register_new(username, password, reentered)
+        print("Username given: " + username)
+        response.set_cookie("currentUser", username)
+
+        retVal = model.register_new(username, password, reentered)
+        print("CurrentUser" + request.get_cookie("currentUser"))
+        return retVal
 
     # Call the appropriate method
     return model.register_form()
@@ -148,11 +154,43 @@ def post_register():
 def get_about():
     '''
         get_about
-        
+
         Serves the about page
     '''
     return model.about()
 #-----------------------------------------------------------------------------
+
+@get('/msg_window')
+def get_msg_window():
+    '''
+        get_friends
+
+        Serves the friends page
+    '''
+    return model.msg_window()
+
+#-----------------------------------------------------------------------------
+
+# Attempt the login
+@post('/msg_window')
+def post_msg_window():
+    '''
+        post_msg_window
+
+        Handles user sending messages
+        Expects a form containing 'message' field
+    '''
+
+    # Handle the form processing
+    message = request.forms.get('message')
+    print("Received message: " + message)
+
+    # Call the appropriate method
+    # return model.msg_window()
+
+
+
+
 
 # Help with debugging
 @post('/debug/<cmd:path>')
@@ -163,5 +201,5 @@ def post_debug(cmd):
 
 # 404 errors, use the same trick for other types of errors
 @error(404)
-def error(error): 
+def error(error):
     return model.handle_errors(error)

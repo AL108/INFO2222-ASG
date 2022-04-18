@@ -1,18 +1,25 @@
+<head>
+<link rel="stylesheet" type="text/css" href="css/temp.css">
+<script src="js/script_head.js"></script>
 
-REGISTER A NEW ACCOUNT
-</p>
-<p>
-<form action="/register" method="post">
-    Username: <input name="username" type="text" />
-</br>
-    Password must be more than 8 characters*
-</br>
-    Password: <input name="password" type="password" />
-</br>
-    Re-enter Password: <input name="reentered" type="password" />
-</br>
-    <input value="Create" type="submit" />
-</form>
-</p>
-</center>
+<title>Register</title>
+</head>
 
+<div class="bordered" style="text-align: center;">
+    <h3>Register</h3>
+    </br>
+    <form name="registerForm" autocomplete="off" action="/register" method="post">
+        <input autocomplete="false" name="hidden" type=text style="display:none;">
+        <input class="loginRegisterTextFields" name="username" type="text" placeholder="Enter Username" style="width: 200px;" pattern="[a-z0-9]{5,15}$" title="Usernames may only contain letters and letters and must be between 5 and 15 characters" required autocomplete="new-password"/>
+        </br>
+        <input class="loginRegisterTextFields" name="password" type="password" placeholder="Enter Password" style="width: 200px;" pattern=".{8,}$" title="Passwords must be at least 8 characters long" required autocomplete="new-password"/>
+        </br>
+        <input class="loginRegisterTextFields" name="reentered" type="password" placeholder="Re-Enter Password" style="width: 200px;" required autocomplete="new-password"/>
+        </br>
+        </br>
+        <input class="button" value="Create Account" type="submit"/>
+        </br>
+    </form>
+</div>
+
+<p></p>

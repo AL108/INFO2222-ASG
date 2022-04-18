@@ -64,7 +64,7 @@ def login_check(username, password):
     database = no_sql_db.database
     entry = database.search_table("users", "username", username)
 
-    if entry: 
+    if entry:
         stored_hash = entry[1]
         salt = entry[2]
         computed_hash = hashlib.sha256((password + salt).encode()).hexdigest()
@@ -78,20 +78,10 @@ def login_check(username, password):
         login = False
 
 
-    
-    # if username != "admin": # Wrong Username
-    #     err_str = "Incorrect Username"
-    #     login = False
-    #
-    # if password != "password": # Wrong password
-    #     err_str = "Incorrect Password"
-    #     login = False
-
-        
-    if login: 
-        return page_view("valid", name=username)
+    if login:
+        return page_view("msg_window")
     else:
-        return page_view("invalid", reason=err_str)
+        return page_view("login", reason=err_str)
 
 #-----------------------------------------------------------------------------
 # Register
@@ -127,7 +117,7 @@ def register_new(username, password, reentered):
     if not password == reentered:
         print("password not matching")
         return page_view("password_not_matching")
-    
+
     if not len(password) >= MIN_PASSWORD_LENGTH:
         print(f"password must be longer than {MIN_PASSWORD_LENGTH} characters")
         return page_view("password_too_short")
@@ -145,6 +135,7 @@ def register_new(username, password, reentered):
     else:
         database.create_table_entry("users", [username, hash_string, salt])
 
+    print("successfully created user: " + username)
     return page_view("register_success")
 
 #-----------------------------------------------------------------------------
@@ -166,7 +157,7 @@ def about_garble():
         about_garble
         Returns one of several strings for the about page
     '''
-    garble = ["leverage agile frameworks to provide a robust synopsis for high level overviews.", 
+    garble = ["leverage agile frameworks to provide a robust synopsis for high level overviews.",
     "iterate approaches to corporate strategy and foster collaborative thinking to further the overall value proposition.",
     "organically grow the holistic world view of disruptive innovation via workplace change management and empowerment.",
     "bring to the table win-win survival strategies to ensure proactive and progressive competitive domination.",
@@ -174,6 +165,16 @@ def about_garble():
     "provide user generated content in real-time will have multiple touchpoints for offshoring."]
     return garble[random.randint(0, len(garble) - 1)]
 
+#-----------------------------------------------------------------------------
+# Friends
+#-----------------------------------------------------------------------------
+
+def msg_window():
+    '''
+        friends
+        Returns the view for the friends page
+    '''
+    return page_view("msg_window")
 
 #-----------------------------------------------------------------------------
 # Debug

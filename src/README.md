@@ -9,7 +9,7 @@ This template has been roughly set up around a 'Model View Controller' or MVC de
 Typically the user will request a page (from the controller), the request will be interpreted and then passed to the program logic (the model) which will generate a new page to return to the user (the view).
 
 
-This setup has been used to keep the logic of the code and the logic of the site separate. 
+This setup has been used to keep the logic of the code and the logic of the site separate.
 
 
 If your site starts sprawling enough, you may wish to create distinct folders for each of these categories and then split the code into separate files within these folders.
@@ -39,11 +39,11 @@ Simply loads our HTML files and renders any elements of the template.
 
 It might be helpful to have an explanation of the View class. You do not actually need this to use bottle at all, but it's a primitive method of automating loading and rendering HTML templates.If you already have your own method of managing this, please feel free to disregard the explanation below. If you don't like how parts of this have been implemented, you are more than free to modify it for your own use.
 
-The template has been modified to be more explicit and verbose in what it is doing rather than strictly the most efficient or Pythonesque method. 
+The template has been modified to be more explicit and verbose in what it is doing rather than strictly the most efficient or Pythonesque method.
 
-If you're completely lost: the point of this code is to "render HTML", all this really means is that we're going to take a string, modify it a bit and return it. HTML is effectively just some specially formatted text. I would suggest starting by looking at and building the polling site in tutorial 3. 
+If you're completely lost: the point of this code is to "render HTML", all this really means is that we're going to take a string, modify it a bit and return it. HTML is effectively just some specially formatted text. I would suggest starting by looking at and building the polling site in tutorial 3.
 
-All the code below is just to read text from a file, replace a few keywords and then return it. 
+All the code below is just to read text from a file, replace a few keywords and then return it.
 
 Once you've completed the polling site you might wonder if hard coding all the HTML responses is the most efficient method. Depending on the size of the project it might or it might not be. It is entirely possible to hard code all the pages required for this assignment. However, one method of managing HTML is to store it in a separate file, then read and return it when required.  
 
@@ -94,12 +94,12 @@ def simple_render(self, template, **kwargs):
 
 \*\*kwargs is a Python default method of passing arbitrary keyword arguments (see tutorial 1!) as a dictionary, this lets us pass our dictionary around without actually having to worry about the contents.
 
-Now let's say that there are some "global" dynamic template options we want to use, things that we can just pass into a template when it's called. For this we'll follow exactly the same method as above, but store these "global renders" as a member variable. 
+Now let's say that there are some "global" dynamic template options we want to use, things that we can just pass into a template when it's called. For this we'll follow exactly the same method as above, but store these "global renders" as a member variable.
 
 ```python
-def __init__(self, 
-        template_path="templates/", 
-        template_extension=".html", 
+def __init__(self,
+        template_path="templates/",
+        template_extension=".html",
         **kwargs):
         self.template_path = template_path
         self.template_extension = template_extension
@@ -109,7 +109,7 @@ Here we're using \*\*kwargs again for the "global renders"...
 
 ```python
 def render(self, template, **kwargs):
-         ''' 
+         '''
             render
             A more complex render that joins global settings with local settings
 
@@ -131,18 +131,18 @@ def render(self, template, **kwargs):
         return rendered_template
 
 ```
-...and here we build the header, tailer and body, join them together and then apply any global replacements we might need 
+...and here we build the header, tailer and body, join them together and then apply any global replacements we might need
 
 Lastly let's consider some generic headers we can add to every page on the site (in the case of Drawing Straws, this is the menu bar and the image on every page), and the "tailer" to properly enclose the HTML. This can be more efficiently managed using  proper rendering calls but this template was not built for flexibility so much as for ease of use on a few small sites.
 
 Putting it all together we now get our load and render method:
 ```python
 def load_and_render(self, filename, header="header", tailer="tailer", **kwargs):
-        ''' 
+        '''
             Loads and renders templates
 
             :: filename :: Name of the template to load
-            :: header :: Header template to use, swap this out for multiple headers 
+            :: header :: Header template to use, swap this out for multiple headers
             :: tailer :: Tailer template to use
             :: kwargs :: Keyword arguments to pass
         '''
@@ -151,9 +151,9 @@ def load_and_render(self, filename, header="header", tailer="tailer", **kwargs):
         tailer_template = self.load_template(tailer)
 
         rendered_template = self.render(
-            body_template=body_template, 
-            header_template=header_template, 
-            tailer_template=tailer_template, 
+            body_template=body_template,
+            header_template=header_template,
+            tailer_template=tailer_template,
             **kwargs)
 
         return rendered_template

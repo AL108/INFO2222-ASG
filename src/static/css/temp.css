@@ -14,7 +14,7 @@ li a {
     display: block;
     color: white;
     text-align: center;
-    padding: 14px 16px;
+    padding: 5px 5px;
     text-decoration: none;
 }
 
@@ -42,4 +42,76 @@ html, body, {
     bottom:0;
     left:0;
     right:0;
+}
+
+.loginRegisterTextFields {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    /* display: inline-block; */
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.bordered {
+    padding: 20px;
+    border: 5px solid grey;
+    width: 25%;
+    margin: auto;
+}
+
+.sidepanel {
+    background-color: #181818;
+    height: 100%;
+    width: 13%;
+    position: fixed;
+    color: white;
+    float: left;
+    padding-top: 20px;
+    stretch: True;
+}
+
+.button {
+    font: bold 13px Arial;
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #333333;
+    padding: 10px;
+    border: 1px solid black;
+    display:inline-block;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.sidepanelProfiles {
+    /* border: 10px solid grey; */
+    color: white;
+    text-align: left;
+    /* padding: 1px; */
+    color: #818181;
+    display: block;
+}
+
+.msgcontainer {
+    float: right;
+    width: 87%;
+    top: 40%;
+}
+
+.msgInputContainer {
+    /* position: fixed;
+    bottom: 0; */
+    width: 90%;
+    padding: 20px;
+}
+
+#msgTextField {
+    width: 85%;
+    height: 30px;
+    background-color: ORANGE;
+}
+
+#msgSubmit {
+    width: 9%;
+    height: 25px;
 }
