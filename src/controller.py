@@ -144,7 +144,6 @@ def post_register():
     # username = request.forms.get('username')
     # password = request.forms.get('password')
     # reentered = request.forms.get('reentered')
-    #
 
     registerForm = request.json
     # print(registerForm)
@@ -160,19 +159,6 @@ def post_register():
 
     if username and password:
         retVals = model.register_new(username, password, reentered)
-
-        # if retVals[0] == "not matching":
-        #     redirect('register?password_not_matching')
-        # elif retVals[0] == "too short":
-        #     redirect('register?password_too_short')
-        # elif retVals[0] == "user taken":
-        #     redirect('register?user_taken')
-        # elif retVals[0] == "success":
-        #     response.set_cookie("registeredUser", username)
-        #     print("retVals[1]: " + retVals[1])
-        #     redirect('register?success')
-
-
 
         returnValues = [{"error": retVals[0]}]
         # returnValues = [{"user": username}]
