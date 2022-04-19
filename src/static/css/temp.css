@@ -60,17 +60,105 @@ html, body, {
     margin: auto;
 }
 
-.sidepanel {
-    background-color: #181818;
-    height: 100%;
-    width: 13%;
-    position: fixed;
-    color: white;
-    float: left;
-    padding-top: 20px;
-    stretch: True;
+/* -----------------------------------------------------------------------------
+                                Message Window
+ -----------------------------------------------------------------------------*/
+
+.msgContainer {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 50px;
+    padding-right: 50px;
 }
 
+/*  ------------------------------- Left Panel -------------------------------*/
+.leftMsgPanel {
+    height: 80%;
+    width: 18%;
+    color: white;
+    float: left;
+}
+
+#newMsg {
+    width: 100%;
+    height: 5%;
+    margin: 5px;
+}
+
+.receivedMsgsPanel {
+    height: 100%;
+    width: 100%;
+    float: left;
+    border: 5px solid #181818;
+}
+
+.messageOption {
+    padding: 5px;
+    border-top: 2px solid #181818;
+    border-bottom: 2px solid #181818;
+    display: flex;
+    flex-direction: column;
+}
+
+.messageOption:focused {
+    background: #bde4ff;
+}
+
+.messageOption:hover {
+    background-color: #bde4ff;
+    cursor: pointer;
+}
+
+#messageTemplate {
+    /* display: none; */
+}
+
+.msg_from, .msg_subject, .msg_time {
+    font-family: Helvetica;
+    color: black;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+/*  ------------------------------ Right Panel -------------------------------*/
+.rightMsgPanel {
+    border: 5px solid #181818;
+    height: 85%;
+    width: 75%;
+    float: right;
+}
+
+#msgInputContainer {
+    width: 90%;
+    padding: 50px;
+    display: block;
+}
+
+#msgTextField {
+    width: 100%;
+    height: 30px;
+    /* background-color: ORANGE; */
+}
+
+#msgSubmit {
+    width: 9%;
+    height: 25px;
+}
+
+.msgFont {
+    font-family: Helvetica;
+}
+
+
+#msgViewContainer {
+    width: 90%;
+    padding: 50px;
+    display: none;
+}
+
+/* -----------------------------------------------------------------------------
+                                General
+ -----------------------------------------------------------------------------*/
 .button {
     font: bold 13px Arial;
     text-decoration: none;
@@ -81,37 +169,4 @@ html, body, {
     display:inline-block;
     vertical-align: middle;
     text-align: center;
-}
-
-.sidepanelProfiles {
-    /* border: 10px solid grey; */
-    color: white;
-    text-align: left;
-    /* padding: 1px; */
-    color: #818181;
-    display: block;
-}
-
-.msgcontainer {
-    float: right;
-    width: 87%;
-    top: 40%;
-}
-
-.msgInputContainer {
-    /* position: fixed;
-    bottom: 0; */
-    width: 90%;
-    padding: 20px;
-}
-
-#msgTextField {
-    width: 85%;
-    height: 30px;
-    background-color: ORANGE;
-}
-
-#msgSubmit {
-    width: 9%;
-    height: 25px;
 }
