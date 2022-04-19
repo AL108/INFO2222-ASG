@@ -173,7 +173,26 @@ def get_messages(recipient):
         to_return += '}\n'
     to_return += ']\n'
     return to_return
-      
+
+def store_session_key(user_a, user_b, a_enc_session_key, b_enc_session_key):
+    database = no_sql_db.database
+    database.create_table_entry("session_keys", [user_a, user_b, a_enc_session_key, b_enc_session_key])
+
+def get_session_key(user_a, user_b):
+    '''
+        get b_enc_session_key
+    '''
+    database = no_sql_db.database
+    entries = database.get_entries('session_keys', 'user_b', user_b)
+    entries.append(database.get_entries('session_keys', 'user_a', user_b))
+    b_enc_session_key = None 
+    for entry in entries:
+        if entry[1] == user_a:
+            b_enc_session_key = entries[2]
+        elif entry[2] == user_a:
+            b_enc_session_key = entries[1]
+    return b_enc_session_key
+
 #-----------------------------------------------------------------------------
 # About
 #-----------------------------------------------------------------------------

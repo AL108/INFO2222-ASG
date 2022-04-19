@@ -1,4 +1,5 @@
 # This file provides a very simple "no sql database using python dictionaries"
+
 # If you don't know SQL then you might consider something like this for this course
 # We're not using a class here as we're roughly expecting this to be a singleton
 
@@ -13,12 +14,14 @@ cur_path = os.path.dirname(__file__)
 user_db_path = os.path.join(cur_path, 'db/user_database.txt')
 pubkey_db_path = os.path.join(cur_path, 'db/public_key_database.txt')
 messages_db_path = os.path.join(cur_path, 'db/messages.txt')
+session_keys_db_path = os.path.join(cur_path, 'db/session_keys.txt')
 
 class Table():
-    def __init__(self, table_name, *table_fields):
+    def __init__(self, table_path, table_name, *table_fields):
         self.entries = []
         self.fields = table_fields
         self.name = table_name
+        self.path = table_path
 
     def load_entries(self, user_db_path):
 
@@ -40,11 +43,18 @@ class Table():
         if len(data) != len(self.fields):
             raise ValueError('Wrong number of fields for table')
 
-        with open(user_db_path, 'a') as user_db:
-            user_db.write(",".join([str(field) for field in data]) + "\n")
+        with open(path, 'a') as table:
+            table.write(",".join([str(field) for field in data]) + "\n")
 
         self.entries.append(data)
         return
+
+    def search_table_binary_primary_key(self, target_field_name_1, target_value_1, target_field_name_2, target_value_2):
+        for entry in self.entries:
+            for field_name_1, field_name_2, value_1, value_2 in zip(self.fields, entry):
+                if target_field_name_1 == field_name_1 and target_value_1 == value_1 and target_field_name_2 == field_name_2 and target_value_2 == value_2:
+                    return entry
+        return None
 
     def search_table(self, target_field_name, target_value):
         '''
@@ -106,21 +116,25 @@ class DB():
         self.add_table('users',"username", "hash_string", "salt")
         self.add_table('public_keys', 'username', 'public_key')
         self.add_table('messages', 'sender', 'recipient', 'enc_msg_ts', 'mac_enc_msg_ts')
+        self.add_table('session_keys', 'user_a', 'user_b', 'a_enc_session_key', 'b_enc_session_key')
         # Loads user database
         self.load_data_table("users", user_db_path)
         self.load_data_table('public_keys', pubkey_db_path)
         self.load_data_table('messages', messages_db_path)
+        self.load_data_table('session_keys', session_keys_db_path)
         return
 
-    def add_table(self, table_name, *table_fields):
+    def add_table(self, table_path, table_name, *table_fields):
         '''
             Adds a table to the database
         '''
-        table = Table(table_name, *table_fields)
+        table = Table(table_name, table_path, *table_fields)
         self.tables[table_name] = table
 
         return
 
+    def search_table_binary_primary_key(self, table_name, target_field_name_1, target_value_1, target_field_name_2, target_value_2):
+        return self.tables[table_name].search_table(target_field_name_1, target_value_1, target_field_name_2, target_value_2)
 
     def search_table(self, table_name, target_field_name, target_value):
         '''
