@@ -170,3 +170,8 @@ html, body, {
     vertical-align: middle;
     text-align: center;
 }
+
+#registerInfo {
+    font: bold 13px Arial;
+    color: Red;
+}

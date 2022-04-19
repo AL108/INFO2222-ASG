@@ -113,13 +113,15 @@ def register_new(username, password, reentered):
         Returns either a view for valid credentials, or a view for invalid credentials
     '''
 
+    # Edge cases
     if not password == reentered:
-        print("password not matching")
-        return page_view("password_not_matching")
-
+        # print("password not matching")
+        return ("not matching", page_view("password_not_matching"))
     if not len(password) >= MIN_PASSWORD_LENGTH:
-        print(f"password must be longer than {MIN_PASSWORD_LENGTH} characters")
-        return page_view("password_too_short")
+        # print(f"password must be longer than {MIN_PASSWORD_LENGTH} characters")
+        return ("too short", page_view("password_too_short"))
+
+    # Salt and hash
     salt = generate_salt64()
     hash_string = hashlib.sha256((password + salt).encode()).hexdigest()
 
@@ -129,13 +131,14 @@ def register_new(username, password, reentered):
 
     # User exists
     if entry:
-        print("user already exists")
-        return page_view("user_taken")
-    else:
-        database.create_table_entry("users", [username, hash_string, salt])
+        # print("user already exists")
+        return ("user taken", page_view("user_taken"))
+
 
     print("successfully created user: " + username)
-    return page_view("register_success")
+    database.create_table_entry("users", [username, hash_string, salt])
+
+    return ("success", page_view("register_success"))
 
 def store_public_key(username, public_key, digital_signature):
 
