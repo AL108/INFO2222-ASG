@@ -34,49 +34,43 @@ function encryptString(string){
     );
 }
 
-// function validateLogin(){
-//     let x = document.forms["loginForm"]["username"].value;
-//     let y = document.forms["loginForm"]["password"].value;
-//     if (x == "" || y == ""){
-//         alert("Error: One or more textfields empty");
-//         return false;
-//     }
-// }
+// Makes sure that user is logged in
+checkLogin();
+function checkLogin() {
+    console.log("Doing some checks");
+    if (window.location.href.match('msg_window')){
+        if (getCookie("currentUser") == null){
+            window.location.href = "/login";
+        }
+    }
+}
 
-// document.forms['registerForm'].addEventListener('submit', (event)=> {
-//     event.preventDefault();
-//     console.log("Register");
-//
-//
-//     fetch(event.target.action, {
-//         method: 'POST',
-//         body: new URLSearchParams(new FormData(event.target))
-//     }).then((resp) => {
-//         return resp.json();
-//     }).then((body) => {
-//         // TODO handle body
-//         console.log("Body");
-//     }).catch((error) => {
-//         // TODO handle error
-//         console.log("Error");
-//     })
-//
-//     console.log("Cookies: " + document.cookie);
-// })
-// var x = document.cookie;
-// if (x){
-//     console.log("x: " + document.cookie);
-// }
+function viewMessage () {
+    console.log("Selected a message to view");
+    var inputContainer = document.getElementById("msgInputContainer");
+    inputContainer.style.display = "none";
+
+    var messageContainer = document.getElementById("msgViewContainer");
+    messageContainer.style.display = "block";
+
+
+}
+
+function newMessage() {
+    console.log("Selected to create new message");
+    var inputContainer = document.getElementById("msgInputContainer");
+    inputContainer.style.display = "block";
+
+    var messageContainer = document.getElementById("msgViewContainer");
+    messageContainer.style.display = "none";
+
+
+}
 
 // Set for Message Window
 if (getCookie("currentUser") != null && document.getElementById("fromLabel") != null) {
     console.log("fromLabel: exists");
     document.getElementById("fromLabel").textContent = "From: " + getCookie("currentUser");
-}
-
-
-function register(){
-
 }
 
 function myFunction(){
