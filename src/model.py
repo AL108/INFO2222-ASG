@@ -138,9 +138,9 @@ def register_new(username, password, reentered):
     return page_view("register_success")
 
 def store_public_key(username, public_key, digital_signature):
-
     database = no_sql_db.database
     database.create_table_entry("public_keys", [username, public_key, digital_signature])
+
 
 def get_public_key(username):
     '''
@@ -154,7 +154,24 @@ def store_message(sender, recipient, enc_msg_ts, mac_enc_msg_ts):
     database = no_sql_db.database
     database.create_table_entry("messages", [sender, recipient, enc_msg_ts, mac_enc_msg_ts])
 
-
+def get_messages(recipient):
+    '''
+    returns message entries in JSON format
+    message entry format is <sender> <recipient> <enc_msg_ts> <mac_enc_ts>
+    '''
+    database = no_sql_db.database
+    entries = database.get_entries("messages", "recipient", recipient)
+    to_return = '[\n'
+    for entry in entries:
+        to_return += '{\n'
+        to_return += '"sender": "' + entry[0] + '",\n'
+        to_return += '"recipient": "' + entry[1] + '",\n'
+        to_return += '"enc_msg_ts": "' + entry[2] + '",\n'
+        to_return += '"mac_enc_ts": "' + entry[3] + '"\n'
+        to_return += '}\n'
+    to_return += ']\n'
+    return to_return
+      
 #-----------------------------------------------------------------------------
 # About
 #-----------------------------------------------------------------------------

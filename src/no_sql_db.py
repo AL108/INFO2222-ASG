@@ -60,6 +60,19 @@ class Table():
 
         # Nothing Found
         return None
+    
+    def get_entries(self, target_field_name, target_value):
+        '''
+            Search the table for given a field name and a target value
+            returns the entries found that match.
+        '''
+        entries = []
+        for entry in self.entries:
+            for field_name, value in zip(self.fields, entry):
+                if target_field_name == field_name and target_value == value:
+                    entries.append(entry)
+
+        return entries
 
     def save_table(self):
         '''
@@ -114,6 +127,12 @@ class DB():
             Calls the search table method on an appropriate table
         '''
         return self.tables[table_name].search_table(target_field_name, target_value)
+   
+    def get_entries(self, table_name, target_field_name, target_value):
+       ''' 
+            calls the get entries method on the appropriate table
+       '''
+       return self.get_entries[table_name].get_entries(target_field_name, target_value)
 
     def create_table_entry(self, table_name, data):
         '''
