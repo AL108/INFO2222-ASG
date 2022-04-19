@@ -142,9 +142,14 @@ def store_public_key(username, public_key, digital_signature):
     database = no_sql_db.database
     database.create_table_entry("public_keys", [username, public_key, digital_signature])
 
+def get_public_key(username):
+    database = no_sql_db.database
+    database.search_table('public_keys', 'username', username)
+
 def store_message(sender, recipient, enc_msg_ts, mac_enc_msg_ts):
     database = no_sql_db.database
     database.create_table_entry("messages", [sender, recipient, enc_msg_ts, mac_enc_msg_ts])
+
 
 #-----------------------------------------------------------------------------
 # About
