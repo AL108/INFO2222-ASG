@@ -7,6 +7,7 @@
 from bottle import route, get, post, error, request, static_file, response, redirect
 
 import model
+import json
 
 #-----------------------------------------------------------------------------
 # Static file paths
@@ -129,33 +130,53 @@ def get_register_controller():
 
 #-----------------------------------------------------------------------------
 
-# Attempt the login
+# Attempt the register
 @post('/register')
 def post_register():
     '''
-        post_login
+        post_register
 
-        Handles login attempts
+        Handles register attempts
         Expects a form containing 'username', 'password' and 'reentered' fields
     '''
 
     # Handle the form processing
-    username = request.forms.get('username')
-    password = request.forms.get('password')
-    reentered = request.forms.get('reentered')
+    # username = request.forms.get('username')
+    # password = request.forms.get('password')
+    # reentered = request.forms.get('reentered')
+
+    registerForm = request.json
+    # print(registerForm)
+    # print(registerForm.get("username"))
+    username = registerForm["username"]
+    password = registerForm["password"]
+    reentered = registerForm["reentered"]
+
+    print("user: " + username)
+    print("password: " + password)
+    print("reentered: " + reentered)
+
 
     if username and password:
-        print("Username given: " + username)
+        retVals = model.register_new(username, password, reentered)
 
-        retVal = model.register_new(username, password, reentered)
-        # got_cookie = request.get_cookie("currentUser")
-        # if got_cookie:
-        #     print("CurrentUser" + got_cookie)
-        return retVal
+        returnValues = [{"error": retVals[0]}]
+        # returnValues = [{"user": username}]
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'error': retVals[0]})
+        # return retVals[1]
+
+
 
     # Call the appropriate method
-    return model.register_form()
+    # return model.register_form()
+    return
 
+@post('/endpoint')
+def myEndpoint():
+    print(request.json)
+    #model.doSomething(request.json)
+    return
 #-----------------------------------------------------------------------------
 
 @get('/about')
