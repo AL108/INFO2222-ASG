@@ -104,7 +104,7 @@ class DB():
 
         # Setup your tables
         self.add_table('users',"username", "hash_string", "salt")
-        self.add_table('public_keys', 'username', 'public_key', 'digital_signature')
+        self.add_table('public_keys', 'username', 'public_key')
         self.add_table('messages', 'sender', 'recipient', 'enc_msg_ts', 'mac_enc_msg_ts')
         # Loads user database
         self.load_data_table("users", user_db_path)

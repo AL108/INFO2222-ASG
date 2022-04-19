@@ -140,10 +140,9 @@ def register_new(username, password, reentered):
 
     return ("success", page_view("register_success"))
 
-def store_public_key(username, public_key, digital_signature):
+def store_public_key(username, public_key):
     database = no_sql_db.database
-    database.create_table_entry("public_keys", [username, public_key, digital_signature])
-
+    database.create_table_entry("public_keys", [username, public_key])
 
 def get_public_key(username):
     '''
