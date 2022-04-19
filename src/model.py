@@ -143,6 +143,10 @@ def store_public_key(username, public_key, digital_signature):
     database.create_table_entry("public_keys", [username, public_key, digital_signature])
 
 def get_public_key(username):
+    '''
+    returns entry of public key table
+    format username, public key, digital signature
+    '''
     database = no_sql_db.database
     database.search_table('public_keys', 'username', username)
 
