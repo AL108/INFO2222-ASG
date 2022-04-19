@@ -172,11 +172,14 @@ def post_register():
     # return model.register_form()
     return
 
-@post('/endpoint')
-def myEndpoint():
-    print(request.json)
-    #model.doSomething(request.json)
-    return
+@post('/add_user')
+def add_user():
+    # print(request.json)
+    userDetails = request.json;
+    model.store_public_key(userDetails["username"], userDetails["publicKey"]);
+
+    response.headers['Content-Type'] = 'application/json'
+    return json.dumps({'status': "success"})
 #-----------------------------------------------------------------------------
 
 @get('/about')

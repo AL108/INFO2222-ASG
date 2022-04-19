@@ -61,7 +61,7 @@ def login_check(username, password):
     # By default assume good creds
     #print("username entered: ", username)
     #print("password entered: ", password)
-    
+
     login = False
     err_str = "Incorrect Username or Password"
 
@@ -173,7 +173,7 @@ def get_messages(recipient):
         to_return += '}\n'
     to_return += ']\n'
     return to_return
-      
+
 #-----------------------------------------------------------------------------
 # About
 #-----------------------------------------------------------------------------

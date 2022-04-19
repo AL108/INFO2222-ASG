@@ -97,8 +97,33 @@ function exportKeys(keyPair, user) {
         keyPair.publicKey
     ).then(function (publicKey) {
         let byteCode = String.fromCharCode.apply(null, new Uint8Array(publicKey))
+
+        postNewUser(user, window.btoa(byteCode));
+
     }).catch(function (err) {
         console.error(err);
+    });
+}
+
+function postNewUser(user, publicK) {
+
+    var newUser = {
+         username: user,
+         publicKey: publicK
+    };
+
+    fetch('/add_user', {
+         method: 'POST',
+         headers: {
+             'content-type': 'application/json'
+         },
+         body: JSON.stringify(newUser),
+    })
+    .then(response => response.json())
+    .then(retData => { retData
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
     });
 }
 

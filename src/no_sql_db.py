@@ -60,7 +60,7 @@ class Table():
 
         # Nothing Found
         return None
-    
+
     def get_entries(self, target_field_name, target_value):
         '''
             Search the table for given a field name and a target value
@@ -127,9 +127,9 @@ class DB():
             Calls the search table method on an appropriate table
         '''
         return self.tables[table_name].search_table(target_field_name, target_value)
-   
+
     def get_entries(self, table_name, target_field_name, target_value):
-       ''' 
+       '''
             calls the get entries method on the appropriate table
        '''
        return self.get_entries[table_name].get_entries(target_field_name, target_value)
