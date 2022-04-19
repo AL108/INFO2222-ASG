@@ -16,9 +16,9 @@ MIN_PASSWORD_LENGTH = 8
 # Initialise our views, all arguments are defaults for the template
 import no_sql_db
 
-db_path = 'db/user_database.txt'
 cur_path = os.path.dirname(__file__)
-user_db_path = os.path.join(cur_path, db_path)
+user_db_path = os.path.join(cur_path, 'db/user_database.txt')
+pubkey_db_path = os.path.join(cur_path, 'db/public_key_database.txt')
 
 page_view = view.View()
 
@@ -136,6 +136,11 @@ def register_new(username, password, reentered):
 
     print("successfully created user: " + username)
     return page_view("register_success")
+
+def store_public_key(username, public_key, digital_signature):
+
+    database = no_sql_db.database
+    database.create_table_entry("public_keys", [username, public_key, digital_signature])
 
 #-----------------------------------------------------------------------------
 # About

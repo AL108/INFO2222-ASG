@@ -9,9 +9,9 @@
 # Currently it does basic insertions and lookups
 import os
 
-db_path = 'db/user_database.txt'
 cur_path = os.path.dirname(__file__)
-user_db_path = os.path.join(cur_path, db_path)
+user_db_path = os.path.join(cur_path, 'db/user_database.txt')
+pubkey_db_path = os.path.join(cur_path, 'db/public_key_database.txt')
 
 class Table():
     def __init__(self, table_name, *table_fields):
@@ -90,10 +90,10 @@ class DB():
 
         # Setup your tables
         self.add_table('users',"username", "hash_string", "salt")
-
+        self.add_table('public_keys', 'username', 'public_key', 'digital_signature')
         # Loads user database
         self.load_data_table("users", user_db_path)
-
+        self.load_data_table('public_keys', pubkey_db_path)
         return
 
     def add_table(self, table_name, *table_fields):
