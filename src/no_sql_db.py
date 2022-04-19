@@ -12,6 +12,7 @@ import os
 cur_path = os.path.dirname(__file__)
 user_db_path = os.path.join(cur_path, 'db/user_database.txt')
 pubkey_db_path = os.path.join(cur_path, 'db/public_key_database.txt')
+messages_db_path = os.path.join(cur_path, 'db/messages.txt')
 
 class Table():
     def __init__(self, table_name, *table_fields):
@@ -91,9 +92,11 @@ class DB():
         # Setup your tables
         self.add_table('users',"username", "hash_string", "salt")
         self.add_table('public_keys', 'username', 'public_key', 'digital_signature')
+        self.add_table('messages', 'sender', 'recipient', 'enc_msg_ts', 'mac_enc_msg_ts')
         # Loads user database
         self.load_data_table("users", user_db_path)
         self.load_data_table('public_keys', pubkey_db_path)
+        self.load_data_table('messages', messages_db_path)
         return
 
     def add_table(self, table_name, *table_fields):

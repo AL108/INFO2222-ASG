@@ -61,7 +61,7 @@ def login_check(username, password):
     # By default assume good creds
     #print("username entered: ", username)
     #print("password entered: ", password)
-
+    
     login = False
     err_str = "Incorrect Username or Password"
 
@@ -141,6 +141,10 @@ def store_public_key(username, public_key, digital_signature):
 
     database = no_sql_db.database
     database.create_table_entry("public_keys", [username, public_key, digital_signature])
+
+def store_message(sender, recipient, enc_msg_ts, mac_enc_msg_ts):
+    database = no_sql_db.database
+    database.create_table_entry("messages", [sender, recipient, enc_msg_ts, mac_enc_msg_ts])
 
 #-----------------------------------------------------------------------------
 # About
