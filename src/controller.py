@@ -7,6 +7,7 @@
 from bottle import route, get, post, error, request, static_file, response, redirect
 
 import model
+import json
 
 #-----------------------------------------------------------------------------
 # Static file paths
@@ -129,33 +130,62 @@ def get_register_controller():
 
 #-----------------------------------------------------------------------------
 
-# Attempt the login
+# Attempt the register
 @post('/register')
 def post_register():
     '''
-        post_login
+        post_register
 
-        Handles login attempts
+        Handles register attempts
         Expects a form containing 'username', 'password' and 'reentered' fields
     '''
 
     # Handle the form processing
-    username = request.forms.get('username')
-    password = request.forms.get('password')
-    reentered = request.forms.get('reentered')
+    # username = request.forms.get('username')
+    # password = request.forms.get('password')
+    # reentered = request.forms.get('reentered')
+    #
+
+    registerForm = request.json
+    # print(registerForm)
+    # print(registerForm.get("username"))
+    username = registerForm.get("username")
+    password = registerForm.get("password")
+    reentered = registerForm.get("reentered")
 
     if username and password:
-        print("Username given: " + username)
+        retVals = model.register_new(username, password, reentered)
 
-        retVal = model.register_new(username, password, reentered)
-        # got_cookie = request.get_cookie("currentUser")
-        # if got_cookie:
-        #     print("CurrentUser" + got_cookie)
-        return retVal
+        # if retVals[0] == "not matching":
+        #     redirect('register?password_not_matching')
+        # elif retVals[0] == "too short":
+        #     redirect('register?password_too_short')
+        # elif retVals[0] == "user taken":
+        #     redirect('register?user_taken')
+        # elif retVals[0] == "success":
+        #     response.set_cookie("registeredUser", username)
+        #     print("retVals[1]: " + retVals[1])
+        #     redirect('register?success')
+
+
+
+        returnValues = [{"error": retVals[0]}]
+        # returnValues = [{"user": username}]
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'error': retVals[0]})
+        # return retVals[1]
+
+
 
     # Call the appropriate method
-    return model.register_form()
+    # return model.register_form()
+    return
 
+@post('/endpoint')
+def myEndpoint():
+    print(request.json)
+    #model.doSomething(request.json)
+    return
 #-----------------------------------------------------------------------------
 
 @get('/about')
