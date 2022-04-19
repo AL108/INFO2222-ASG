@@ -107,10 +107,10 @@ def post_login():
         if retPage[0]:
             print("Valid username or password")
             response.set_cookie("currentUser", username)
+            redirect('/msg_window')
         else:
             print("Invalid username or password")
-            
-        return retPage[1]
+            return retPage[1]
 
     # Call the appropriate method
     return model.login_form()

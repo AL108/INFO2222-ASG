@@ -1,35 +1,61 @@
 <head>
 <link rel="stylesheet" type="text/css" href="css/temp.css">
 <script src="js/script_head.js"></script>
-
 <title>Friends List</title>
 </head>
 
-<div>
-    <!-- <div class="sidepanel">
-        <a><h3>Friends List</h3></a>
-        <a class="sidepanelProfiles"; href="/msg_window">Person B</a>
-    </div> -->
 
-    <div class="msgcontainer">
-        <!-- <div id="msgcontainer">
-            <p id="output">This is some initial text</p>
-        </div> -->
-        <div class="msgInputContainer">
-            <!-- <form style="width: 95%; float: right" autocomplete="off"> -->
-            <form action="/msg_window" method="post" style="width: 95%; float: right" autocomplete="off">
-                <label id="fromLabel">From: *INSERT CURRENT USER*</label>
+<div class="msgContainer" onload="checkLogin()">
+
+    <div class="leftMsgPanel">
+
+        <button id="newMsg" type="button" name="button" onclick="newMessage()">New Message</button>
+
+        <div class="receivedMsgsPanel">
+            <div class="messageOption" id="messageTemplate" onclick="viewMessage()">
+                <label class="msg_from">*User*</label>
+                <label class="msg_subject">*Subject*</label>
+                <label class="msg_time">*Time*</label>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="rightMsgPanel">
+
+        <div id="msgInputContainer">
+            <form action="/msg_window" method="post" autocomplete="off">
+                <label class="msgFont">From: *INSERT CURRENT USER*</label>
                 <br><br>
-                <label for="friendsList">To: </label>
+                <label class="msgFont" for="friendsList">To: </label>
                 <select id="friendsList">
                     <option value="personB">Person B</option>
                 </select>
                 <br><br>
-                <input id="msgTextField" name="msg" type="text" placeholder="Enter message"/>
+                <label class="msgFont">Subject: </label>
+                <hr>
+                <br>
+                <input id="msgTextField" type="text" placeholder="Enter message"/>
                 <br><br>
                 <button id="msgSubmit" onclick="myFunction();">Send</button>
             </form>
-
         </div>
+
+        <div id="msgViewContainer">
+            <label class="msgFont">From: </label>
+            <br><br>
+            <label class="msgFont">To: </label>
+            <br><br>
+            <label class="msgFont">Subject: </label>
+            <hr>
+            <br>
+            <p class="msgFont">Twenty-five hours had passed since the incident. It seemed to be a lot longer than that. That twenty-five hours seemed more like a week in her mind.
+                The fact that she still was having trouble comprehending exactly what took place wasn't helping the matter. She thought if she could just get a little
+                rest the entire incident might make a little more sense.</p>
+        </div>
+
     </div>
+
 </div>
+
+<p></p>
