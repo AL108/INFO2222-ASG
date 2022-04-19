@@ -4,7 +4,7 @@
     maybe some simple program logic
 '''
 
-from bottle import route, get, post, error, request, static_file, response
+from bottle import route, get, post, error, request, static_file, response, redirect
 
 import model
 
