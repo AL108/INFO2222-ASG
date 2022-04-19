@@ -166,8 +166,6 @@ def post_register():
         return json.dumps({'error': retVals[0]})
         # return retVals[1]
 
-
-
     # Call the appropriate method
     # return model.register_form()
     return

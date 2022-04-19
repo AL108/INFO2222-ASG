@@ -15,14 +15,15 @@ pubkey_db_path = os.path.join(cur_path, 'db/public_key_database.txt')
 messages_db_path = os.path.join(cur_path, 'db/messages.txt')
 
 class Table():
-    def __init__(self, table_name, *table_fields):
-        self.entries = []
-        self.fields = table_fields
+    def __init__(self, table_name, db_path, *table_fields):
         self.name = table_name
+        self.db_path = db_path
+        self.fields = table_fields
+        self.entries = []
 
-    def load_entries(self, user_db_path):
+    def load_entries(self):
 
-        with open(user_db_path, 'r') as user_db:
+        with open(self.db_path, 'r') as user_db:
             lines = [line.rstrip() for line in user_db]
 
             # Strips the newline character
@@ -40,10 +41,13 @@ class Table():
         if len(data) != len(self.fields):
             raise ValueError('Wrong number of fields for table')
 
-        with open(user_db_path, 'a') as user_db:
+        with open(self.db_path, 'a') as user_db:
             user_db.write(",".join([str(field) for field in data]) + "\n")
 
         self.entries.append(data)
+        print("Appended: ")
+        print(data)
+        print("To: " + self.name)
         return
 
     def search_table(self, target_field_name, target_value):
@@ -79,7 +83,7 @@ class Table():
             Manual save of whole table
         :return:
         '''
-        with open(user_db_path, 'w') as user_db:
+        with open(self.db_path, 'w') as user_db:
             for entry in self.entries:
                 user_db.write(",".join([str(field) for field in entry]) + "\n")
 
@@ -103,13 +107,13 @@ class DB():
         self.tables = {}
 
         # Setup your tables
-        self.add_table('users',"username", "hash_string", "salt")
-        self.add_table('public_keys', 'username', 'public_key')
-        self.add_table('messages', 'sender', 'recipient', 'enc_msg_ts', 'mac_enc_msg_ts')
+        self.add_table('users', user_db_path,"username", "hash_string", "salt")
+        self.add_table('public_keys', pubkey_db_path,'username', 'public_key')
+        self.add_table('messages', messages_db_path,'sender', 'recipient', 'enc_msg_ts', 'mac_enc_msg_ts')
         # Loads user database
-        self.load_data_table("users", user_db_path)
-        self.load_data_table('public_keys', pubkey_db_path)
-        self.load_data_table('messages', messages_db_path)
+        self.load_data_table("users")
+        self.load_data_table('public_keys')
+        self.load_data_table('messages')
         return
 
     def add_table(self, table_name, *table_fields):
@@ -146,8 +150,8 @@ class DB():
     def save_table(self, table_name):
         self.tables[table_name].save_table()
 
-    def load_data_table(self, table_name, db_path):
-        self.tables[table_name].load_entries(db_path)
+    def load_data_table(self, table_name):
+        self.tables[table_name].load_entries()
 
 # Our global database
 # Invoke this as needed
