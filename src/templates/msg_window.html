@@ -9,12 +9,12 @@
 
     <div class="leftMsgPanel">
 
-        <button id="newMsg" type="button" name="button" onclick="newMessage()">New Message</button>
+        <button id="newMsg" type="button" name="button" onclick="viewNewMessage()">New Message</button>
 
         <div class="receivedMsgsPanel">
-            <div class="messageOption" id="messageTemplate" onclick="viewMessage()">
+            <div class="messageOption" id="messageTemplate" onclick="viewSelectedMessage()">
                 <label class="msg_from">*User*</label>
-                <label class="msg_subject">*Subject*</label>
+                <!-- <label class="msg_subject">*Subject*</label> -->
                 <label class="msg_time">*Time*</label>
             </div>
         </div>
@@ -24,18 +24,20 @@
     <div class="rightMsgPanel">
 
         <div id="msgInputContainer">
-            <form action="/msg_window" method="post" autocomplete="off">
-                <label class="msgFont">From: *INSERT CURRENT USER*</label>
+            <form id="sendMessageForm" action="/msg_window" method="post" autocomplete="off">
+                <label id="senderField" class="msgFont">From: *INSERT CURRENT USER*</label>
                 <br><br>
                 <label class="msgFont" for="friendsList">To: </label>
                 <input id='recipientField' type="text" placeholder="Enter recipient"/>
+                <label id="recipientError" class="msgFont" style="color: red;"></label>
+                <!-- <br><br>
+                <label class="msgFont">Subject: </label> -->
                 <br><br>
-                <label class="msgFont">Subject: </label>
                 <hr>
                 <br>
                 <input id="msgTextField" type="text" placeholder="Enter message"/>
                 <br><br>
-                <button id="msgSubmit" onclick="myFunction();">Send</button>
+                <button id="msgSubmit" onclick="sendMessage(event);">Send</button>
             </form>
         </div>
 
