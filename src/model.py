@@ -147,7 +147,6 @@ def get_public_key(username):
     database = no_sql_db.database
     entryList = database.search_table('public_keys', 'username', username)
     if entryList:
-        print(entryList)
         return entryList[1]
 
     return None
@@ -194,9 +193,9 @@ def get_session_key(sender, recipient):
     return None
 
 # Messages database
-def store_message(sender, recipient, enc_msg_ts, mac_enc_msg_ts):
+def store_message(sender, recipient, enc_msg_ts, mac_enc_msg_ts, iv):
     database = no_sql_db.database
-    database.create_table_entry("messages", [sender, recipient, enc_msg_ts, mac_enc_msg_ts])
+    database.create_table_entry("messages", [sender, recipient, enc_msg_ts, mac_enc_msg_ts, iv])
 
 def get_messages(recipient):
     '''
@@ -212,6 +211,7 @@ def get_messages(recipient):
         to_return += '"recipient": "' + entry[1] + '",\n'
         to_return += '"enc_msg_ts": "' + entry[2] + '",\n'
         to_return += '"mac_enc_ts": "' + entry[3] + '"\n'
+        to_return += '"iv": "' + entry[4] + '"\n'
         to_return += '}\n'
     to_return += ']\n'
     return to_return
