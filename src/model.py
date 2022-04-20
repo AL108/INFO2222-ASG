@@ -147,6 +147,7 @@ def get_public_key(username):
     database = no_sql_db.database
     entryList = database.search_table('public_keys', 'username', username)
     if entryList:
+        print(entryList)
         return entryList[1]
 
     return None
@@ -165,15 +166,30 @@ def get_session_key(sender, recipient):
 
     database = no_sql_db.database
     entriesList = database.get_entries('session_keys', 'A_username', sender)
-    entriesList.extend(database.get_entries('session_keys', 'B_username', recipient))
+    # entriesList.extend(database.get_entries('session_keys', 'B_username', recipient))
     entriesList.extend(database.get_entries('session_keys', 'A_username', recipient))
-    entriesList.extend(database.get_entries('session_keys', 'B_username', sender))
+    # entriesList.extend(database.get_entries('session_keys', 'B_username', sender))
+
+    # retList = []
 
     if (len(entriesList) > 0):
-        if entriesList[0][0] == sender and entriesList[0][2] == recipient:
-            return entriesList[0][1]
-        elif entriesList[0][2] == sender and entriesList[0][0] == recipient:
-            return entriesList[0][3]
+        print("Sender: " + sender)
+        print("Recipient: " + recipient)
+        print(entriesList[0][0])
+        print(entriesList[0][2])
+
+        for entry in entriesList:
+            if entry[0] == sender and entry[2] == recipient:
+                print("Sender: " + sender + "Entry[0]: " + entry[0])
+                print("Recipient: " + recipient + "Entry[2]: " + entry[2])
+                # retList.append(entry[1])
+                return entry[1]
+
+            elif entry[2] == sender and entry[0] == recipient:
+                print("Recipient: " + recipient + "Entry[0]: " + entry[0])
+                print("Sender: " + sender + "Entry[2]: " + entry[2])
+                # retList.append(entry[3])
+                return entry[3]
 
     return None
 

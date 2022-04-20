@@ -5,6 +5,7 @@
 // }
 
 var keyPair;
+var HMACKey;
 
 /* -----------------------------------------------------------------------------
                                 Register
@@ -188,24 +189,90 @@ function viewNewMessage() {
 async function sendMessage(event) {
     event.preventDefault();
 
+    // Form variables
     var messageForm = document.getElementById("sendMessageForm");
     var senderFieldLabel = document.getElementById("senderField").textContent;
     var senderField = senderFieldLabel.replace('From: ', '');
     var recipientField = document.getElementById("recipientField").value;
     var msgField = document.getElementById("msgTextField").value;
 
-    // console.log("sender: " + senderField);
-    // console.log("recipient: " + recipientField);
-    // console.log("msg: " + msgField);
+    // Generates session key if needed
+    await sessionKeyHelper(senderField, recipientField);
 
-    // getPublicKey(recipientField);
+    // Retrieves session key
     let DBsessionKey = await getSessionKey(senderField, recipientField);
-    // console.log(typeof DBsessionKey);
+    if (DBsessionKey == null){
+        console.error("Session key could not be retrieved");
+    }
+
+    // console.log(Date.now());
+    // console.log(new Date(Date.now()));
+    // console.log(new Date(Date.now()).toLocaleString());
+
+    // Creates msg + time stamp string
+    var msgstamp = msgField + Date.now();
+    console.log(msgstamp);
+
+    // Session key as object
+    let sessionKeyObj = await importSessionKeyObject(DBsessionKey);
+    console.log(typeof sessionKeyObj);
+
+    //
+    let encryptedMessage = await encryptStringAES(sessionKeyObj, msgstamp);
+    console.log(typeof encryptedMessage);
+
+    if (HMACKey == null){
+        HMACKey = await generateHMACKey();
+    }
+
+    let MACsignature = await window.crypto.subtle.sign(
+      "HMAC",
+      HMACKey,
+      encryptedMessage
+    );
+
+
+    postNewMessage(senderField, recipientField, encryptedMessage, MACsignature);
+
+
+    // generateMACString(sessionKeyObj, encryptedMessage);
+
+}
+
+function postNewMessage(senderField, recipientField, enc_Message, sig) {
+
+    var newMessage = {
+         sender : senderField,
+         recipient : recipientField,
+         enc_msg : enc_Message,
+         hmacSig : sig
+    };
+
+    fetch('/post_newMessage', {
+         method: 'POST',
+         headers: {
+             'content-type': 'application/json'
+         },
+         body: JSON.stringify(newMessage),
+    })
+    // .then(response => response.json())
+    // .then(retData => { retData
+    // })
+    .catch((error) => {
+        console.error('Error: ', error);
+    });
+}
+
+
+
+async function sessionKeyHelper(senderField, recipientField) {
+    let DBsessionKey = await getSessionKey(senderField, recipientField);
 
     // Use decrypt encrypted session key to then encrypt a message
-    if(DBsessionKey != null){
+    if (DBsessionKey != null) {
         // console.log(DBsessionKey);
         document.getElementById("recipientError").textContent = "";
+
     }
 
     // Create session key (if user exists)
@@ -224,7 +291,6 @@ async function sendMessage(event) {
         else if (recipient_publicKey != null){
             // User exists: Generate session key
             console.log("Generating session key");
-
 
             // Generate session key for A and B
             let newSessionKey = await generateSessionKey();
@@ -246,10 +312,7 @@ async function sendMessage(event) {
             if (sender_Enc_String != null && recipient_Enc_String != null) {
                 postNewSessionKey(senderField, sender_Enc_String, recipientField, recipient_Enc_String);
             }
-
         }
-
-
     }
 }
 
@@ -266,12 +329,31 @@ function postNewSessionKey(senderField, sender_Enc_String, recipientField, recip
          },
          body: JSON.stringify(sessionKeys),
     })
-    .then(response => response.json())
-    .then(retData => { retData
-    })
+    // .then(response => response.json())
+    // // .then(retData => { retData
+    // // })
     .catch((error) => {
         console.error('Error: ', error);
     });
+}
+
+async function generateHMACKey() {
+    return await window.crypto.subtle.generateKey(
+        {
+            name: "HMAC",
+            hash: {name: "SHA-512"}
+        },
+        true,
+        ["sign", "verify"]
+    );
+}
+
+function generateMACString(sessionKey, encoded){
+    return window.crypto.subtle.sign(
+        "HMAC",
+        sessionKey,
+        encoded
+    );
 }
 
 async function generateEnc_PKSK(publicKeyString, sessionKeyRaw) {
@@ -291,7 +373,7 @@ async function generateEnc_PKSK(publicKeyString, sessionKeyRaw) {
     }
 }
 
-function importRSAKey(pem) {
+async function importRSAKey(pem) {
     // fetch the part of the PEM string between header and footer
     // const pemHeader = "-----BEGIN PUBLIC KEY-----";
     // const pemFooter = "-----END PUBLIC KEY-----";
@@ -302,7 +384,7 @@ function importRSAKey(pem) {
     // convert from a binary string to an ArrayBuffer
     const binaryDer = str2ab(binaryDerString);
 
-    return window.crypto.subtle.importKey(
+    return await window.crypto.subtle.importKey(
     "spki",
     binaryDer,
     {
@@ -325,6 +407,24 @@ async function exportCryptoKey(key) {
   return keyString;
 }
 
+function importSessionKeyObject(rawKey){
+    // const binaryDerString = window.atob(pem);
+    // // convert from a binary string to an ArrayBuffer
+    // const binaryDer = str2ab(binaryDerString);
+    // console.log("rawKey: "+ rawKey);
+    // const utf8Key = encodeString(rawKey);
+    const utf8Key = window.crypto.getRandomValues(new Uint8Array(16));
+    console.log(typeof utf8Key);
+
+    return window.crypto.subtle.importKey(
+    "raw",
+    utf8Key,
+    "AES-GCM",
+    true,
+    ["encrypt", "decrypt"]
+    );
+}
+
 function generateSessionKey(){
     return window.crypto.subtle.generateKey(
         {
@@ -333,6 +433,19 @@ function generateSessionKey(){
         },
         true,
         ["encrypt", "decrypt"]
+    );
+}
+
+function encryptStringAES(key, string){
+    var encoded = encodeString(string);
+    let iv = window.crypto.getRandomValues(new Uint8Array(12));
+    return crypto.subtle.encrypt(
+        {
+            name: 'AES-GCM',
+            iv: iv
+        },
+        key,
+        encoded
     );
 }
 

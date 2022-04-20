@@ -230,6 +230,27 @@ def add_sessionkeysEntry():
     response.headers['Content-Type'] = 'application/json'
     return json.dumps({'status': "success"})
 
+@post('/post_newMessage')
+def post_newMessage():
+    newMessageDetails = request.json
+
+             # sender : senderField,
+             # recipient : recipientField,
+             # enc_msg : enc_Message,
+             # hmacSig : sig
+
+     sender = newMessageDetails["sender"]
+     recipient = newMessageDetails["recipient"]
+     enc_msg = newMessageDetails["enc_msg"]
+     hmacSig = newMessageDetails["hmacSig"]
+
+
+     # model.store_session_key(sessionKeysList[0][0], sessionKeysList[0][1], sessionKeysList[1][0], sessionKeysList[1][1])
+
+     response.headers['Content-Type'] = 'application/json'
+     return json.dumps({'status': "success"})
+
+
 #-----------------------------------------------------------------------------
 # Database Callers
 #-----------------------------------------------------------------------------
@@ -238,6 +259,7 @@ def get_public_key():
     # print(request.json)
     # print(userJson["username"])
     userJson = request.json;
+    print(userJson["username"])
     publicKey = model.get_public_key(userJson["username"])
     # print(retVal)
 
@@ -251,11 +273,11 @@ def get_public_key():
 
 @post('/get_session_key')
 def get_session_key():
-    # print(request.json)
     # print(userJson["username"])
     userJson = request.json;
+    print(request.json)
     sessionKey = model.get_session_key(userJson["sender"], userJson["recipient"])
-    # print(sessionKey)
+    print(sessionKey)
 
     if (sessionKey != None):
         response.headers['Content-Type'] = 'application/json'
