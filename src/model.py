@@ -178,9 +178,9 @@ def get_session_key(sender, recipient):
     return None
 
 # Messages database
-def store_message(sender, recipient, enc_msg_ts, mac_enc_msg_ts):
+def store_message(sender, recipient, enc_msg_ts, mac_enc_msg_ts, iv):
     database = no_sql_db.database
-    database.create_table_entry("messages", [sender, recipient, enc_msg_ts, mac_enc_msg_ts])
+    database.create_table_entry("messages", [sender, recipient, enc_msg_ts, mac_enc_msg_ts, iv])
 
 def get_messages(recipient):
     '''
