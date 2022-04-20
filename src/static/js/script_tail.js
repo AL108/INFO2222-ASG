@@ -132,37 +132,6 @@ function postNewUser(user, publicK) {
     });
 }
 
-function msg_window_OnLoad(){
-    checkLogin();
-    // console.log("On load");
-
-    retrieveMessages();
-}
-
-function retrieveMessages(){
-    getMessages(getCookie("currentUser"));
-}
-
-function getMessages(target){
-    var recipientTar = {
-         recipient: target,
-    };
-
-    fetch('/post_getMessages', {
-         method: 'POST',
-         headers: {
-             'content-type': 'application/json'
-         },
-         body: JSON.stringify(recipientTar),
-    })
-    .then(response => response.json())
-    .then(retData => { retData
-    })
-    .catch((error) => {
-        console.error('Error: ', error);
-    });
-}
-
 /* -----------------------------------------------------------------------------
                                 Login
  -----------------------------------------------------------------------------*/
@@ -530,6 +499,114 @@ function decodeString(string) {
 if (getCookie("currentUser") != null && document.getElementById("fromLabel") != null) {
     // console.log("fromLabel: exists");
     document.getElementById("fromLabel").textContent = "From: " + getCookie("currentUser");
+}
+
+function msg_window_OnLoad(){
+    checkLogin();
+    // console.log("On load");
+
+    retrieveMessages();
+}
+
+async function retrieveMessages(){
+    let messagesData = await getMessages(getCookie("currentUser"));
+    // console.log(messagesData);
+
+    for (i = 0; i < messagesData.length; i++) {
+        // console.log(messagesData[i]);
+
+        var sender = messagesData[i][0];
+        var recipient = messagesData[i][1];
+        var enc_msg = messagesData[i][2];
+        var mac_enc_msg_ts = messagesData[i][3];
+
+        console.log("sender: " + sender);
+        console.log("recipient: " + recipient);
+        console.log("enc_msg: " + enc_msg);
+        console.log("mac_enc_msg_ts: " + mac_enc_msg_ts);
+
+
+
+        // Verify HMAC
+        let DBsessionKeyDict = await getSessionKey(sender, recipient);
+        if (DBsessionKeyDict == null){
+            console.error("Session key could not be retrieved");
+        }
+
+        // Session key as object
+        var curSessionKey;
+        if (DBsessionKeyDict["sender"] === senderField){
+            curSessionKey = DBsessionKeyDict["sender_enc"]
+        }
+        else if (DBsessionKeyDict["recipient"] === senderField){
+            curSessionKey = DBsessionKeyDict["recipient_enc"]
+        }
+        let sessionKeyObj = await importSessionKeyObject(curSessionKey);
+
+        // Get iv
+        iv = convertBase64ToArrayBuffer(DBsessionKeyDict["iv"]);
+
+
+        // let encryptedMessage = await encryptStringAES(sessionKeyObj, msgstamp, iv);
+        // console.log(typeof encryptedMessage);
+
+        // Get HMAC Key Object
+        let HMACKey = await generateHMACKeyObject(encodeString(DBsessionKeyDict["hmac"]));
+        if (HMACKey == null) {
+            console.log("hmac failed");
+        }
+
+
+        // let MACsignature = await window.crypto.subtle.sign(
+        //     "HMAC",
+        //     HMACKey,
+        //     encryptedMessage
+        // );
+
+        // Decrypt message
+
+        verifyHMAC();
+
+    }
+}
+
+function verifyHMAC(key, signature, encoded) {
+    return window.crypto.subtle.verify(
+        "HMAC",
+        key,
+        signature,
+        encoded
+    );
+}
+
+function getMessages(target){
+    var recipientTar = {
+         recipient: target,
+    };
+
+    console.log("here");
+
+    return fetch('/post_getMessages', {
+         method: 'POST',
+         headers: {
+             'content-type': 'application/json'
+         },
+         body: JSON.stringify(recipientTar),
+    })
+    .then(response => response.json())
+    .then(returnData => {
+        if ("messages" in returnData) {
+            messagesData = returnData["messages"];
+
+            return messagesData;
+        }
+        else if ("error" in returnData) {
+
+        }
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
+    });
 }
 
 /* -----------------------------------------------------------------------------

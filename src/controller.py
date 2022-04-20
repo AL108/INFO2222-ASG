@@ -229,11 +229,16 @@ def post_getMessages():
 
     recipientObj = request.json
     recipient = recipientObj["recipient"]
-    print(recipient)
-    # model.store_message(sender, recipient, enc_msg, hmacSig);
+    # print(recipient)
 
-    response.headers['Content-Type'] = 'application/json'
-    return json.dumps({'status': "success"})
+    messagesList = model.get_messages(recipient)
+
+    if messagesList:
+        # print(messagesJson)
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'messages': messagesList})
+
+
 
 
 @post('/post_newMessage')

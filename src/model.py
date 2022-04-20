@@ -195,16 +195,17 @@ def get_messages(recipient):
     '''
     database = no_sql_db.database
     entries = database.get_entries("messages", "recipient", recipient)
-    to_return = '[\n'
-    for entry in entries:
-        to_return += '{\n'
-        to_return += '"sender": "' + entry[0] + '",\n'
-        to_return += '"recipient": "' + entry[1] + '",\n'
-        to_return += '"enc_msg_ts": "' + entry[2] + '",\n'
-        to_return += '"mac_enc_ts": "' + entry[3] + '"\n'
-        to_return += '}\n'
-    to_return += ']\n'
-    return to_return
+    return entries
+    # to_return = '[\n'
+    # for entry in entries:
+    #     to_return += '{\n'
+    #     to_return += '"sender": "' + entry[0] + '",\n'
+    #     to_return += '"recipient": "' + entry[1] + '",\n'
+    #     to_return += '"enc_msg_ts": "' + entry[2] + '",\n'
+    #     to_return += '"mac_enc_ts": "' + entry[3] + '"\n'
+    #     to_return += '}\n'
+    # to_return += ']\n'
+    # return to_return
 
 #-----------------------------------------------------------------------------
 # About
