@@ -58,10 +58,6 @@ def login_check(username, password):
         Returns either a view for valid credentials, or a view for invalid credentials
     '''
 
-    # By default assume good creds
-    #print("username entered: ", username)
-    #print("password entered: ", password)
-
     login = False
     err_str = "Incorrect Username or Password"
 
@@ -73,7 +69,7 @@ def login_check(username, password):
         salt = entry[2]
         computed_hash = hashlib.sha256((password + salt).encode()).hexdigest()
         if computed_hash == stored_hash:
-            print("Password matches")
+            # print("Password matches")
             login = True
 
 
@@ -92,8 +88,6 @@ def register_form():
         Returns the view for the login_form
     '''
     return page_view("register")
-
-#-----------------------------------------------------------------------------
 
 def generate_salt64():
     '''
@@ -140,6 +134,11 @@ def register_new(username, password, reentered):
 
     return ("success", page_view("register_success"))
 
+#-----------------------------------------------------------------------------
+# Database Helpers
+#-----------------------------------------------------------------------------
+
+# Public keys database
 def store_public_key(username, public_key):
     database = no_sql_db.database
     database.create_table_entry("public_keys", [username, public_key])
@@ -150,8 +149,49 @@ def get_public_key(username):
     format username, public key, digital signature
     '''
     database = no_sql_db.database
-    database.search_table('public_keys', 'username', username)
+    entryList = database.search_table('public_keys', 'username', username)
+    if entryList:
+        return entryList[1]
 
+    return None
+
+
+# Session keys database
+def store_session_key(A_username, enc_Apub_sk, B_username, enc_Bpub_sk):
+    database = no_sql_db.database
+    database.create_table_entry("session_keys", [A_username, enc_Apub_sk, B_username, enc_Bpub_sk])
+
+def get_session_key(sender, recipient):
+    '''
+    returns entry of public key table
+    format username, public key, digital signature
+    '''
+
+    database = no_sql_db.database
+    entriesList = database.get_entries('session_keys', 'A_username', sender)
+    entriesList.extend(database.get_entries('session_keys', 'B_username', recipient))
+    entriesList.extend(database.get_entries('session_keys', 'A_username', recipient))
+    entriesList.extend(database.get_entries('session_keys', 'B_username', sender))
+
+    # print("EntriesList")
+    # print(entriesList)
+    # print(sender)
+    # print(recipient)
+    # print(entriesList[0][0])
+    # print(entriesList[0][2])
+    # print(entriesList[0][0] == sender and entriesList[0][2] == recipient)
+    if (len(entriesList) > 0):
+        if entriesList[0][0] == sender and entriesList[0][2] == recipient:
+            return entriesList[0][1]
+        elif entriesList[0][2] == sender and entriesList[0][0] == recipient:
+            return entriesList[0][3]
+
+    # if entriesList:
+    #     return entriesList[1]
+
+    return None
+
+# Messages database
 def store_message(sender, recipient, enc_msg_ts, mac_enc_msg_ts):
     database = no_sql_db.database
     database.create_table_entry("messages", [sender, recipient, enc_msg_ts, mac_enc_msg_ts])

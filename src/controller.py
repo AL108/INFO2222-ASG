@@ -60,7 +60,7 @@ def serve_js(js):
     return static_file(js, root='static/js/')
 
 #-----------------------------------------------------------------------------
-# Pages
+# Index Page
 #-----------------------------------------------------------------------------
 
 # Redirect to login
@@ -74,6 +74,8 @@ def get_index():
     '''
     return model.index()
 
+#-----------------------------------------------------------------------------
+# Login Page
 #-----------------------------------------------------------------------------
 
 # Display the login page
@@ -106,16 +108,18 @@ def post_login():
     if username and password:
         retPage = model.login_check(username, password)
         if retPage[0]:
-            print("Valid username or password")
+            # print("Valid username or password")
             response.set_cookie("currentUser", username)
             redirect('/msg_window')
         else:
-            print("Invalid username or password")
+            # print("Invalid username or password")
             return retPage[1]
 
     # Call the appropriate method
     return model.login_form()
 
+#-----------------------------------------------------------------------------
+# Register
 #-----------------------------------------------------------------------------
 
 # Display the login page
@@ -174,20 +178,13 @@ def post_register():
 def add_user():
     # print(request.json)
     userDetails = request.json;
-    model.store_public_key(userDetails["username"], userDetails["publicKey"]);
+    model.store_public_key(userDetails["username"], userDetails["publicKey"])
 
     response.headers['Content-Type'] = 'application/json'
     return json.dumps({'status': "success"})
+
 #-----------------------------------------------------------------------------
-
-@get('/about')
-def get_about():
-    '''
-        get_about
-
-        Serves the about page
-    '''
-    return model.about()
+# Message Window Page
 #-----------------------------------------------------------------------------
 
 @get('/msg_window')
@@ -217,6 +214,58 @@ def post_msg_window():
     # Call the appropriate method
     return model.msg_window()
 
+#-----------------------------------------------------------------------------
+# Database Callers
+#-----------------------------------------------------------------------------
+@post('/get_public_key')
+def get_public_key():
+    # print(request.json)
+    # print(userJson["username"])
+    userJson = request.json;
+    publicKey = model.get_public_key(userJson["username"])
+    # print(retVal)
+
+    if (publicKey != None):
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'public_key': publicKey})
+    else:
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'error': "Username not found"})
+
+
+@post('/get_session_key')
+def get_session_key():
+    # print(request.json)
+    # print(userJson["username"])
+    userJson = request.json;
+    sessionKey = model.get_session_key(userJson["sender"], userJson["recipient"])
+    print(sessionKey)
+
+    if (sessionKey != None):
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'session_key': sessionKey})
+    else:
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'error': "Username not found"})
+
+
+
+#-----------------------------------------------------------------------------
+# About Page
+#-----------------------------------------------------------------------------
+
+@get('/about')
+def get_about():
+    '''
+        get_about
+
+        Serves the about page
+    '''
+    return model.about()
+
+#-----------------------------------------------------------------------------
+# Miscellaneous Helpers
+#-----------------------------------------------------------------------------
 
 # Help with debugging
 @post('/debug/<cmd:path>')

@@ -12,6 +12,7 @@ import os
 cur_path = os.path.dirname(__file__)
 user_db_path = os.path.join(cur_path, 'db/user_database.txt')
 pubkey_db_path = os.path.join(cur_path, 'db/public_key_database.txt')
+sesskey_db_path = os.path.join(cur_path, 'db/session_key_database.txt')
 messages_db_path = os.path.join(cur_path, 'db/messages.txt')
 
 class Table():
@@ -109,10 +110,12 @@ class DB():
         # Setup your tables
         self.add_table('users', user_db_path,"username", "hash_string", "salt")
         self.add_table('public_keys', pubkey_db_path,'username', 'public_key')
+        self.add_table('session_keys', sesskey_db_path,'A_username', 'enc_Apub_sk', 'B_username', 'enc_Bpub_sk')
         self.add_table('messages', messages_db_path,'sender', 'recipient', 'enc_msg_ts', 'mac_enc_msg_ts')
         # Loads user database
         self.load_data_table("users")
         self.load_data_table('public_keys')
+        self.load_data_table('session_keys')
         self.load_data_table('messages')
         return
 
@@ -136,7 +139,7 @@ class DB():
        '''
             calls the get entries method on the appropriate table
        '''
-       return self.get_entries[table_name].get_entries(target_field_name, target_value)
+       return self.tables[table_name].get_entries(target_field_name, target_value)
 
     def create_table_entry(self, table_name, data):
         '''

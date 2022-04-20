@@ -40,6 +40,9 @@ var keyPair;
         }
         else {
             generateKeyPair(formUser);
+            document.getElementById("registerInfo").style.color = "green";
+            document.getElementById("registerInfo").textContent = "Successfully created your account";
+            document.getElementById("registerFormId").reset();
         }
     })
     .catch((error) => {
@@ -48,6 +51,7 @@ var keyPair;
  }
 
 function registerError(errorMessage) {
+    document.getElementById("registerInfo").style.color = "red";
     if (errorMessage == 'password_not_matching'){
         document.getElementById("registerInfo").textContent = "The passwords do not match.";
     }
@@ -169,6 +173,9 @@ function checkLogin() {
         if (getCookie("currentUser") == null){
             window.location.href = "/login";
         }
+        else{
+            viewNewMessage();
+        }
     }
 }
 
@@ -176,31 +183,147 @@ function checkLogin() {
                                 Message Window
  -----------------------------------------------------------------------------*/
 // Views message
-function viewMessage () {
+function viewSelectedMessage () {
     var inputContainer = document.getElementById("msgInputContainer");
     inputContainer.style.display = "none";
 
     var messageContainer = document.getElementById("msgViewContainer");
     messageContainer.style.display = "block";
+    // if (messageContainer.style.display == "block"){
+    //     messageContainer.style.display = "none";
+    // }
+    // else {
+    //     messageContainer.style.display = "block";
+    // }
 
 
 }
 
-function newMessage() {
-    console.log("Selected to create new message");
+function viewNewMessage() {
+    // console.log("Selected to create new message");
     var inputContainer = document.getElementById("msgInputContainer");
     inputContainer.style.display = "block";
+    // if (inputContainer.style.display == "block"){
+    //     inputContainer.style.display = "none";
+    // }
+    // else {
+    //     inputContainer.style.display = "block";
+    // }
 
     var messageContainer = document.getElementById("msgViewContainer");
     messageContainer.style.display = "none";
 
+    var senderField = document.getElementById("senderField");
+    senderField.textContent = "From: " + getCookie("currentUser");
+}
 
+async function sendMessage(event) {
+    event.preventDefault();
+
+    var messageForm = document.getElementById("sendMessageForm");
+    var senderFieldLabel = document.getElementById("senderField").textContent;
+    var senderField = senderFieldLabel.replace('From: ', '');
+    var recipientField = document.getElementById("recipientField").value;
+    var msgField = document.getElementById("msgTextField").value;
+
+    // console.log("sender: " + senderField);
+    // console.log("recipient: " + recipientField);
+    // console.log("msg: " + msgField);
+
+    // getPublicKey(recipientField);
+    let sessionKey = await getSessionKey(senderField, recipientField);
+
+    // Use decrypt encrypted session key to then encrypt a message
+    if(sessionKey != null){
+        console.log(sessionKey);
+        document.getElementById("recipientError").textContent = "";
+    }
+
+    // Create session key
+    else{
+        console.log("Session key with this user not found");
+
+        // Check if user exists first
+            // User exists: Create session key
+
+            // Not exist:
+                document.getElementById("recipientError").textContent = "Username not found";
+    }
 }
 
 // Set for Message Window
 if (getCookie("currentUser") != null && document.getElementById("fromLabel") != null) {
     console.log("fromLabel: exists");
     document.getElementById("fromLabel").textContent = "From: " + getCookie("currentUser");
+}
+
+/* -----------------------------------------------------------------------------
+                                Database Calls.
+ -----------------------------------------------------------------------------*/
+
+function getPublicKey(user) {
+
+    var getUser = {
+         username: user,
+    };
+
+    fetch('/get_public_key', {
+         method: 'POST',
+         headers: {
+             'content-type': 'application/json'
+         },
+         body: JSON.stringify(getUser),
+    })
+    .then(response => response.json())
+    .then(retData => {
+        if ("error" in retData){
+            // console.log(retData["error"]);
+            return null;
+        }
+        else {
+            // console.log(retData["public_key"]);
+            return retData["public_key"];
+        }
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
+    });
+}
+
+function getSessionKey(sender, recipient) {
+
+    var getMessagePoints = {
+         sender: sender,
+         recipient: recipient
+    };
+
+    // console.log("sender: " + sender);
+    // console.log("recipient: " + recipient);
+
+    return fetch('/get_session_key', {
+         method: 'POST',
+         headers: {
+             'content-type': 'application/json'
+         },
+         body: JSON.stringify(getMessagePoints),
+    })
+    .then(response => response.json())
+    .then(retData => {
+        if ("error" in retData){
+            // console.log(retData["error"]);
+            return null;
+        }
+        else {
+            // console.log(retData["session_key"]);
+            return retData["session_key"];
+            // return retData;
+        }
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
+    });
+
+
 }
 
 /* -----------------------------------------------------------------------------
