@@ -509,65 +509,107 @@ function msg_window_OnLoad(){
 }
 
 async function retrieveMessages(){
+    console.log(getCookie("currentUser"));
     let messagesData = await getMessages(getCookie("currentUser"));
-    // console.log(messagesData);
+    console.log(messagesData.length);
 
-    for (i = 0; i < messagesData.length; i++) {
-        // console.log(messagesData[i]);
+    if (messagesData != null){
 
-        var sender = messagesData[i][0];
-        var recipient = messagesData[i][1];
-        var enc_msg = messagesData[i][2];
-        var mac_enc_msg_ts = messagesData[i][3];
+        for (i = 0; i < messagesData.length; i++) {
+            // console.log(messagesData[i]);
 
-        console.log("sender: " + sender);
-        console.log("recipient: " + recipient);
-        console.log("enc_msg: " + enc_msg);
-        console.log("mac_enc_msg_ts: " + mac_enc_msg_ts);
+            var sender = messagesData[i][0];
+            var recipient = messagesData[i][1];
+            var enc_msg = messagesData[i][2];
+            var mac_enc_msg_ts = messagesData[i][3];
+
+            console.log("sender: " + sender);
+            console.log("recipient: " + recipient);
+            console.log("enc_msg: " + enc_msg);
+            console.log("mac_enc_msg_ts: " + mac_enc_msg_ts);
+
+
+            // Verify HMAC
+            let DBsessionKeyDict = await getSessionKey(sender, recipient);
+            if (DBsessionKeyDict == null){
+                console.error("Session key could not be retrieved");
+            }
+
+            // Session key as object
+            var curSessionKey;
+            if (DBsessionKeyDict["sender"] === senderField){
+                curSessionKey = DBsessionKeyDict["sender_enc"]
+            }
+            else if (DBsessionKeyDict["recipient"] === senderField){
+                curSessionKey = DBsessionKeyDict["recipient_enc"]
+            }
+            let sessionKeyObj = await importSessionKeyObject(curSessionKey);
+            console.log("sessionKeyObj: " + sessionKeyObj);
+
+            // Get iv
+            var iv = convertBase64ToArrayBuffer(DBsessionKeyDict["iv"]);
+            console.log("iv: " + iv);
+
+
+            // let encryptedMessage = await encryptStringAES(sessionKeyObj, msgstamp, iv);
+            // console.log(typeof encryptedMessage);
+
+            // Get HMAC Key Object
+            let HMACKey = await generateHMACKeyObject(encodeString(DBsessionKeyDict["hmac"]));
+            if (HMACKey == null) {
+                console.log("hmac failed");
+            }
+            console.log("HMACKey: " + HMACKey);
+
+            // Get MAC Signature
+            MACsignature = convertBase64ToArrayBuffer(mac_enc_msg_ts);
+            console.log("MACsignature: " + MACsignature);
+            // Decrypt message
+
+
+            var verifyStatus = await verifyHMAC(HMACKey, MACsignature, convertBase64ToArrayBuffer(enc_msg));
+            // console.log("verifystatus: " + verifyStatus);
+
+            if (verifyStatus){
+                // Decrypt message
+                console.log("here");
+                var decryptedMessageTS = await decryptMessage(sessionKeyObj, convertBase64ToArrayBuffer(enc_msg), iv);
+                console.log(typeof decryptedMessageTS);
+                // console.log(decryptedMessageTS);
+
+                // TODO fix decrypted message bug
 
 
 
-        // Verify HMAC
-        let DBsessionKeyDict = await getSessionKey(sender, recipient);
-        if (DBsessionKeyDict == null){
-            console.error("Session key could not be retrieved");
+
+
+
+
+
+            }
+            else{
+                console.msg("here2");
+            }
+
+            console.log("end");
         }
 
-        // Session key as object
-        var curSessionKey;
-        if (DBsessionKeyDict["sender"] === senderField){
-            curSessionKey = DBsessionKeyDict["sender_enc"]
-        }
-        else if (DBsessionKeyDict["recipient"] === senderField){
-            curSessionKey = DBsessionKeyDict["recipient_enc"]
-        }
-        let sessionKeyObj = await importSessionKeyObject(curSessionKey);
-
-        // Get iv
-        iv = convertBase64ToArrayBuffer(DBsessionKeyDict["iv"]);
-
-
-        // let encryptedMessage = await encryptStringAES(sessionKeyObj, msgstamp, iv);
-        // console.log(typeof encryptedMessage);
-
-        // Get HMAC Key Object
-        let HMACKey = await generateHMACKeyObject(encodeString(DBsessionKeyDict["hmac"]));
-        if (HMACKey == null) {
-            console.log("hmac failed");
-        }
-
-
-        // let MACsignature = await window.crypto.subtle.sign(
-        //     "HMAC",
-        //     HMACKey,
-        //     encryptedMessage
-        // );
-
-        // Decrypt message
-
-        verifyHMAC();
 
     }
+}
+
+function decryptMessage(sessionKeyObj, enc_msg, iv) {
+    return window.crypto.subtle.decrypt(
+    {
+        name: "AES-GCM",
+        iv: iv
+    },
+    sessionKeyObj,
+    enc_msg
+    )
+    .catch((error) => {
+        console.error('Error: ', error);
+    });
 }
 
 function verifyHMAC(key, signature, encoded) {
@@ -584,8 +626,6 @@ function getMessages(target){
          recipient: target,
     };
 
-    console.log("here");
-
     return fetch('/post_getMessages', {
          method: 'POST',
          headers: {
@@ -601,7 +641,7 @@ function getMessages(target){
             return messagesData;
         }
         else if ("error" in returnData) {
-
+            return null;
         }
     })
     .catch((error) => {
