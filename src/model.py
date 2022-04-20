@@ -125,7 +125,7 @@ def register_new(username, password, reentered):
         return ("user taken", page_view("user_taken"))
 
 
-    print("successfully created user: " + username)
+    print("Successfully created user: " + username)
     database.create_table_entry("users", [username, hash_string, salt])
 
     return ("success", page_view("register_success"))
@@ -153,9 +153,10 @@ def get_public_key(username):
 
 
 # Session keys database
-def store_session_key(A_username, enc_Apub_sk, B_username, enc_Bpub_sk):
+def store_session_key(A_username, enc_Apub_sk, B_username, enc_Bpub_sk, hmac_key, iv):
     database = no_sql_db.database
-    database.create_table_entry("session_keys", [A_username, enc_Apub_sk, B_username, enc_Bpub_sk])
+    # newIV = iv.replace(",","-")
+    database.create_table_entry("session_keys", [A_username, enc_Apub_sk, B_username, enc_Bpub_sk, hmac_key, iv])
 
 def get_session_key(sender, recipient):
     '''
@@ -165,37 +166,27 @@ def get_session_key(sender, recipient):
 
     database = no_sql_db.database
     entriesList = database.get_entries('session_keys', 'A_username', sender)
-    # entriesList.extend(database.get_entries('session_keys', 'B_username', recipient))
     entriesList.extend(database.get_entries('session_keys', 'A_username', recipient))
-    # entriesList.extend(database.get_entries('session_keys', 'B_username', sender))
 
-    # retList = []
+    for entry in entriesList:
+        if entry[0] == sender and entry[2] == recipient:
+            # return entry[1]
+            # print(entry)
+            # entry[5] = entry[5].replace("-",",")
+            return entry
 
-    if (len(entriesList) > 0):
-        print("Sender: " + sender)
-        print("Recipient: " + recipient)
-        print(entriesList[0][0])
-        print(entriesList[0][2])
-
-        for entry in entriesList:
-            if entry[0] == sender and entry[2] == recipient:
-                print("Sender: " + sender + "Entry[0]: " + entry[0])
-                print("Recipient: " + recipient + "Entry[2]: " + entry[2])
-                # retList.append(entry[1])
-                return entry[1]
-
-            elif entry[2] == sender and entry[0] == recipient:
-                print("Recipient: " + recipient + "Entry[0]: " + entry[0])
-                print("Sender: " + sender + "Entry[2]: " + entry[2])
-                # retList.append(entry[3])
-                return entry[3]
+        elif entry[2] == sender and entry[0] == recipient:
+            # return entry[3]
+            # entry[5] = entry[5].replace("-",",")
+            return entry
 
     return None
 
 # Messages database
-def store_message(sender, recipient, enc_msg_ts, mac_enc_msg_ts, iv):
+def store_message(sender, recipient, enc_msg_ts, mac_enc_msg_ts):
     database = no_sql_db.database
-    database.create_table_entry("messages", [sender, recipient, enc_msg_ts, mac_enc_msg_ts, iv])
+    new_encMsg = enc_msg_ts
+    database.create_table_entry("messages", [sender, recipient, new_encMsg, mac_enc_msg_ts])
 
 def get_messages(recipient):
     '''
@@ -211,7 +202,6 @@ def get_messages(recipient):
         to_return += '"recipient": "' + entry[1] + '",\n'
         to_return += '"enc_msg_ts": "' + entry[2] + '",\n'
         to_return += '"mac_enc_ts": "' + entry[3] + '"\n'
-        to_return += '"iv": "' + entry[4] + '"\n'
         to_return += '}\n'
     to_return += ']\n'
     return to_return

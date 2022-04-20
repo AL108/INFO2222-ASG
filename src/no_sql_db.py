@@ -107,8 +107,8 @@ class DB():
         # Setup your tables
         self.add_table('users', user_db_path,"username", "hash_string", "salt")
         self.add_table('public_keys', pubkey_db_path,'username', 'public_key')
-        self.add_table('session_keys', sesskey_db_path,'A_username', 'enc_Apub_sk', 'B_username', 'enc_Bpub_sk')
-        self.add_table('messages', messages_db_path,'sender', 'recipient', 'enc_msg_ts', 'mac_enc_msg_ts','iv')
+        self.add_table('session_keys', sesskey_db_path,'A_username', 'enc_Apub_sk', 'B_username', 'enc_Bpub_sk', "hmac_key",'iv')
+        self.add_table('messages', messages_db_path,'sender', 'recipient', 'enc_msg_ts', 'mac_enc_msg_ts')
         # Loads user database
         self.load_data_table("users")
         self.load_data_table('public_keys')
