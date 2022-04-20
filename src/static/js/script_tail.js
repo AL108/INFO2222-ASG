@@ -131,38 +131,6 @@ function postNewUser(user, publicK) {
     });
 }
 
-function encryptString(string){
-    var encoded = encodeString(string);
-
-    return crypto.subtle.encrypt(
-        {
-            name: 'RSA-OAEP'
-        },
-        publicKey,
-        encoded
-    );
-}
-
-function decryptString(encrypted){
-    var decrypt = crypto.subtle.decrypt(
-        {
-            name: 'RSA-OAEP'
-        },
-        publicKey,
-        encrypted
-    );
-}
-
-function encodeString(string) {
-    var encoder = new TextEncoder();
-    return encoder.encode(string);
-}
-
-function decodeString(encoded) {
-    var decoder = new TextDecoder();
-    return encoder.encode(string);
-}
-
 /* -----------------------------------------------------------------------------
                                 Login
  -----------------------------------------------------------------------------*/
@@ -231,40 +199,178 @@ async function sendMessage(event) {
     // console.log("msg: " + msgField);
 
     // getPublicKey(recipientField);
-    let sessionKey = await getSessionKey(senderField, recipientField);
+    let DBsessionKey = await getSessionKey(senderField, recipientField);
+    // console.log(typeof DBsessionKey);
 
     // Use decrypt encrypted session key to then encrypt a message
-    if(sessionKey != null){
-        console.log(sessionKey);
+    if(DBsessionKey != null){
+        // console.log(DBsessionKey);
         document.getElementById("recipientError").textContent = "";
     }
 
-    // Create session key
+    // Create session key (if user exists)
     else{
-        console.log("Session key with this user not found");
+        console.log("No session key or user does not exist");
 
         // Check if user exists first
-        if (getPublicKey(recipientField) != null){
-            // User exists: Generate session key
+        const recipient_publicKey = await getPublicKey(recipientField);
 
-        }
-        else {
+
+        if (recipient_publicKey == null){
             // Not exist:
+            console.log("User not found");
             document.getElementById("recipientError").textContent = "Username not found";
         }
+        else if (recipient_publicKey != null){
+            // User exists: Generate session key
+            console.log("Generating session key");
+
+
+            // Generate session key for A and B
+            let newSessionKey = await generateSessionKey();
+            const sessionKeyRaw = exportCryptoKey(newSessionKey);
+            // console.log(typeof sessionKeyRaw);
+            // console.log(sessionKeyRaw);
+
+            // Sender public key
+            const sender_publicKey = await getPublicKey(senderField);
+
+            // Sender encrypted string of pk and sk
+            const sender_Enc_String = await generateEnc_PKSK(sender_publicKey, sessionKeyRaw);
+            // console.log(sender_Enc_String);
+
+            // Recipient encrypted string of pk and sk
+            const recipient_Enc_String = await generateEnc_PKSK(recipient_publicKey, sessionKeyRaw);
+            // console.log(recipient_Enc_String);
+
+            if (sender_Enc_String != null && recipient_Enc_String != null) {
+                postNewSessionKey(senderField, sender_Enc_String, recipientField, recipient_Enc_String);
+            }
+
+        }
+
 
     }
 }
 
-function generateSessionKey(){
+function postNewSessionKey(senderField, sender_Enc_String, recipientField, recipient_Enc_String) {
+    var sessionKeys = {
+         [senderField]: sender_Enc_String,
+         [recipientField]: recipient_Enc_String
+    };
 
+    fetch('/add_sessionkeysEntry', {
+         method: 'POST',
+         headers: {
+             'content-type': 'application/json'
+         },
+         body: JSON.stringify(sessionKeys),
+    })
+    .then(response => response.json())
+    .then(retData => { retData
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
+    });
 }
 
+async function generateEnc_PKSK(publicKeyString, sessionKeyRaw) {
 
+    const publicKeyObj = await importRSAKey(publicKeyString);
+    // console.log(typeof publicKeyObj);
+
+    const enc_String = await encryptString(publicKeyObj, sessionKeyRaw);
+    // console.log(enc_String);
+    if (enc_String == null){
+        console.log("Encryption failed");
+        return null;
+    }
+    else{
+        return convertArrayBufferToBase64(enc_String);
+        // console.log(base64Enc);
+    }
+}
+
+function importRSAKey(pem) {
+    // fetch the part of the PEM string between header and footer
+    // const pemHeader = "-----BEGIN PUBLIC KEY-----";
+    // const pemFooter = "-----END PUBLIC KEY-----";
+    //
+    // const pemContents = pem.substring(pemHeader.length, pem.length - pemFooter.length);
+    // base64 decode the string to get the binary data
+    const binaryDerString = window.atob(pem);
+    // convert from a binary string to an ArrayBuffer
+    const binaryDer = str2ab(binaryDerString);
+
+    return window.crypto.subtle.importKey(
+    "spki",
+    binaryDer,
+    {
+        name: "RSA-OAEP",
+        hash: "SHA-256"
+    },
+    true,
+    ["encrypt"]
+    );
+}
+
+async function exportCryptoKey(key) {
+  const exported = await window.crypto.subtle.exportKey(
+    "raw",
+    key
+  );
+  const exportedKeyBuffer = new Uint8Array(exported);
+
+  const keyString = `[${exportedKeyBuffer}]`;
+  return keyString;
+}
+
+function generateSessionKey(){
+    return window.crypto.subtle.generateKey(
+        {
+            name: "AES-GCM",
+            length: 256
+        },
+        true,
+        ["encrypt", "decrypt"]
+    );
+}
+
+function encryptString(key, string){
+    var encoded = encodeString(string);
+
+    return crypto.subtle.encrypt(
+        {
+            name: 'RSA-OAEP'
+        },
+        key,
+        encoded
+    );
+}
+
+function decryptString(encrypted, key){
+    var decrypt = crypto.subtle.decrypt(
+        {
+            name: 'RSA-OAEP'
+        },
+        key,
+        encrypted
+    );
+}
+
+function encodeString(string) {
+    var encoder = new TextEncoder();
+    return encoder.encode(string);
+}
+
+function decodeString(encoded) {
+    var decoder = new TextDecoder();
+    return encoder.encode(string);
+}
 
 // Set for Message Window
 if (getCookie("currentUser") != null && document.getElementById("fromLabel") != null) {
-    console.log("fromLabel: exists");
+    // console.log("fromLabel: exists");
     document.getElementById("fromLabel").textContent = "From: " + getCookie("currentUser");
 }
 
@@ -278,7 +384,7 @@ function getPublicKey(user) {
          username: user,
     };
 
-    fetch('/get_public_key', {
+    return fetch('/get_public_key', {
          method: 'POST',
          headers: {
              'content-type': 'application/json'
@@ -287,6 +393,7 @@ function getPublicKey(user) {
     })
     .then(response => response.json())
     .then(retData => {
+        // return retData;
         if ("error" in retData){
             // console.log(retData["error"]);
             return null;
@@ -346,6 +453,19 @@ function myFunction(){
     console.log("Cookies: " + document.cookie);
     alert(inputVal);
     window.location.href = "/msg_window"
+}
+
+function str2ab(str) {
+  const buf = new ArrayBuffer(str.length);
+  const bufView = new Uint8Array(buf);
+  for (let i = 0, strLen = str.length; i < strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
+
+function convertArrayBufferToBase64(arrayBuffer) {
+    return btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
 }
 
 /* -----------------------------------------------------------------------------

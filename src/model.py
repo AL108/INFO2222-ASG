@@ -169,21 +169,11 @@ def get_session_key(sender, recipient):
     entriesList.extend(database.get_entries('session_keys', 'A_username', recipient))
     entriesList.extend(database.get_entries('session_keys', 'B_username', sender))
 
-    # print("EntriesList")
-    # print(entriesList)
-    # print(sender)
-    # print(recipient)
-    # print(entriesList[0][0])
-    # print(entriesList[0][2])
-    # print(entriesList[0][0] == sender and entriesList[0][2] == recipient)
     if (len(entriesList) > 0):
         if entriesList[0][0] == sender and entriesList[0][2] == recipient:
             return entriesList[0][1]
         elif entriesList[0][2] == sender and entriesList[0][0] == recipient:
             return entriesList[0][3]
-
-    # if entriesList:
-    #     return entriesList[1]
 
     return None
 

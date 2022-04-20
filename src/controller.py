@@ -214,6 +214,22 @@ def post_msg_window():
     # Call the appropriate method
     return model.msg_window()
 
+
+@post('/add_sessionkeysEntry')
+def add_sessionkeysEntry():
+    # print(request.json)
+    sessionKeys = request.json
+
+    sessionKeysList = []
+    for k, v in sessionKeys.items():
+        temp = [k, v]
+        sessionKeysList.append(temp)
+
+    model.store_session_key(sessionKeysList[0][0], sessionKeysList[0][1], sessionKeysList[1][0], sessionKeysList[1][1])
+
+    response.headers['Content-Type'] = 'application/json'
+    return json.dumps({'status': "success"})
+
 #-----------------------------------------------------------------------------
 # Database Callers
 #-----------------------------------------------------------------------------
@@ -239,7 +255,7 @@ def get_session_key():
     # print(userJson["username"])
     userJson = request.json;
     sessionKey = model.get_session_key(userJson["sender"], userJson["recipient"])
-    print(sessionKey)
+    # print(sessionKey)
 
     if (sessionKey != None):
         response.headers['Content-Type'] = 'application/json'
