@@ -46,9 +46,6 @@ class Table():
             user_db.write(",".join([str(field) for field in data]) + "\n")
 
         self.entries.append(data)
-        print("Appended: ")
-        print(data)
-        print("To: " + self.name)
         return
 
     def search_table(self, target_field_name, target_value):
