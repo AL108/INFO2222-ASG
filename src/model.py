@@ -156,7 +156,7 @@ def get_public_key(username):
 def store_session_key(A_username, enc_Apub_sk, B_username, enc_Bpub_sk):
     database = no_sql_db.database
     database.create_table_entry("session_keys", [A_username, enc_Apub_sk, B_username, enc_Bpub_sk])
-    
+
 def get_session_key(sender, recipient):
     '''
     returns entry of public key table
