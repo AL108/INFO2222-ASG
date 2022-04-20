@@ -244,12 +244,23 @@ async function sendMessage(event) {
         console.log("Session key with this user not found");
 
         // Check if user exists first
-            // User exists: Create session key
+        if (getPublicKey(recipientField) != null){
+            // User exists: Generate session key
 
+        }
+        else {
             // Not exist:
-                document.getElementById("recipientError").textContent = "Username not found";
+            document.getElementById("recipientError").textContent = "Username not found";
+        }
+
     }
 }
+
+function generateSessionKey(){
+
+}
+
+
 
 // Set for Message Window
 if (getCookie("currentUser") != null && document.getElementById("fromLabel") != null) {
