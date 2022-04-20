@@ -57,10 +57,6 @@ def login_check(username, password):
 
         Returns either a view for valid credentials, or a view for invalid credentials
     '''
-
-    # By default assume good creds
-    #print("username entered: ", username)
-    #print("password entered: ", password)
     
     login = False
     err_str = "Incorrect Username or Password"
