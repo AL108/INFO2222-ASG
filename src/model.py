@@ -196,6 +196,7 @@ def get_messages(recipient):
         to_return += '"recipient": "' + entry[1] + '",\n'
         to_return += '"enc_msg_ts": "' + entry[2] + '",\n'
         to_return += '"mac_enc_ts": "' + entry[3] + '"\n'
+        to_return += '"iv": "' + entry[4] + '"\n'
         to_return += '}\n'
     to_return += ']\n'
     return to_return
