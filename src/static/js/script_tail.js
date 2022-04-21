@@ -78,13 +78,13 @@ async function registerPost(event) {
 
 function registerError(errorMessage) {
     document.getElementById("registerInfo").style.color = "red";
-    if (errorMessage == 'password_not_matching'){
+    if (errorMessage == 'password not matching'){
         document.getElementById("registerInfo").textContent = "The passwords do not match.";
     }
-    else if (errorMessage == 'password_too_short'){
+    else if (errorMessage == 'password too short'){
         document.getElementById("registerInfo").textContent = "The password is too short. Minimum 8 characters is required.";
     }
-    else if (errorMessage == 'user_taken'){
+    else if (errorMessage == 'user taken'){
         document.getElementById("registerInfo").textContent = "The username has already been taken.";
     }
 
@@ -196,7 +196,7 @@ function loginPost(user, publicK) {
     })
     .then(response => response.json())
     .then(retData => {
-        console.log(retData);
+        // console.log(retData);
         if ("failed" in retData){
             document.getElementById("loginInfo").textContent = "Invalid username or password";
         }
@@ -235,7 +235,7 @@ async function sendMessage(event) {
     event.preventDefault();
 
     if (Date.now() - (delay * ONE_SECOND) < lastMessageTime) {
-        console.log("Under " + delay + " seconds");
+        // console.log("Under " + delay + " seconds");
         return;
     }
 
@@ -253,7 +253,7 @@ async function sendMessage(event) {
     let DBsessionKeyDict = await getSessionKey(senderField, recipientField);
 
     if (DBsessionKeyDict == null){
-        console.log("Session key could not be retrieved");
+        // console.log("Session key could not be retrieved");
         return;
     }
 
@@ -284,6 +284,7 @@ async function sendMessage(event) {
 
     if (HMACKey == null) {
         console.log("hmac failed");
+        return;
     }
     //
     //
@@ -292,7 +293,7 @@ async function sendMessage(event) {
         HMACKey,
         encryptedMessage
     );
-
+    document.getElementById("recipientError").textContent= "";
     postNewMessage(senderField, recipientField, convertArrayBufferToBase64(encryptedMessage), convertArrayBufferToBase64(MACsignature));
     lastMessageTime = Date.now();
 }
@@ -843,7 +844,7 @@ function getSessionKey(sender, recipient) {
 
 function myFunction(){
     var inputVal = document.getElementById("msgTextField").value;
-    console.log("Cookies: " + document.cookie);
+    // console.log("Cookies: " + document.cookie);
     alert(inputVal);
     window.location.href = "/msg_window"
 }
