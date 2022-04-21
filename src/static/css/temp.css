@@ -110,14 +110,23 @@ html, body, {
 }
 
 #messageTemplate {
-    /* display: none; */
+    display: none;
 }
 
-.msg_from, .msg_subject, .msg_time {
+.msg_from, .msg_time {
     font-family: Helvetica;
     color: black;
     padding-top: 2px;
     padding-bottom: 2px;
+}
+
+.msg_from {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.msg_time {
+    font-size: 12px;
 }
 
 /*  ------------------------------ Right Panel -------------------------------*/

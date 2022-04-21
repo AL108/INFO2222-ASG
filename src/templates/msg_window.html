@@ -13,10 +13,10 @@
 
         <button id="newMsg" type="button" name="button" onclick="viewNewMessage()">New Message</button>
 
-        <div class="receivedMsgsPanel">
-            <div class="messageOption" id="messageTemplate" onclick="viewSelectedMessage()">
+        <div class="receivedMsgsPanel" id ="receivedMsgsPanel">
+            <!-- onclick="viewSelectedMessage()" -->
+            <div class="messageOption" id="messageTemplate">
                 <label class="msg_from">*User*</label>
-                <!-- <label class="msg_subject">*Subject*</label> -->
                 <label class="msg_time">*Time*</label>
             </div>
         </div>
@@ -32,8 +32,6 @@
                 <label class="msgFont" for="friendsList">To: </label>
                 <input id='recipientField' type="text" placeholder="Enter recipient"/>
                 <label id="recipientError" class="msgFont" style="color: red;"></label>
-                <!-- <br><br>
-                <label class="msgFont">Subject: </label> -->
                 <br><br>
                 <hr>
                 <br>
@@ -44,14 +42,13 @@
         </div>
 
         <div id="msgViewContainer">
-            <label class="msgFont">From: </label>
+            <label class="msgFont">From: </label> <label class="msgFont" id="msgView_From">From: </label>
             <br><br>
-            <label class="msgFont">To: </label>
-            <br><br>
-            <label class="msgFont">Subject: </label>
+            <label class="msgFont">To: </label> <label class="msgFont" id="msgView_To"></label>
+            <!-- <br><br>
+            <label class="msgFont">Subject: </label> -->
             <hr>
-            <br>
-            <p class="msgFont">Twenty-five hours had passed since the incident. It seemed to be a lot longer than that. That twenty-five hours seemed more like a week in her mind.
+            <p class="msgFont" id="msgView_Message">Twenty-five hours had passed since the incident. It seemed to be a lot longer than that. That twenty-five hours seemed more like a week in her mind.
                 The fact that she still was having trouble comprehending exactly what took place wasn't helping the matter. She thought if she could just get a little
                 rest the entire incident might make a little more sense.</p>
         </div>

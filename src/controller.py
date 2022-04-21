@@ -8,6 +8,9 @@ from bottle import route, get, post, error, request, static_file, response, redi
 
 import model
 import json
+import time
+
+lastMessageTime = 0
 
 #-----------------------------------------------------------------------------
 # Static file paths
@@ -102,21 +105,36 @@ def post_login():
     '''
 
     # Handle the form processing
-    username = request.forms.get('username')
-    password = request.forms.get('password')
+    # username = request.forms.get('username')
+    # password = request.forms.get('password')
+
+    loginForm = request.json
+
+    username = loginForm["username"]
+    password = loginForm["password"]
+
+    print(username)
+    print(password)
 
     if username and password:
         retPage = model.login_check(username, password)
+        print("retPage: ", retPage)
         if retPage[0]:
-            # print("Valid username or password")
+            print("Valid username or password")
             response.set_cookie("currentUser", username)
-            redirect('/msg_window')
-        else:
-            # print("Invalid username or password")
-            return retPage[1]
 
+            response.headers['Content-Type'] = 'application/json'
+            return json.dumps({'success': "Login successful"})
+            # redirect('/msg_window')
+        else:
+            response.headers['Content-Type'] = 'application/json'
+            return json.dumps({'failed': "Invalid username or password"})
+            # print("Invalid username or password")
+            # return retPage[1]
+
+    redirect('/login')
     # Call the appropriate method
-    return model.login_form()
+    # return model.login_form()
 
 #-----------------------------------------------------------------------------
 # Register
@@ -156,13 +174,10 @@ def post_register():
         retVals = model.register_new(username, hashed, salt)
 
         returnValues = [{"error": retVals[0]}]
-        # returnValues = [{"user": username}]
         response.headers['Content-Type'] = 'application/json'
         return json.dumps({'error': retVals[0]})
-        # return retVals[1]
 
     # Call the appropriate method
-    # return model.register_form()
     return
 
 @post('/add_user')
@@ -232,6 +247,7 @@ def post_getMessages():
     # print(recipient)
 
     messagesList = model.get_messages(recipient)
+    print(messagesList)
 
     if messagesList:
         # print(messagesJson)
@@ -239,10 +255,20 @@ def post_getMessages():
         return json.dumps({'messages': messagesList})
 
 
+    return json.dumps({'error': "did not find anything"})
 
 
 @post('/post_newMessage')
 def post_newMessage():
+    testDelay = 10000
+    global lastMessageTime
+    if (time.time() * 1000) <= lastMessageTime + testDelay:
+        print("Slow down!")
+        return
+
+    lastMessageTime = time.time() * 1000
+    # -----------------------------------------
+
     newMessageDetails = request.json
 
     sender = newMessageDetails["sender"]
@@ -260,12 +286,8 @@ def post_newMessage():
 #-----------------------------------------------------------------------------
 @post('/get_public_key')
 def get_public_key():
-    # print(request.json)
-    # print(userJson["username"])
-    userJson = request.json;
-    # print(userJson["username"])
+    userJson = request.json
     publicKey = model.get_public_key(userJson["username"])
-    # print(retVal)
 
     if (publicKey != None):
         response.headers['Content-Type'] = 'application/json'
@@ -277,11 +299,8 @@ def get_public_key():
 
 @post('/get_session_key')
 def get_session_key():
-    # print(userJson["username"])
     userJson = request.json;
-    # print(request.json)
     sessionKeyEntry = model.get_session_key(userJson["sender"], userJson["recipient"])
-    # print(sessionKeyEntry)
 
     if (sessionKeyEntry != None):
         response.headers['Content-Type'] = 'application/json'

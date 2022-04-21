@@ -5,7 +5,6 @@
 // }
 
 var keyPair;
-// var HMACKey;
 
 /* -----------------------------------------------------------------------------
                                 Register
@@ -93,7 +92,7 @@ function registerError(errorMessage) {
 }
 
 function generateKeyPair(user) {
-    console.log("Generating key pair");
+    // console.log("Generating key pair");
 
     keyPair = crypto.subtle.generateKey(
         {
@@ -163,10 +162,12 @@ function postNewUser(user, publicK) {
                                 Login
  -----------------------------------------------------------------------------*/
 // Makes sure that user is logged in
-// checkLogin();
 function checkLogin() {
     if (window.location.href.match('msg_window')){
-        if (getCookie("currentUser") == null){
+        // if (getCookie("currentUser") == null){
+        //     window.location.href = "/login";
+        // }
+        if (sessionStorage.getItem("currentUser") == null){
             window.location.href = "/login";
         }
         else{
@@ -175,46 +176,71 @@ function checkLogin() {
     }
 }
 
+function loginPost(user, publicK) {
+
+    event.preventDefault();
+
+    let formUser = document.getElementById("l_username").value;
+    let formPassword = document.getElementById("l_password").value;
+
+    var loginForm = {
+         username: formUser,
+         password: formPassword
+    };
+
+    fetch('/login', {
+         method: 'POST',
+         headers: {
+             'content-type': 'application/json'
+         },
+         body: JSON.stringify(loginForm),
+    })
+    .then(response => response.json())
+    .then(retData => {
+        console.log(retData);
+        if ("failed" in retData){
+            console.log("Invalid username or password");
+            document.getElementById("loginInfo").textContent = "Invalid username or password";
+        }
+        else if ("success" in retData){
+            console.log("Successful login");
+            sessionStorage.setItem("currentUser", formUser);
+            window.location.href = "/msg_window";
+        }
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
+    });
+}
+
+
 /* -----------------------------------------------------------------------------
                                 Message Window
  -----------------------------------------------------------------------------*/
-// Views message
-function viewSelectedMessage () {
-    var inputContainer = document.getElementById("msgInputContainer");
-    inputContainer.style.display = "none";
-
-    var messageContainer = document.getElementById("msgViewContainer");
-    messageContainer.style.display = "block";
-    // if (messageContainer.style.display == "block"){
-    //     messageContainer.style.display = "none";
-    // }
-    // else {
-    //     messageContainer.style.display = "block";
-    // }
-
-
-}
-
+// Views container to send messages
 function viewNewMessage() {
-    // console.log("Selected to create new message");
     var inputContainer = document.getElementById("msgInputContainer");
     inputContainer.style.display = "block";
-    // if (inputContainer.style.display == "block"){
-    //     inputContainer.style.display = "none";
-    // }
-    // else {
-    //     inputContainer.style.display = "block";
-    // }
 
     var messageContainer = document.getElementById("msgViewContainer");
     messageContainer.style.display = "none";
 
     var senderField = document.getElementById("senderField");
-    senderField.textContent = "From: " + getCookie("currentUser");
+    // senderField.textContent = "From: " + getCookie("currentUser");
+    senderField.textContent = "From: " + sessionStorage.getItem("currentUser");
 }
+
+var lastMessageTime;
+const ONE_SECOND = 1000;
+var delay = 0.5;
 
 async function sendMessage(event) {
     event.preventDefault();
+
+    if (Date.now() - (delay * ONE_SECOND) < lastMessageTime) {
+        console.log("Under " + delay + " seconds");
+        return;
+    }
 
     // Form variables
     var messageForm = document.getElementById("sendMessageForm");
@@ -223,50 +249,47 @@ async function sendMessage(event) {
     var recipientField = document.getElementById("recipientField").value;
     var msgField = document.getElementById("msgTextField").value;
 
-
     // Generates session key if needed
     await sessionKeyHelper(senderField, recipientField);
 
     // Retrieves session key
     let DBsessionKeyDict = await getSessionKey(senderField, recipientField);
-    // console.log(DBsessionKeyDict);
 
     if (DBsessionKeyDict == null){
-        console.error("Session key could not be retrieved");
+        console.log("Session key could not be retrieved");
+        return;
     }
-
-    // console.log(Date.now());
-    // console.log(new Date(Date.now()));
-    // console.log(new Date(Date.now()).toLocaleString());
 
     // Creates msg + time stamp string
     var msgstamp = msgField + Date.now();
-    // console.log(msgstamp);
 
     // Session key as object
-    var curSessionKey;
+    var PKSKString;
     if (DBsessionKeyDict["sender"] === senderField){
-        curSessionKey = DBsessionKeyDict["sender_enc"]
+        PKSKString = DBsessionKeyDict["sender_enc"]
     }
     else if (DBsessionKeyDict["recipient"] === senderField){
-        curSessionKey = DBsessionKeyDict["recipient_enc"]
+        PKSKString = DBsessionKeyDict["recipient_enc"]
     }
 
-    let sessionKeyObj = await importSessionKeyObject(curSessionKey);
+    var sessionKeyAB = await generateDec_PKSK(localStorage.getItem(senderField), convertBase64ToArrayBuffer(PKSKString));
+    // console.log("sessionKeyAB type: " + sessionKeyAB);
+
+    let sessionKeyObj = await importSessionKeyObject(sessionKeyAB);
 
     iv = convertBase64ToArrayBuffer(DBsessionKeyDict["iv"]);
-
+    //
     let encryptedMessage = await encryptStringAES(sessionKeyObj, msgstamp, iv);
     // console.log(typeof encryptedMessage);
-
+    //
     // console.log(DBsessionKeyDict["hmac"]);
     let HMACKey = await generateHMACKeyObject(encodeString(DBsessionKeyDict["hmac"]));
 
     if (HMACKey == null) {
         console.log("hmac failed");
     }
-
-
+    //
+    //
     let MACsignature = await window.crypto.subtle.sign(
         "HMAC",
         HMACKey,
@@ -274,7 +297,7 @@ async function sendMessage(event) {
     );
 
     postNewMessage(senderField, recipientField, convertArrayBufferToBase64(encryptedMessage), convertArrayBufferToBase64(MACsignature));
-
+    lastMessageTime = Date.now();
 }
 
 function postNewMessage(senderField, recipientField, enc_Message, sig) {
@@ -331,11 +354,13 @@ async function sessionKeyHelper(senderField, recipientField) {
         }
         else if (recipient_publicKey != null){
             // User exists: Generate session key
-            console.log("Generating session key");
+            // console.log("Generating session key");
 
             // Generate session key for A and B
             let newSessionKey = await generateSessionKey();
+            // console.log("Session key: " + typeof newSessionKey);
             const sessionKeyRaw = exportCryptoKey(newSessionKey);
+            // console.log("sessionKeyRaw: " + typeof sessionKeyRaw);
 
             // Sender public key
             const sender_publicKey = await getPublicKey(senderField);
@@ -356,6 +381,7 @@ async function sessionKeyHelper(senderField, recipientField) {
                 let hmacString = await generateHMACString(HMACKey);
                 postNewSessionKey(senderField, sender_Enc_String, recipientField, recipient_Enc_String, convertArrayBufferToBase64(hmacString), convertArrayBufferToBase64(iv));
             }
+
         }
     }
 }
@@ -427,8 +453,22 @@ async function generateEnc_PKSK(publicKeyString, sessionKeyRaw) {
     }
 }
 
-async function importRSAKey(pem) {
-    const binaryDerString = window.atob(pem);
+async function generateDec_PKSK(privateKeyString, enc_PKSK) {
+    const privateKeyObj = await importPrivateKey(privateKeyString);
+
+    const dec_sessionKeyRaw = await decryptString(privateKeyObj, enc_PKSK);
+
+    if (dec_sessionKeyRaw == null){
+        console.log("Decryption failed");
+        return null;
+    }
+    else{
+        return dec_sessionKeyRaw;
+    }
+}
+
+async function importRSAKey(stringKey) {
+    const binaryDerString = window.atob(stringKey);
     const binaryDer = str2ab(binaryDerString);
 
     return await window.crypto.subtle.importKey(
@@ -443,7 +483,24 @@ async function importRSAKey(pem) {
     );
 }
 
+function importPrivateKey(stringKey){
+    const binaryDerString = window.atob(stringKey);
+    const binaryDer = str2ab(binaryDerString);
+
+    return window.crypto.subtle.importKey(
+        "pkcs8",
+        binaryDer,
+        {
+            name: "RSA-OAEP",
+            hash: "SHA-256",
+        },
+        true,
+        ["decrypt"]
+    );
+}
+
 async function exportCryptoKey(key) {
+    // console.log("Session Key before: " + key);
   const exported = await window.crypto.subtle.exportKey(
     "raw",
     key
@@ -451,15 +508,17 @@ async function exportCryptoKey(key) {
   const exportedKeyBuffer = new Uint8Array(exported);
 
   const keyString = `[${exportedKeyBuffer}]`;
+  // console.log("Session Key after: " + keyString);
+  // console.log("Session Key after: " + typeof keyString);
   return keyString;
 }
 
 function importSessionKeyObject(rawKey){
-    const utf8Key = window.crypto.getRandomValues(new Uint8Array(16));
+    // const utf8Key = window.crypto.getRandomValues(new Uint8Array(16));
 
     return window.crypto.subtle.importKey(
     "raw",
-    utf8Key,
+    rawKey,
     "AES-GCM",
     true,
     ["encrypt", "decrypt"]
@@ -502,8 +561,8 @@ function encryptString(key, string){
     );
 }
 
-function decryptString(encrypted, key){
-    var decrypt = crypto.subtle.decrypt(
+function decryptString(key, encrypted){
+    return crypto.subtle.decrypt(
         {
             name: 'RSA-OAEP'
         },
@@ -523,9 +582,12 @@ function decodeString(string) {
 }
 
 // Set for Message Window
-if (getCookie("currentUser") != null && document.getElementById("fromLabel") != null) {
+if (sessionStorage.getItem("currentUser") != null && document.getElementById("fromLabel") != null) {
     // console.log("fromLabel: exists");
-    document.getElementById("fromLabel").textContent = "From: " + getCookie("currentUser");
+    // document.getElementById("fromLabel").textContent = "From: " + getCookie("currentUser");
+    document.getElementById("fromLabel").textContent = "From: " + sessionStorage.getItem("currentUser");
+
+
 }
 
 function msg_window_OnLoad(){
@@ -536,92 +598,118 @@ function msg_window_OnLoad(){
 }
 
 async function retrieveMessages(){
-    console.log(getCookie("currentUser"));
-    let messagesData = await getMessages(getCookie("currentUser"));
-    console.log(messagesData.length);
+    // console.log(getCookie("currentUser"));
+    // var messagesData = await getMessages(getCookie("currentUser"));
+    var messagesData = await getMessages(sessionStorage.getItem("currentUser"));
 
+
+    // console.log("run");
     if (messagesData != null){
 
-        for (i = 0; i < messagesData.length; i++) {
-            // console.log(messagesData[i]);
+        const msgPanel = document.getElementById("receivedMsgsPanel");
+        const msgTemplate = document.getElementById("messageTemplate");
 
-            var sender = messagesData[i][0];
-            var recipient = messagesData[i][1];
-            var enc_msg = messagesData[i][2];
-            var mac_enc_msg_ts = messagesData[i][3];
-
-            console.log("sender: " + sender);
-            console.log("recipient: " + recipient);
-            console.log("enc_msg: " + enc_msg);
-            console.log("mac_enc_msg_ts: " + mac_enc_msg_ts);
-
-
-            // Verify HMAC
-            let DBsessionKeyDict = await getSessionKey(sender, recipient);
-            if (DBsessionKeyDict == null){
-                console.error("Session key could not be retrieved");
+        for (let i = 0; i < messagesData.length; i++) {
+            var processedMsg = await processMessage(messagesData[i]);
+            if (processedMsg == null){
+                return;
             }
 
-            // Session key as object
-            var curSessionKey;
-            if (DBsessionKeyDict["sender"] === senderField){
-                curSessionKey = DBsessionKeyDict["sender_enc"]
-            }
-            else if (DBsessionKeyDict["recipient"] === senderField){
-                curSessionKey = DBsessionKeyDict["recipient_enc"]
-            }
-            let sessionKeyObj = await importSessionKeyObject(curSessionKey);
-            console.log("sessionKeyObj: " + sessionKeyObj);
+            const sender = messagesData[i][0];
+            const recipient = messagesData[i][1];
 
-            // Get iv
-            var iv = convertBase64ToArrayBuffer(DBsessionKeyDict["iv"]);
-            console.log("iv: " + iv);
+            const message = processedMsg[0];
+            const timestamp = processedMsg[1];
+            const time = new Date(parseInt(timestamp, 10)).toLocaleString();
+            // console.log(`Message[${time}]: ${message}`);
 
+            const msgClone = createMessageClone(msgTemplate, sender, time);
+            msgClone.addEventListener("click", () => {
+                viewSelectedMessage(sender, recipient, message);
+            });
 
-            // let encryptedMessage = await encryptStringAES(sessionKeyObj, msgstamp, iv);
-            // console.log(typeof encryptedMessage);
-
-            // Get HMAC Key Object
-            let HMACKey = await generateHMACKeyObject(encodeString(DBsessionKeyDict["hmac"]));
-            if (HMACKey == null) {
-                console.log("hmac failed");
-            }
-            console.log("HMACKey: " + HMACKey);
-
-            // Get MAC Signature
-            MACsignature = convertBase64ToArrayBuffer(mac_enc_msg_ts);
-            console.log("MACsignature: " + MACsignature);
-            // Decrypt message
-
-
-            var verifyStatus = await verifyHMAC(HMACKey, MACsignature, convertBase64ToArrayBuffer(enc_msg));
-            // console.log("verifystatus: " + verifyStatus);
-
-            if (verifyStatus){
-                // Decrypt message
-                console.log("here");
-                var decryptedMessageTS = await decryptMessage(sessionKeyObj, convertBase64ToArrayBuffer(enc_msg), iv);
-                console.log(typeof decryptedMessageTS);
-                // console.log(decryptedMessageTS);
-
-                // TODO fix decrypted message bug
-
-
-
-
-
-
-
-
-            }
-            else{
-                console.msg("here2");
-            }
-
-            console.log("end");
+            msgPanel.appendChild(msgClone);
         }
 
+    }
 
+}
+
+// Views message
+function viewSelectedMessage(sender, recipient, message) {
+    var inputContainer = document.getElementById("msgInputContainer");
+    inputContainer.style.display = "none";
+
+    var messageContainer = document.getElementById("msgViewContainer");
+    messageContainer.style.display = "block";
+
+    document.getElementById("msgView_From").innerHTML = sender;
+    document.getElementById("msgView_To").innerHTML = recipient;
+    document.getElementById("msgView_Message").innerHTML = message;
+    // messageContainer.children[0].innerHTML = sender;
+    // messageContainer.children[1].innerHTML = recipient;
+    // messageContainer.children[2].innerHTML = message;
+}
+
+function createMessageClone(msgTemplate, sender, time) {
+    const msgClone = msgTemplate.cloneNode(true);
+    msgClone.removeAttribute('id');
+    msgClone.children[0].innerHTML = sender;
+    msgClone.children[1].innerHTML = time;
+    return msgClone;
+}
+
+async function processMessage(msgData) {
+
+    var sender = msgData[0];
+    var recipient = msgData[1];
+    var enc_msg = msgData[2];
+    var mac_enc_msg_ts = msgData[3];
+
+    // Verify HMAC
+    let DBsessionKeyDict = await getSessionKey(sender, recipient);
+    if (DBsessionKeyDict == null){
+        console.error("Session key could not be retrieved");
+        return null;
+    }
+
+    // Process session key
+    var PKSKString;
+    if (DBsessionKeyDict["sender"] === sender){
+        PKSKString = DBsessionKeyDict["sender_enc"]
+    }
+    else if (DBsessionKeyDict["recipient"] === sender){
+        PKSKString = DBsessionKeyDict["recipient_enc"]
+    }
+
+    var sessionKeyAB = await generateDec_PKSK(localStorage.getItem(sender), convertBase64ToArrayBuffer(PKSKString));
+
+    var sessionKeyObj = await importSessionKeyObject(sessionKeyAB);
+
+    // Get HMAC Key Object
+    let HMACKey = await generateHMACKeyObject(encodeString(DBsessionKeyDict["hmac"]));
+    if (HMACKey == null) {
+        console.error("HMAC generation failed");
+        return;
+    }
+
+    // Get MAC Signature
+    MACsignature = convertBase64ToArrayBuffer(mac_enc_msg_ts);
+
+    // Decrypt message
+    var verifyStatus = await verifyHMAC(HMACKey, MACsignature, convertBase64ToArrayBuffer(enc_msg));
+    if (verifyStatus){
+        var decryptedMessageTS = await decryptMessage(sessionKeyObj, convertBase64ToArrayBuffer(enc_msg), convertBase64ToArrayBuffer(DBsessionKeyDict["iv"]));
+        var decodedMessageTS = decodeString(decryptedMessageTS);
+
+        // Split message and timestamp
+        var message = decodedMessageTS.substring(0, decodedMessageTS.length - 13);
+        var timestamp = decodedMessageTS.slice(-13);
+        return [message, timestamp];
+    }
+    else{
+        console.error("Verification of message failed!");
+        return;
     }
 }
 
@@ -664,7 +752,6 @@ function getMessages(target){
     .then(returnData => {
         if ("messages" in returnData) {
             messagesData = returnData["messages"];
-
             return messagesData;
         }
         else if ("error" in returnData) {
