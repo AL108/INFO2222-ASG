@@ -157,9 +157,10 @@ def get_public_key(username):
 
 
 # Session keys database
-def store_session_key(A_username, enc_Apub_sk, B_username, enc_Bpub_sk, hmac_key):
+def store_session_key(A_username, enc_Apub_sk, B_username, enc_Bpub_sk, hmac_key, iv):
     database = no_sql_db.database
-    database.create_table_entry("session_keys", [A_username, enc_Apub_sk, B_username, enc_Bpub_sk, hmac_key])
+    # newIV = iv.replace(",","-")
+    database.create_table_entry("session_keys", [A_username, enc_Apub_sk, B_username, enc_Bpub_sk, hmac_key, iv])
 
 def get_session_key(sender, recipient):
     '''
@@ -169,22 +170,27 @@ def get_session_key(sender, recipient):
 
     database = no_sql_db.database
     entriesList = database.get_entries('session_keys', 'A_username', sender)
-    entriesList.extend(database.get_entries('session_keys', 'B_username', recipient))
     entriesList.extend(database.get_entries('session_keys', 'A_username', recipient))
-    entriesList.extend(database.get_entries('session_keys', 'B_username', sender))
 
-    if (len(entriesList) > 0):
-        if entriesList[0][0] == sender and entriesList[0][2] == recipient:
-            return entriesList[0][1]
-        elif entriesList[0][2] == sender and entriesList[0][0] == recipient:
-            return entriesList[0][3]
+    for entry in entriesList:
+        if entry[0] == sender and entry[2] == recipient:
+            # return entry[1]
+            # print(entry)
+            # entry[5] = entry[5].replace("-",",")
+            return entry
+
+        elif entry[2] == sender and entry[0] == recipient:
+            # return entry[3]
+            # entry[5] = entry[5].replace("-",",")
+            return entry
 
     return None
 
 # Messages database
-def store_message(sender, recipient, enc_msg_ts, mac_enc_msg_ts, iv):
+def store_message(sender, recipient, enc_msg_ts, mac_enc_msg_ts):
     database = no_sql_db.database
-    database.create_table_entry("messages", [sender, recipient, enc_msg_ts, mac_enc_msg_ts, iv])
+    new_encMsg = enc_msg_ts
+    database.create_table_entry("messages", [sender, recipient, new_encMsg, mac_enc_msg_ts])
 
 def get_messages(recipient):
     '''
@@ -193,17 +199,17 @@ def get_messages(recipient):
     '''
     database = no_sql_db.database
     entries = database.get_entries("messages", "recipient", recipient)
-    to_return = '[\n'
-    for entry in entries:
-        to_return += '{\n'
-        to_return += '"sender": "' + entry[0] + '",\n'
-        to_return += '"recipient": "' + entry[1] + '",\n'
-        to_return += '"enc_msg_ts": "' + entry[2] + '",\n'
-        to_return += '"mac_enc_ts": "' + entry[3] + '"\n'
-        to_return += '"iv": "' + entry[4] + '"\n'
-        to_return += '}\n'
-    to_return += ']\n'
-    return to_return
+    return entries
+    # to_return = '[\n'
+    # for entry in entries:
+    #     to_return += '{\n'
+    #     to_return += '"sender": "' + entry[0] + '",\n'
+    #     to_return += '"recipient": "' + entry[1] + '",\n'
+    #     to_return += '"enc_msg_ts": "' + entry[2] + '",\n'
+    #     to_return += '"mac_enc_ts": "' + entry[3] + '"\n'
+    #     to_return += '}\n'
+    # to_return += ']\n'
+    # return to_return
 
 #-----------------------------------------------------------------------------
 # About

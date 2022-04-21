@@ -145,20 +145,11 @@ def post_register():
     '''
 
     # Handle the form processing
-    # username = request.forms.get('username')
-    # password = request.forms.get('password')
-    # reentered = request.forms.get('reentered')
-
     registerForm = request.json
-    # print(registerForm)
-    # print(registerForm.get("username"))
+
     username = registerForm["username"]
     hashed = registerForm["hashed"]
     salt = registerForm["salt"]
-
-    print("user: " + username)
-    print("hashed: " + hashed)
-    print("salt: " + salt)
 
 
     if username and hashed:
@@ -220,12 +211,46 @@ def add_sessionkeysEntry():
     # print(request.json)
     sessionKeys = request.json
 
+    hmacKeyString = sessionKeys["hmacKeyString"]
+    iv = sessionKeys["iv"]
+
     sessionKeysList = []
     for k, v in sessionKeys.items():
         temp = [k, v]
         sessionKeysList.append(temp)
 
-    model.store_session_key(sessionKeysList[0][0], sessionKeysList[0][1], sessionKeysList[1][0], sessionKeysList[1][1])
+    model.store_session_key(sessionKeysList[0][0], sessionKeysList[0][1], sessionKeysList[1][0], sessionKeysList[1][1], hmacKeyString, iv)
+
+    response.headers['Content-Type'] = 'application/json'
+    return json.dumps({'status': "success"})
+
+@post('/post_getMessages')
+def post_getMessages():
+
+    recipientObj = request.json
+    recipient = recipientObj["recipient"]
+    # print(recipient)
+
+    messagesList = model.get_messages(recipient)
+
+    if messagesList:
+        # print(messagesJson)
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'messages': messagesList})
+
+
+
+
+@post('/post_newMessage')
+def post_newMessage():
+    newMessageDetails = request.json
+
+    sender = newMessageDetails["sender"]
+    recipient = newMessageDetails["recipient"]
+    enc_msg = newMessageDetails["enc_msg"]
+    hmacSig = newMessageDetails["hmacSig"]
+
+    model.store_message(sender, recipient, enc_msg, hmacSig);
 
     response.headers['Content-Type'] = 'application/json'
     return json.dumps({'status': "success"})
@@ -238,6 +263,7 @@ def get_public_key():
     # print(request.json)
     # print(userJson["username"])
     userJson = request.json;
+    # print(userJson["username"])
     publicKey = model.get_public_key(userJson["username"])
     # print(retVal)
 
@@ -251,15 +277,15 @@ def get_public_key():
 
 @post('/get_session_key')
 def get_session_key():
-    # print(request.json)
     # print(userJson["username"])
     userJson = request.json;
-    sessionKey = model.get_session_key(userJson["sender"], userJson["recipient"])
-    # print(sessionKey)
+    # print(request.json)
+    sessionKeyEntry = model.get_session_key(userJson["sender"], userJson["recipient"])
+    # print(sessionKeyEntry)
 
-    if (sessionKey != None):
+    if (sessionKeyEntry != None):
         response.headers['Content-Type'] = 'application/json'
-        return json.dumps({'session_key': sessionKey})
+        return json.dumps({'sessionKeyEntry': sessionKeyEntry})
     else:
         response.headers['Content-Type'] = 'application/json'
         return json.dumps({'error': "Username not found"})
