@@ -51,7 +51,7 @@ async function registerPost(event) {
              salt: slt,
         };
         console.log(JSON.stringify(registerForm));
-
+            
         fetch('/register', {
              method: 'POST',
              headers: {
