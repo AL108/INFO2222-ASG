@@ -1,0 +1,29 @@
+<head>
+<link rel="stylesheet" type="text/css" href="css/temp.css">
+<script src="js/script_head.js"></script>
+
+<title>Register</title>
+</head>
+
+<div class="bordered" style="text-align: center;">
+    <h3>Register</h3>
+    </br>
+    <!-- <form name="registerForm" autocomplete="off" action="/register" method="post"> -->
+    <form id="registerFormId" name="registerForm" autocomplete="off">
+        <input autocomplete="false" name="hidden" type=text style="display:none;">
+        <input class="loginRegisterTextFields" id="r_username" name="username" type="text" placeholder="Enter Username" style="width: 200px;" pattern="[a-z0-9]{5,15}$" title="Usernames may only contain letters and letters and must be between 5 and 15 characters" required autocomplete="new-password"/>
+        </br>
+        <input class="loginRegisterTextFields" id="r_password" name="password" type="password" placeholder="Enter Password" style="width: 200px;" pattern=".{8,}$" title="Passwords must be at least 8 characters long" required autocomplete="new-password"/>
+        </br>
+        <input class="loginRegisterTextFields" id="r_reentered" name="reentered" type="password" placeholder="Re-Enter Password" style="width: 200px;" required autocomplete="new-password"/>
+        </br>
+        </br>
+        <label id="registerInfo"></label>
+        </br>
+        </br>
+        <input class="button" value="Create Account" type="submit" onclick="registerPost(event)"/>
+        </br>
+    </form>
+</div>
+
+<p></p>

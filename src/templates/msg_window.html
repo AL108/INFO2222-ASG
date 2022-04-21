@@ -1,0 +1,60 @@
+<head>
+<link rel="stylesheet" type="text/css" href="css/temp.css">
+<script src="js/script_head.js"></script>
+<title>Friends List</title>
+</head>
+
+<body onload="msg_window_OnLoad()"/>
+
+
+<div class="msgContainer">
+
+    <div class="leftMsgPanel">
+
+        <button id="newMsg" type="button" name="button" onclick="viewNewMessage()">New Message</button>
+
+        <div class="receivedMsgsPanel" id ="receivedMsgsPanel">
+            <!-- onclick="viewSelectedMessage()" -->
+            <div class="messageOption" id="messageTemplate">
+                <label class="msg_from">*User*</label>
+                <label class="msg_time">*Time*</label>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="rightMsgPanel">
+
+        <div id="msgInputContainer">
+            <form id="sendMessageForm" action="/msg_window" method="post" autocomplete="off">
+                <label id="senderField" class="msgFont">From: *INSERT CURRENT USER*</label>
+                <br><br>
+                <label class="msgFont" for="friendsList">To: </label>
+                <input id='recipientField' type="text" placeholder="Enter recipient"/>
+                <label id="recipientError" class="msgFont" style="color: red;"></label>
+                <br><br>
+                <hr>
+                <br>
+                <input id="msgTextField" type="text" placeholder="Enter message"/>
+                <br><br>
+                <button id="msgSubmit" onclick="sendMessage(event);">Send</button>
+            </form>
+        </div>
+
+        <div id="msgViewContainer">
+            <label class="msgFont">From: </label> <label class="msgFont" id="msgView_From">From: </label>
+            <br><br>
+            <label class="msgFont">To: </label> <label class="msgFont" id="msgView_To"></label>
+            <!-- <br><br>
+            <label class="msgFont">Subject: </label> -->
+            <hr>
+            <p class="msgFont" id="msgView_Message">Twenty-five hours had passed since the incident. It seemed to be a lot longer than that. That twenty-five hours seemed more like a week in her mind.
+                The fact that she still was having trouble comprehending exactly what took place wasn't helping the matter. She thought if she could just get a little
+                rest the entire incident might make a little more sense.</p>
+        </div>
+
+    </div>
+
+</div>
+
+<p></p>
