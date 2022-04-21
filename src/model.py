@@ -94,7 +94,7 @@ def generate_salt64():
     return ''.join(random.choice(string.ascii_letters) for char in range(64))
 
 # Create new account
-def register_new(username, password, reentered):
+def register_new(username, hashed, salt):
     '''
         register_new
         Checks usernames and passwords
@@ -104,16 +104,16 @@ def register_new(username, password, reentered):
     '''
 
     # Edge cases
-    if not password == reentered:
+    #if not password == reentered:
         # print("password not matching")
-        return ("not matching", page_view("password_not_matching"))
-    if not len(password) >= MIN_PASSWORD_LENGTH:
+        #return ("not matching", page_view("password_not_matching"))
+    #if not len(password) >= MIN_PASSWORD_LENGTH:
         # print(f"password must be longer than {MIN_PASSWORD_LENGTH} characters")
-        return ("too short", page_view("password_too_short"))
+        #return ("too short", page_view("password_too_short"))
 
     # Salt and hash
-    salt = generate_salt64()
-    hash_string = hashlib.sha256((password + salt).encode()).hexdigest()
+    #salt = generate_salt64()
+    #hash_string = hashlib.sha256((password + salt).encode()).hexdigest()
 
     database = no_sql_db.database
 
@@ -126,7 +126,7 @@ def register_new(username, password, reentered):
 
 
     print("successfully created user: " + username)
-    database.create_table_entry("users", [username, hash_string, salt])
+    database.create_table_entry("users", [username, hashed, salt])
 
     return ("success", page_view("register_success"))
 
@@ -138,6 +138,10 @@ def register_new(username, password, reentered):
 def store_public_key(username, public_key):
     database = no_sql_db.database
     database.create_table_entry("public_keys", [username, public_key])
+
+def store_password(username, hash, salt):
+    database = no_sql_db.database
+    database.create_table_entry("users", [username, hash, salt])
 
 def get_public_key(username):
     '''
@@ -153,9 +157,9 @@ def get_public_key(username):
 
 
 # Session keys database
-def store_session_key(A_username, enc_Apub_sk, B_username, enc_Bpub_sk):
+def store_session_key(A_username, enc_Apub_sk, B_username, enc_Bpub_sk, hmac_key):
     database = no_sql_db.database
-    database.create_table_entry("session_keys", [A_username, enc_Apub_sk, B_username, enc_Bpub_sk])
+    database.create_table_entry("session_keys", [A_username, enc_Apub_sk, B_username, enc_Bpub_sk, hmac_key])
 
 def get_session_key(sender, recipient):
     '''

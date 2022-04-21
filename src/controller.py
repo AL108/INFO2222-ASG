@@ -153,16 +153,16 @@ def post_register():
     # print(registerForm)
     # print(registerForm.get("username"))
     username = registerForm["username"]
-    password = registerForm["password"]
-    reentered = registerForm["reentered"]
+    hashed = registerForm["hashed"]
+    salt = registerForm["salt"]
 
     print("user: " + username)
-    print("password: " + password)
-    print("reentered: " + reentered)
+    print("hashed: " + hashed)
+    print("salt: " + salt)
 
 
-    if username and password:
-        retVals = model.register_new(username, password, reentered)
+    if username and hashed:
+        retVals = model.register_new(username, hashed, salt)
 
         returnValues = [{"error": retVals[0]}]
         # returnValues = [{"user": username}]
