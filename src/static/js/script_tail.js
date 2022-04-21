@@ -271,25 +271,21 @@ async function sendMessage(event) {
     else if (DBsessionKeyDict["recipient"] === senderField){
         PKSKString = DBsessionKeyDict["recipient_enc"]
     }
-
     var sessionKeyAB = await generateDec_PKSK(localStorage.getItem(senderField), convertBase64ToArrayBuffer(PKSKString));
-    // console.log("sessionKeyAB type: " + sessionKeyAB);
-
     let sessionKeyObj = await importSessionKeyObject(sessionKeyAB);
 
+    // Retrieves iv
     iv = convertBase64ToArrayBuffer(DBsessionKeyDict["iv"]);
-    //
+
+    // Encrypts message with session key, message (with timestamp) and iv variable
     let encryptedMessage = await encryptStringAES(sessionKeyObj, msgstamp, iv);
-    // console.log(typeof encryptedMessage);
-    //
-    // console.log(DBsessionKeyDict["hmac"]);
+
     let HMACKey = await generateHMACKeyObject(encodeString(DBsessionKeyDict["hmac"]));
 
     if (HMACKey == null) {
         console.log("hmac failed");
     }
-    //
-    //
+
     let MACsignature = await window.crypto.subtle.sign(
         "HMAC",
         HMACKey,
@@ -341,26 +337,18 @@ async function sessionKeyHelper(senderField, recipientField) {
 
     // Create session key (if user exists)
     else{
-        // console.log("No session key or user does not exist");
-
         // Check if user exists first
         const recipient_publicKey = await getPublicKey(recipientField);
 
 
+        // Not exist:
         if (recipient_publicKey == null){
-            // Not exist:
-            // console.log("User not found");
             document.getElementById("recipientError").textContent = "Username not found";
         }
         else if (recipient_publicKey != null){
-            // User exists: Generate session key
-            // console.log("Generating session key");
-
             // Generate session key for A and B
             let newSessionKey = await generateSessionKey();
-            // console.log("Session key: " + typeof newSessionKey);
             const sessionKeyRaw = exportCryptoKey(newSessionKey);
-            // console.log("sessionKeyRaw: " + typeof sessionKeyRaw);
 
             // Sender public key
             const sender_publicKey = await getPublicKey(senderField);
@@ -611,7 +599,7 @@ async function retrieveMessages(){
 
         for (let i = 0; i < messagesData.length; i++) {
             var processedMsg = await processMessage(messagesData[i]);
-            if (processedMsg == null){
+            if (processedMsg == null) {
                 return;
             }
 
@@ -681,9 +669,7 @@ async function processMessage(msgData) {
     else if (DBsessionKeyDict["recipient"] === sender){
         PKSKString = DBsessionKeyDict["recipient_enc"]
     }
-
     var sessionKeyAB = await generateDec_PKSK(localStorage.getItem(sender), convertBase64ToArrayBuffer(PKSKString));
-
     var sessionKeyObj = await importSessionKeyObject(sessionKeyAB);
 
     // Get HMAC Key Object
@@ -698,7 +684,7 @@ async function processMessage(msgData) {
 
     // Decrypt message
     var verifyStatus = await verifyHMAC(HMACKey, MACsignature, convertBase64ToArrayBuffer(enc_msg));
-    if (verifyStatus){
+    if (verifyStatus) {
         var decryptedMessageTS = await decryptMessage(sessionKeyObj, convertBase64ToArrayBuffer(enc_msg), convertBase64ToArrayBuffer(DBsessionKeyDict["iv"]));
         var decodedMessageTS = decodeString(decryptedMessageTS);
 
@@ -707,7 +693,7 @@ async function processMessage(msgData) {
         var timestamp = decodedMessageTS.slice(-13);
         return [message, timestamp];
     }
-    else{
+    else {
         console.error("Verification of message failed!");
         return;
     }
