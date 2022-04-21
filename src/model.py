@@ -94,7 +94,7 @@ def generate_salt64():
     return ''.join(random.choice(string.ascii_letters) for char in range(64))
 
 # Create new account
-def register_new(username, password, reentered):
+def register_new(username, hashed, salt):
     '''
         register_new
         Checks usernames and passwords
@@ -104,16 +104,16 @@ def register_new(username, password, reentered):
     '''
 
     # Edge cases
-    if not password == reentered:
+    #if not password == reentered:
         # print("password not matching")
-        return ("not matching", page_view("password_not_matching"))
-    if not len(password) >= MIN_PASSWORD_LENGTH:
+        #return ("not matching", page_view("password_not_matching"))
+    #if not len(password) >= MIN_PASSWORD_LENGTH:
         # print(f"password must be longer than {MIN_PASSWORD_LENGTH} characters")
-        return ("too short", page_view("password_too_short"))
+        #return ("too short", page_view("password_too_short"))
 
     # Salt and hash
-    salt = generate_salt64()
-    hash_string = hashlib.sha256((password + salt).encode()).hexdigest()
+    #salt = generate_salt64()
+    #hash_string = hashlib.sha256((password + salt).encode()).hexdigest()
 
     database = no_sql_db.database
 
@@ -125,8 +125,8 @@ def register_new(username, password, reentered):
         return ("user taken", page_view("user_taken"))
 
 
-    print("Successfully created user: " + username)
-    database.create_table_entry("users", [username, hash_string, salt])
+    print("successfully created user: " + username)
+    database.create_table_entry("users", [username, hashed, salt])
 
     return ("success", page_view("register_success"))
 

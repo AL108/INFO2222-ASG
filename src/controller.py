@@ -152,12 +152,10 @@ def get_register_controller():
 
 #-----------------------------------------------------------------------------
 
-# Attempt the register
 @post('/register')
 def post_register():
     '''
         post_register
-
         Handles register attempts
         Expects a form containing 'username', 'password' and 'reentered' fields
     '''
@@ -166,11 +164,11 @@ def post_register():
     registerForm = request.json
 
     username = registerForm["username"]
-    password = registerForm["password"]
-    reentered = registerForm["reentered"]
+    hashed = registerForm["hashed"]
+    salt = registerForm["salt"]
 
-    if username and password:
-        retVals = model.register_new(username, password, reentered)
+    if username and hashed:
+        retVals = model.register_new(username, hashed, salt)
 
         returnValues = [{"error": retVals[0]}]
         response.headers['Content-Type'] = 'application/json'
@@ -178,6 +176,8 @@ def post_register():
 
     # Call the appropriate method
     return
+
+
 
 @post('/add_user')
 def add_user():

@@ -10,44 +10,72 @@ var keyPair;
                                 Register
  -----------------------------------------------------------------------------*/
 
- function registerPost(event) {
+ function generateSalt64() {
+    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var salt = "";
+    for (var i = 0; i < 64; i++) {
+      salt += chars.charAt(Math.floor(Math.random() * chars.length));
+   }
+   return salt;
+}
 
-    event.preventDefault();
+ async function hash_pwd(pwd, salt) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(pwd + salt);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHexStr = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+  return hashHexStr;
+}
 
-    let formUser = document.getElementById("r_username").value;
-    let formPassword = document.getElementById("r_password").value;
-    let formReentered = document.getElementById("r_reentered").value;
+async function registerPost(event) {
 
-    var registerForm = {
-         username: formUser,
-         password: formPassword,
-         reentered: formReentered,
-    };
+   event.preventDefault();
 
-    fetch('/register', {
-         method: 'POST',
-         headers: {
-             'content-type': 'application/json'
-         },
-         body: JSON.stringify(registerForm),
-    })
-    .then(response => response.json())
-    .then(retData => {
-        if (retData["error"] != "success"){
-            console.log(retData["error"]);
-            registerError(retData["error"]);
-        }
-        else {
-            generateKeyPair(formUser);
-            document.getElementById("registerInfo").style.color = "green";
-            document.getElementById("registerInfo").textContent = "Successfully created your account";
-            document.getElementById("registerFormId").reset();
-        }
-    })
-    .catch((error) => {
-        console.error('Error: ', error);
-    });
- }
+   let formUser = document.getElementById("r_username").value;
+   let formPassword = document.getElementById("r_password").value;
+   let formReentered = document.getElementById("r_reentered").value;
+
+   if (formPassword != formReentered) {
+       registerError("registerInfo");
+   } else {
+
+       var slt = generateSalt64();
+       var salted_hash = await hash_pwd(formPassword, slt);
+       console.log(slt);
+       console.log('salted hash: ' + salted_hash);
+       var registerForm = {
+            username: formUser,
+            hashed: salted_hash,
+            salt: slt,
+       };
+       console.log(JSON.stringify(registerForm));
+
+       fetch('/register', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(registerForm),
+       })
+       .then(response => response.json())
+       .then(retData => {
+           if (retData["error"] != "success"){
+               console.log(retData["error"]);
+               registerError(retData["error"]);
+           }
+           else {
+               generateKeyPair(formUser);
+               document.getElementById("registerInfo").style.color = "green";
+               document.getElementById("registerInfo").textContent = "Successfully created your account";
+               document.getElementById("registerFormId").reset();
+           }
+       })
+       .catch((error) => {
+           console.error('Error: ', error);
+       });
+    }
+}
 
 function registerError(errorMessage) {
     document.getElementById("registerInfo").style.color = "red";
