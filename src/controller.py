@@ -232,13 +232,17 @@ def post_getMessages():
     # print(recipient)
 
     messagesList = model.get_messages(recipient)
+    print(messagesList)
 
     if messagesList:
         # print(messagesJson)
         response.headers['Content-Type'] = 'application/json'
+        print("returning: ")
+        print({'messages': messagesList})
         return json.dumps({'messages': messagesList})
 
 
+    return json.dumps({'error': "did not find anything"})
 
 
 @post('/post_newMessage')
