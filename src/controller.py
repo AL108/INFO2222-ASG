@@ -8,6 +8,9 @@ from bottle import route, get, post, error, request, static_file, response, redi
 
 import model
 import json
+import time
+
+lastMessageTime = 0
 
 #-----------------------------------------------------------------------------
 # Static file paths
@@ -151,18 +154,14 @@ def post_register():
     password = registerForm["password"]
     reentered = registerForm["reentered"]
 
-
     if username and password:
         retVals = model.register_new(username, password, reentered)
 
         returnValues = [{"error": retVals[0]}]
-        # returnValues = [{"user": username}]
         response.headers['Content-Type'] = 'application/json'
         return json.dumps({'error': retVals[0]})
-        # return retVals[1]
 
     # Call the appropriate method
-    # return model.register_form()
     return
 
 @post('/add_user')
@@ -237,8 +236,6 @@ def post_getMessages():
     if messagesList:
         # print(messagesJson)
         response.headers['Content-Type'] = 'application/json'
-        print("returning: ")
-        print({'messages': messagesList})
         return json.dumps({'messages': messagesList})
 
 
@@ -247,6 +244,15 @@ def post_getMessages():
 
 @post('/post_newMessage')
 def post_newMessage():
+    testDelay = 10000
+    global lastMessageTime
+    if (time.time() * 1000) <= lastMessageTime + testDelay:
+        print("Slow down!")
+        return
+
+    lastMessageTime = time.time() * 1000
+    # -----------------------------------------
+
     newMessageDetails = request.json
 
     sender = newMessageDetails["sender"]
@@ -264,12 +270,8 @@ def post_newMessage():
 #-----------------------------------------------------------------------------
 @post('/get_public_key')
 def get_public_key():
-    # print(request.json)
-    # print(userJson["username"])
-    userJson = request.json;
-    # print(userJson["username"])
+    userJson = request.json
     publicKey = model.get_public_key(userJson["username"])
-    # print(retVal)
 
     if (publicKey != None):
         response.headers['Content-Type'] = 'application/json'
@@ -281,11 +283,8 @@ def get_public_key():
 
 @post('/get_session_key')
 def get_session_key():
-    # print(userJson["username"])
     userJson = request.json;
-    # print(request.json)
     sessionKeyEntry = model.get_session_key(userJson["sender"], userJson["recipient"])
-    # print(sessionKeyEntry)
 
     if (sessionKeyEntry != None):
         response.headers['Content-Type'] = 'application/json'
