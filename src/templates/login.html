@@ -9,14 +9,16 @@
     <h3>Login</h3>
     </br>
 
-    <form name="loginForm" action="/login" method="post">
-        <input class="loginRegisterTextFields" name="username" type="text" placeholder="Enter Username" style="width: 200px;" required/>
+    <form name="loginForm">
+        <input class="loginRegisterTextFields" id="l_username" name="username" type="text" placeholder="Enter Username" style="width: 200px;" required/>
         </br>
-        <input class="loginRegisterTextFields" name="password" type="password" placeholder="Enter Password" style="width: 200px;" required/>
+        <input class="loginRegisterTextFields" id="l_password" name="password" type="password" placeholder="Enter Password" style="width: 200px;" required/>
         </br>
         </br>
+        <label id="loginInfo"></label>
         </br>
-        <input class="button" value="Login" type="submit" />
+        </br>
+        <input class="button" value="Login" type="submit" onclick="loginPost(event)"/>
         <a class="button" href="/register">Create Account</a>
         </br>
     </form>

@@ -105,21 +105,36 @@ def post_login():
     '''
 
     # Handle the form processing
-    username = request.forms.get('username')
-    password = request.forms.get('password')
+    # username = request.forms.get('username')
+    # password = request.forms.get('password')
+
+    loginForm = request.json
+
+    username = loginForm["username"]
+    password = loginForm["password"]
+
+    print(username)
+    print(password)
 
     if username and password:
         retPage = model.login_check(username, password)
+        print("retPage: ", retPage)
         if retPage[0]:
-            # print("Valid username or password")
+            print("Valid username or password")
             response.set_cookie("currentUser", username)
-            redirect('/msg_window')
-        else:
-            # print("Invalid username or password")
-            return retPage[1]
 
+            response.headers['Content-Type'] = 'application/json'
+            return json.dumps({'success': "Login successful"})
+            # redirect('/msg_window')
+        else:
+            response.headers['Content-Type'] = 'application/json'
+            return json.dumps({'failed': "Invalid username or password"})
+            # print("Invalid username or password")
+            # return retPage[1]
+
+    redirect('/login')
     # Call the appropriate method
-    return model.login_form()
+    # return model.login_form()
 
 #-----------------------------------------------------------------------------
 # Register

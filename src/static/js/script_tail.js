@@ -136,7 +136,10 @@ function postNewUser(user, publicK) {
 // Makes sure that user is logged in
 function checkLogin() {
     if (window.location.href.match('msg_window')){
-        if (getCookie("currentUser") == null){
+        // if (getCookie("currentUser") == null){
+        //     window.location.href = "/login";
+        // }
+        if (sessionStorage.getItem("currentUser") == null){
             window.location.href = "/login";
         }
         else{
@@ -144,6 +147,44 @@ function checkLogin() {
         }
     }
 }
+
+function loginPost(user, publicK) {
+
+    event.preventDefault();
+
+    let formUser = document.getElementById("l_username").value;
+    let formPassword = document.getElementById("l_password").value;
+
+    var loginForm = {
+         username: formUser,
+         password: formPassword
+    };
+
+    fetch('/login', {
+         method: 'POST',
+         headers: {
+             'content-type': 'application/json'
+         },
+         body: JSON.stringify(loginForm),
+    })
+    .then(response => response.json())
+    .then(retData => {
+        console.log(retData);
+        if ("failed" in retData){
+            console.log("Invalid username or password");
+            document.getElementById("loginInfo").textContent = "Invalid username or password";
+        }
+        else if ("success" in retData){
+            console.log("Successful login");
+            sessionStorage.setItem("currentUser", formUser);
+            window.location.href = "/msg_window";
+        }
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
+    });
+}
+
 
 /* -----------------------------------------------------------------------------
                                 Message Window
@@ -157,7 +198,8 @@ function viewNewMessage() {
     messageContainer.style.display = "none";
 
     var senderField = document.getElementById("senderField");
-    senderField.textContent = "From: " + getCookie("currentUser");
+    // senderField.textContent = "From: " + getCookie("currentUser");
+    senderField.textContent = "From: " + sessionStorage.getItem("currentUser");
 }
 
 var lastMessageTime;
@@ -179,13 +221,11 @@ async function sendMessage(event) {
     var recipientField = document.getElementById("recipientField").value;
     var msgField = document.getElementById("msgTextField").value;
 
-
     // Generates session key if needed
     await sessionKeyHelper(senderField, recipientField);
 
     // Retrieves session key
     let DBsessionKeyDict = await getSessionKey(senderField, recipientField);
-    // console.log(DBsessionKeyDict);
 
     if (DBsessionKeyDict == null){
         console.log("Session key could not be retrieved");
@@ -286,13 +326,13 @@ async function sessionKeyHelper(senderField, recipientField) {
         }
         else if (recipient_publicKey != null){
             // User exists: Generate session key
-            console.log("Generating session key");
+            // console.log("Generating session key");
 
             // Generate session key for A and B
             let newSessionKey = await generateSessionKey();
-            console.log("Session key: " + typeof newSessionKey);
+            // console.log("Session key: " + typeof newSessionKey);
             const sessionKeyRaw = exportCryptoKey(newSessionKey);
-            console.log("sessionKeyRaw: " + typeof sessionKeyRaw);
+            // console.log("sessionKeyRaw: " + typeof sessionKeyRaw);
 
             // Sender public key
             const sender_publicKey = await getPublicKey(senderField);
@@ -311,14 +351,8 @@ async function sessionKeyHelper(senderField, recipientField) {
 
             if (sender_Enc_String != null && recipient_Enc_String != null) {
                 let hmacString = await generateHMACString(HMACKey);
-                console.log("HMACString (BEFORE): " + hmacString);
                 postNewSessionKey(senderField, sender_Enc_String, recipientField, recipient_Enc_String, convertArrayBufferToBase64(hmacString), convertArrayBufferToBase64(iv));
             }
-
-
-
-            // Saves
-            // saveSK = sessionKeyObj;
 
         }
     }
@@ -393,11 +427,8 @@ async function generateEnc_PKSK(publicKeyString, sessionKeyRaw) {
 
 async function generateDec_PKSK(privateKeyString, enc_PKSK) {
     const privateKeyObj = await importPrivateKey(privateKeyString);
-    console.log(typeof publicKeyObj);
 
-    // console.log("type: " + typeof enc_PKSK);
     const dec_sessionKeyRaw = await decryptString(privateKeyObj, enc_PKSK);
-    console.log(dec_sessionKeyRaw);
 
     if (dec_sessionKeyRaw == null){
         console.log("Decryption failed");
@@ -427,7 +458,6 @@ async function importRSAKey(stringKey) {
 function importPrivateKey(stringKey){
     const binaryDerString = window.atob(stringKey);
     const binaryDer = str2ab(binaryDerString);
-    console.log("binaryDer: " + typeof binaryDer);
 
     return window.crypto.subtle.importKey(
         "pkcs8",
@@ -442,7 +472,7 @@ function importPrivateKey(stringKey){
 }
 
 async function exportCryptoKey(key) {
-    console.log("Session Key before: " + key);
+    // console.log("Session Key before: " + key);
   const exported = await window.crypto.subtle.exportKey(
     "raw",
     key
@@ -450,8 +480,8 @@ async function exportCryptoKey(key) {
   const exportedKeyBuffer = new Uint8Array(exported);
 
   const keyString = `[${exportedKeyBuffer}]`;
-  console.log("Session Key after: " + keyString);
-  console.log("Session Key after: " + typeof keyString);
+  // console.log("Session Key after: " + keyString);
+  // console.log("Session Key after: " + typeof keyString);
   return keyString;
 }
 
@@ -524,9 +554,12 @@ function decodeString(string) {
 }
 
 // Set for Message Window
-if (getCookie("currentUser") != null && document.getElementById("fromLabel") != null) {
+if (sessionStorage.getItem("currentUser") != null && document.getElementById("fromLabel") != null) {
     // console.log("fromLabel: exists");
-    document.getElementById("fromLabel").textContent = "From: " + getCookie("currentUser");
+    // document.getElementById("fromLabel").textContent = "From: " + getCookie("currentUser");
+    document.getElementById("fromLabel").textContent = "From: " + sessionStorage.getItem("currentUser");
+
+
 }
 
 function msg_window_OnLoad(){
@@ -537,20 +570,19 @@ function msg_window_OnLoad(){
 }
 
 async function retrieveMessages(){
-    console.log(getCookie("currentUser"));
-    var messagesData = await getMessages(getCookie("currentUser"));
+    // console.log(getCookie("currentUser"));
+    // var messagesData = await getMessages(getCookie("currentUser"));
+    var messagesData = await getMessages(sessionStorage.getItem("currentUser"));
+
+
     // console.log("run");
     if (messagesData != null){
-        console.log(messagesData.length);
-        console.log(messagesData);
 
         const msgPanel = document.getElementById("receivedMsgsPanel");
         const msgTemplate = document.getElementById("messageTemplate");
 
         for (let i = 0; i < messagesData.length; i++) {
-            console.log("mData");
             var processedMsg = await processMessage(messagesData[i]);
-            console.log("processedMsg: " + processedMsg);
             if (processedMsg == null){
                 return;
             }
@@ -569,7 +601,6 @@ async function retrieveMessages(){
             });
 
             msgPanel.appendChild(msgClone);
-            console.log("mData");
         }
 
     }
@@ -613,7 +644,6 @@ async function processMessage(msgData) {
         console.error("Session key could not be retrieved");
         return null;
     }
-    console.log("hMAC");
 
     // Process session key
     var PKSKString;
@@ -623,14 +653,10 @@ async function processMessage(msgData) {
     else if (DBsessionKeyDict["recipient"] === sender){
         PKSKString = DBsessionKeyDict["recipient_enc"]
     }
-    console.log("PKSK");
-    console.log("sender: " + localStorage.getItem(sender));
-    var sessionKeyAB = await generateDec_PKSK(localStorage.getItem(sender), convertBase64ToArrayBuffer(PKSKString));
-    console.log("sessionKeyAB");
-    var sessionKeyObj = await importSessionKeyObject(sessionKeyAB);
-    console.log("sessionKey");
 
-    // console.log("here1");
+    var sessionKeyAB = await generateDec_PKSK(localStorage.getItem(sender), convertBase64ToArrayBuffer(PKSKString));
+
+    var sessionKeyObj = await importSessionKeyObject(sessionKeyAB);
 
     // Get HMAC Key Object
     let HMACKey = await generateHMACKeyObject(encodeString(DBsessionKeyDict["hmac"]));
@@ -638,20 +664,12 @@ async function processMessage(msgData) {
         console.error("HMAC generation failed");
         return;
     }
-    console.log("hMACKey");
-
-    // console.log("here3");
 
     // Get MAC Signature
     MACsignature = convertBase64ToArrayBuffer(mac_enc_msg_ts);
 
-    // console.log("here3");
-
     // Decrypt message
     var verifyStatus = await verifyHMAC(HMACKey, MACsignature, convertBase64ToArrayBuffer(enc_msg));
-    console.log("verifyStatus");
-
-    // console.log("here4");
     if (verifyStatus){
         var decryptedMessageTS = await decryptMessage(sessionKeyObj, convertBase64ToArrayBuffer(enc_msg), convertBase64ToArrayBuffer(DBsessionKeyDict["iv"]));
         var decodedMessageTS = decodeString(decryptedMessageTS);
@@ -659,7 +677,6 @@ async function processMessage(msgData) {
         // Split message and timestamp
         var message = decodedMessageTS.substring(0, decodedMessageTS.length - 13);
         var timestamp = decodedMessageTS.slice(-13);
-        console.log("returning");
         return [message, timestamp];
     }
     else{
@@ -710,7 +727,6 @@ function getMessages(target){
             return messagesData;
         }
         else if ("error" in returnData) {
-            console.log("No messages found");
             return null;
         }
     })
