@@ -51,7 +51,7 @@ async function registerPost(event) {
              salt: slt,
         };
         console.log(JSON.stringify(registerForm));
-            
+
         fetch('/register', {
              method: 'POST',
              headers: {
@@ -703,6 +703,34 @@ function getPublicKey(user) {
         else {
             // console.log(retData["public_key"]);
             return retData["public_key"];
+        }
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
+    });
+}
+
+function getSalt(user) {
+    return fetch('/get_salt', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(username),
+    })
+    .then(response => response.json())
+    .then(retData => {
+        if ("error" in retData) {
+            return null;
+        }
+        else {
+            var userEntryDict = {
+                username: retData["userEntry"][0],
+                hash: retData["userEntry"][1],
+                salt: retData["userEntry"][2],
+            };
+
+            return userEntryDict;
         }
     })
     .catch((error) => {

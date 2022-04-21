@@ -45,7 +45,11 @@ def login_form():
     return page_view("login")
 
 #-----------------------------------------------------------------------------
-
+def get_salt(username):
+    database = no_sql_db.database
+    entry = database.search_table('public_keys', 'username', username)
+    return entry[2]
+    
 # Check the login credentials
 def login_check(username, password):
     '''

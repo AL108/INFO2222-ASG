@@ -46,7 +46,6 @@ def run_server(keyfilepath, certfilepath):
         run_server
         Runs a bottle server
     '''
-    # run(host=host, port=port,debug=debug, keyfile='/home/alien/certs/127.0.0.1-key.pem', certfile='/home/alien/certs/127.0.0.1.pem', server="gunicorn")
     run(host=host, port=port,debug=debug, keyfile=keyfilepath, certfile=certfilepath, server="gunicorn")
 
 
