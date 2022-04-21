@@ -42,14 +42,14 @@ async function registerPost(event) {
 
        var slt = generateSalt64();
        var salted_hash = await hash_pwd(formPassword, slt);
-       console.log(slt);
-       console.log('salted hash: ' + salted_hash);
+      
+      
        var registerForm = {
             username: formUser,
             hashed: salted_hash,
             salt: slt,
        };
-       console.log(JSON.stringify(registerForm));
+       
 
        fetch('/register', {
             method: 'POST',
@@ -60,8 +60,7 @@ async function registerPost(event) {
        })
        .then(response => response.json())
        .then(retData => {
-           if (retData["error"] != "success"){
-               console.log(retData["error"]);
+           if (retData["error"] != "success"){ 
                registerError(retData["error"]);
            }
            else {
@@ -199,11 +198,9 @@ function loginPost(user, publicK) {
     .then(retData => {
         console.log(retData);
         if ("failed" in retData){
-            console.log("Invalid username or password");
             document.getElementById("loginInfo").textContent = "Invalid username or password";
         }
         else if ("success" in retData){
-            console.log("Successful login");
             sessionStorage.setItem("currentUser", formUser);
             window.location.href = "/msg_window";
         }
@@ -445,7 +442,7 @@ async function generateEnc_PKSK(publicKeyString, sessionKeyRaw) {
     const enc_String = await encryptString(publicKeyObj, sessionKeyRaw);
     // console.log(enc_String);
     if (enc_String == null){
-        console.log("Encryption failed");
+        
         return null;
     }
     else{
