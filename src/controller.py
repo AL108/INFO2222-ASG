@@ -75,7 +75,7 @@ def get_index():
 
         Serves the index page
     '''
-    return model.index()
+    return model.login_form()
 
 #-----------------------------------------------------------------------------
 # Login Page
