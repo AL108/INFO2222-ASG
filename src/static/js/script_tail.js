@@ -4,6 +4,7 @@
 //     }
 // }
 
+
 var keyPair;
 
 /* -----------------------------------------------------------------------------
@@ -178,7 +179,7 @@ function checkLogin() {
 function loginPost(user, publicK) {
 
     event.preventDefault();
-
+    
     let formUser = document.getElementById("l_username").value;
     let formPassword = document.getElementById("l_password").value;
 
