@@ -115,3 +115,19 @@ h4 {
 body {
 background: rgb(181, 22, 4);
 }
+
+h1 {
+    position: absolute;
+    width: 571px;
+    height: 263px;
+    left: 504px;
+    top: 100px;
+
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 128px;
+    line-height: 155px;
+
+    color: #FFFFFF;
+}
