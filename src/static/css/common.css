@@ -1,0 +1,53 @@
+/* -----------------------------------------------------------------------------
+                                   General
+ -----------------------------------------------------------------------------*/
+ .container {
+    padding: 20px;
+    border-width: 1px;
+    border-radius: 8px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+    /* margin: auto; */
+}
+
+.button_static {
+    border-radius: 10px;
+    border-width: 0px;
+    display: flex;
+    /* width: 200px; */
+    border-color: #6399D1;
+    background-color: #6399D1;
+    color: WHITE;
+    font-size: large;
+}
+
+.button_theme {
+    border-radius: 10px;
+    border-width: 0px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    width: 500px;
+    border-color: #6399D1;
+    background-color: #6399D1;
+    color: WHITE;
+    font-size: large;
+}
+
+/* -----------------------------------------------------------------------------
+                                     Fonts
+ -----------------------------------------------------------------------------*/
+.inter {
+    font-family: 'Inter', sans-serif;
+    font-weight: normal;
+}
+
+.inter_bold {
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+}
+
+.h_bold {
+    font-family: Helvetica;
+    font-weight: 700;
+}
