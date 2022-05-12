@@ -1,60 +1,126 @@
 <head>
 <link rel="stylesheet" type="text/css" href="css/temp.css">
 <script src="js/script_head.js"></script>
-<title>Friends List</title>
+<title>Messages</title>
 </head>
 
 <body onload="msg_window_OnLoad()"/>
 
+<div id="msgWindow">
+    <div class="container msgContainer">
 
-<div class="msgContainer">
-
-    <div class="leftMsgPanel">
-
-        <button id="newMsg" type="button" name="button" onclick="viewNewMessage()">New Message</button>
-
-        <div class="receivedMsgsPanel" id ="receivedMsgsPanel">
-            <!-- onclick="viewSelectedMessage()" -->
-            <div class="messageOption" id="messageTemplate">
-                <label class="msg_from">*User*</label>
-                <label class="msg_time">*Time*</label>
+        <div class="leftMsgPanel">
+            <h2 class="panelLabel">Messages</h2>
+            <div class="button_theme os" id="new_message_button" type="button" name="button" onclick="viewNewMessage()">New Message</div>
+            <div id="button_container">
+                <div class="button_theme os tag_button" id="all_tag" type="button" name="button" onclick="viewNewMessage()">All</div>
+                <div class="button_theme os tag_button" id="unread_tag" type="button" name="button" onclick="viewNewMessage()">Unread</div>
+            </div>
+            <div class="msgListPanel" id ="receivedMsgsPanel">
+                <div class="messageBox container" id="messageTemplate">
+                    <div>
+                        <img src="/img/profile_icons/blue.png" class="profileIcons">
+                    </div>
+                    <div class="messageText">
+                        <div class="messageFromTime">
+                            <label class="msg_from">*User*</label>
+                            <label class="msg_time">*Time*</label>
+                        </div>
+                        <label class="msg_content">*Some content*</label>
+                    </div>
+                </div>  
+                
+            </div>
+    
+        </div>
+    
+        <div class="vertical_line"></div>
+    
+        <div class="rightMsgPanel">
+    
+            <div id="msgInputContainer">
+                <form id="sendMessageForm" action="/msg_window" method="post" autocomplete="off">
+    
+                    <label id="senderField" class="msgFont os_bold">From: *INSERT CURRENT USER*</label>
+                    
+                    <br><br>
+                    <div id="toBox">
+                        <label class="msgFont os_bold" for="friendsList">To: </label>
+                        <input class="msgInputBox" id='recipientField' type="text" placeholder="Enter recipient"/>
+                    </div>
+    
+                    <label class="msgFont" id="recipientError" class="msgFont" style="color: red;"></label>
+    
+                    <br><br>
+                    <hr>
+                    <br>
+    
+                    <input class="msgInputBox" id="msgTextField" type="text" placeholder="Enter message"/>
+    
+                    <br><br>
+    
+                    <button id="msgSubmit" onclick="sendMessage(event);">Send</button>
+    
+                </form>
+            </div>
+    
+            <div id="msgViewContainer">
+                <label class="msgFont">From: </label> <label class="msgFont" id="msgView_From">From: </label>
+                <br><br>
+                <label class="msgFont">To: </label> <label class="msgFont" id="msgView_To"></label>
+                <hr>
+                <p class="msgFont" id="msgView_Message">Twenty-five hours had passed since the incident. It seemed to be a lot longer than that. That twenty-five hours seemed more like a week in her mind.
+                    The fact that she still was having trouble comprehending exactly what took place wasn't helping the matter. She thought if she could just get a little
+                    rest the entire incident might make a little more sense.</p>
+            </div>
+    
+        </div>
+    
+    </div>
+    
+    <div class="container" id="friendsContainer">
+        <h2 class="panelLabel">Friend</h2>
+        <div id="friendsList">
+            <div class="friend container" id="friendTemplate">
+                <div>
+                    <img src="/img/profile_icons/blue.png" class="profileIcons friendProfileIcons">
+                </div>
+                <div class="friendText">
+                    <p class="msg_from">*Fake Friend*</p>
+                </div>
+            </div>
+            <div class="friend container" id="friendTemplate">
+                <div>
+                    <img src="/img/profile_icons/blue.png" class="profileIcons friendProfileIcons">
+                </div>
+                <div class="friendText">
+                    <p class="msg_from">*Fake Friend*</p>
+                </div>
+            </div>
+            <div class="friend container" id="friendTemplate">
+                <div>
+                    <img src="/img/profile_icons/blue.png" class="profileIcons friendProfileIcons">
+                </div>
+                <div class="friendText">
+                    <p class="msg_from">*Fake Friend*</p>
+                </div>
+            </div>
+            <div class="friend container" id="friendTemplate">
+                <div>
+                    <img src="/img/profile_icons/blue.png" class="profileIcons friendProfileIcons">
+                </div>
+                <div class="friendText">
+                    <p class="msg_from">*Fake Friend*</p>
+                </div>
+            </div>
+            <div class="friend container" id="friendTemplate">
+                <div>
+                    <img src="/img/profile_icons/blue.png" class="profileIcons friendProfileIcons">
+                </div>
+                <div class="friendText">
+                    <p class="msg_from">*Fake Friend*</p>
+                </div>
             </div>
         </div>
-
     </div>
-
-    <div class="rightMsgPanel">
-
-        <div id="msgInputContainer">
-            <form id="sendMessageForm" action="/msg_window" method="post" autocomplete="off">
-                <label id="senderField" class="msgFont">From: *INSERT CURRENT USER*</label>
-                <br><br>
-                <label class="msgFont" for="friendsList">To: </label>
-                <input id='recipientField' type="text" placeholder="Enter recipient"/>
-                <label id="recipientError" class="msgFont" style="color: red;"></label>
-                <br><br>
-                <hr>
-                <br>
-                <input id="msgTextField" type="text" placeholder="Enter message"/>
-                <br><br>
-                <button id="msgSubmit" onclick="sendMessage(event);">Send</button>
-            </form>
-        </div>
-
-        <div id="msgViewContainer">
-            <label class="msgFont">From: </label> <label class="msgFont" id="msgView_From">From: </label>
-            <br><br>
-            <label class="msgFont">To: </label> <label class="msgFont" id="msgView_To"></label>
-            <!-- <br><br>
-            <label class="msgFont">Subject: </label> -->
-            <hr>
-            <p class="msgFont" id="msgView_Message">Twenty-five hours had passed since the incident. It seemed to be a lot longer than that. That twenty-five hours seemed more like a week in her mind.
-                The fact that she still was having trouble comprehending exactly what took place wasn't helping the matter. She thought if she could just get a little
-                rest the entire incident might make a little more sense.</p>
-        </div>
-
-    </div>
-
 </div>
-
-<p></p>

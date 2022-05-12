@@ -7,6 +7,17 @@
 
 var keyPair;
 
+checkLogin();
+
+/* -----------------------------------------------------------------------------
+                                Home Page
+ -----------------------------------------------------------------------------*/
+function toForums() {
+    console.log("Set up to forums requried");
+    window.location.href = "/forums";
+}
+
+
 /* -----------------------------------------------------------------------------
                                 Register
  -----------------------------------------------------------------------------*/
@@ -121,9 +132,6 @@ function exportKeys(keyPair, user) {
         let byteCode = String.fromCharCode.apply(null, new Uint8Array(privateKey))
 
         localStorage.setItem(user, window.btoa(byteCode));
-
-        // console.log("LOCAL STORAGE VAR: " + localStorage.getItem(user));
-
     }).catch(function (err) {
         console.log(err);
     });
@@ -168,15 +176,9 @@ function postNewUser(user, publicK) {
  -----------------------------------------------------------------------------*/
 // Makes sure that user is logged in
 function checkLogin() {
-    if (window.location.href.match('msg_window')){
-        // if (getCookie("currentUser") == null){
-        //     window.location.href = "/login";
-        // }
+    if (!window.location.href.match('login') && !window.location.href.match('register')) {
         if (sessionStorage.getItem("currentUser") == null){
             window.location.href = "/login";
-        }
-        else{
-            viewNewMessage();
         }
     }
 }
@@ -208,6 +210,7 @@ function loginPost(user, publicK) {
         }
         else if ("success" in retData){
             sessionStorage.setItem("currentUser", formUser);
+            // console.log("Set current user: " + formUser);
             window.location.href = "/msg_window";
         }
     })
@@ -222,6 +225,8 @@ function loginPost(user, publicK) {
  -----------------------------------------------------------------------------*/
 // Views container to send messages
 function viewNewMessage() {
+    removeSelectedMessageHighlight();
+
     var inputContainer = document.getElementById("msgInputContainer");
     inputContainer.style.display = "block";
 
@@ -252,6 +257,8 @@ async function sendMessage(event) {
     var recipientField = document.getElementById("recipientField").value;
     var msgField = document.getElementById("msgTextField").value;
 
+    
+
     // Generates session key if needed
     await sessionKeyHelper(senderField, recipientField);
 
@@ -259,7 +266,7 @@ async function sendMessage(event) {
     let DBsessionKeyDict = await getSessionKey(senderField, recipientField);
 
     if (DBsessionKeyDict == null){
-        // console.log("Session key could not be retrieved");
+        console.log("Session key could not be retrieved");
         return;
     }
 
@@ -275,21 +282,21 @@ async function sendMessage(event) {
         PKSKString = DBsessionKeyDict["recipient_enc"]
     }
 
+    console.log("sessionKeyAB type: " + sessionKeyAB);
     var sessionKeyAB = await generateDec_PKSK(localStorage.getItem(senderField), convertBase64ToArrayBuffer(PKSKString));
-    // console.log("sessionKeyAB type: " + sessionKeyAB);
-
+    
     let sessionKeyObj = await importSessionKeyObject(sessionKeyAB);
 
     iv = convertBase64ToArrayBuffer(DBsessionKeyDict["iv"]);
-    //
+    
     let encryptedMessage = await encryptStringAES(sessionKeyObj, msgstamp, iv);
     // console.log(typeof encryptedMessage);
-    //
+    
     // console.log(DBsessionKeyDict["hmac"]);
     let HMACKey = await generateHMACKeyObject(encodeString(DBsessionKeyDict["hmac"]));
 
     if (HMACKey == null) {
-        console.log("hmac failed");
+        // console.log("hmac failed");
         return;
     }
     //
@@ -300,12 +307,15 @@ async function sendMessage(event) {
         encryptedMessage
     );
     document.getElementById("recipientError").textContent= "";
+
     postNewMessage(senderField, recipientField, convertArrayBufferToBase64(encryptedMessage), convertArrayBufferToBase64(MACsignature));
+    
     lastMessageTime = Date.now();
 }
 
 function postNewMessage(senderField, recipientField, enc_Message, sig) {
 
+    // console.log("Posting");
     var newMessage = {
          sender : senderField,
          recipient : recipientField,
@@ -459,11 +469,12 @@ async function generateEnc_PKSK(publicKeyString, sessionKeyRaw) {
 
 async function generateDec_PKSK(privateKeyString, enc_PKSK) {
     const privateKeyObj = await importPrivateKey(privateKeyString);
-
+    
     const dec_sessionKeyRaw = await decryptString(privateKeyObj, enc_PKSK);
 
+
     if (dec_sessionKeyRaw == null){
-        console.log("Decryption failed");
+        // console.log("Decryption failed");
         return null;
     }
     else{
@@ -587,33 +598,33 @@ function decodeString(string) {
 
 // Set for Message Window
 if (sessionStorage.getItem("currentUser") != null && document.getElementById("fromLabel") != null) {
-    // console.log("fromLabel: exists");
-    // document.getElementById("fromLabel").textContent = "From: " + getCookie("currentUser");
     document.getElementById("fromLabel").textContent = "From: " + sessionStorage.getItem("currentUser");
-
-
 }
+
+// var selectedMessage = null;
 
 function msg_window_OnLoad(){
     checkLogin();
-    // console.log("On load");
-
+    
+    document.getElementById("senderField").textContent = "From: " + sessionStorage.getItem("currentUser");
+    // selectedMessage = null;
     retrieveMessages();
 }
 
+
 async function retrieveMessages(){
-    // console.log(getCookie("currentUser"));
     // var messagesData = await getMessages(getCookie("currentUser"));
     var messagesData = await getMessages(sessionStorage.getItem("currentUser"));
 
-
-    // console.log("run");
     if (messagesData != null){
-
         const msgPanel = document.getElementById("receivedMsgsPanel");
         const msgTemplate = document.getElementById("messageTemplate");
+        
+        var mDataLen = messagesData.length;
 
-        for (let i = 0; i < messagesData.length; i++) {
+        var senderDict = {};
+
+        for (var i = mDataLen - 1; i >= 0; i--) {
             var processedMsg = await processMessage(messagesData[i]);
             if (processedMsg == null){
                 return;
@@ -622,14 +633,40 @@ async function retrieveMessages(){
             const sender = messagesData[i][0];
             const recipient = messagesData[i][1];
 
+            var profileInt = 0;
+            if (!(sender in senderDict)){
+                senderDict[sender] = getRandomInt(5);
+            }
+            profileInt = senderDict[sender];
+
             const message = processedMsg[0];
             const timestamp = processedMsg[1];
             const time = new Date(parseInt(timestamp, 10)).toLocaleString();
-            // console.log(`Message[${time}]: ${message}`);
+            
+            const timestampDate = new Date(parseInt(timestamp, 10));
+            const currentDate = new Date();
 
-            const msgClone = createMessageClone(msgTemplate, sender, time);
+            const dateDiff = Math.abs(timestampDate.getTime() - currentDate.getTime());
+            const hoursDiff = dateDiff / (60 * 60 * 1000);
+            // console.log(hoursDiff);
+
+
+            var timeFiltered;
+            if (hoursDiff < 24) {
+                // console.log("Date within 24 hours");
+                timeFiltered = time.split(",")[1];
+            }
+            else {
+                // console.log("Date over 24 hours");
+                timeFiltered = time.split(",")[0];
+            }
+
+
+
+            const msgClone = createMessageClone(msgTemplate, sender, timeFiltered, message, profileInt);
             msgClone.addEventListener("click", () => {
-                viewSelectedMessage(sender, recipient, message);
+                removeSelectedMessageHighlight();
+                viewSelectedMessage(msgClone, sender, recipient, message);
             });
 
             msgPanel.appendChild(msgClone);
@@ -639,8 +676,15 @@ async function retrieveMessages(){
 
 }
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
 // Views message
-function viewSelectedMessage(sender, recipient, message) {
+function viewSelectedMessage(msgClone, sender, recipient, message) {
+    msgClone.setAttribute('id', 'messageBoxSelected');
+    
+
     var inputContainer = document.getElementById("msgInputContainer");
     inputContainer.style.display = "none";
 
@@ -655,11 +699,26 @@ function viewSelectedMessage(sender, recipient, message) {
     // messageContainer.children[2].innerHTML = message;
 }
 
-function createMessageClone(msgTemplate, sender, time) {
+function removeSelectedMessageHighlight() {
+    const curSelectedMessage = document.getElementById("messageBoxSelected");
+    if (curSelectedMessage != null) {
+        curSelectedMessage.removeAttribute('id', 'messageBoxSelected');        
+    }
+}
+
+function createMessageClone(msgTemplate, sender, time, message, profileInt) {
     const msgClone = msgTemplate.cloneNode(true);
-    msgClone.removeAttribute('id');
-    msgClone.children[0].innerHTML = sender;
-    msgClone.children[1].innerHTML = time;
+    msgClone.removeAttribute('id', "messageTemplate");
+
+    const messageProfile = msgClone.querySelector('.profileIcons');
+    const colours = ["blue", "green", "grey", "orange", "red"];
+    messageProfile.src = "/img/profile_icons/" + colours[profileInt] + ".png";
+
+    const messageText = msgClone.querySelector('.messageText');
+    const senderTime = messageText.children[0];
+    senderTime.children[0].innerHTML = sender;
+    senderTime.children[1].innerHTML = time;
+    messageText.children[1].innerHTML = message;
     return msgClone;
 }
 
@@ -673,7 +732,7 @@ async function processMessage(msgData) {
     // Verify HMAC
     let DBsessionKeyDict = await getSessionKey(sender, recipient);
     if (DBsessionKeyDict == null){
-        console.error("Session key could not be retrieved");
+        // console.error("Session key could not be retrieved");
         return null;
     }
 
@@ -685,9 +744,9 @@ async function processMessage(msgData) {
     else if (DBsessionKeyDict["recipient"] === sender){
         PKSKString = DBsessionKeyDict["recipient_enc"]
     }
-
+    
     var sessionKeyAB = await generateDec_PKSK(localStorage.getItem(sender), convertBase64ToArrayBuffer(PKSKString));
-
+        
     var sessionKeyObj = await importSessionKeyObject(sessionKeyAB);
 
     // Get HMAC Key Object
