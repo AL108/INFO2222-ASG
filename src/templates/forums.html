@@ -1,9 +1,142 @@
-<p>We're a group of threatening web-dev game changers who are commoditising opportunity pipelines and reorthogonalising boost up-sell messages before getting out of bed each day.
-    <br>In our team we have: 
-    <br><b>Joe User:</b> Our humble software farmer
-    <br><b>Jane Admin:</b>  Our professional software horticulturist
-    </p>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/msg_window.css">
+    <script src="js/script_head.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <title>Messages</title>
+    </head>
     
-    <p>
-    And together we're here to ${garble}
-    </p>
+    <body onload="msg_window_OnLoad()"/>
+    
+    <div class="navbar">
+        <a class="website_name">EdStem</a>
+        <a href="/about">About Us</a>
+        <a href="/forums">Forums</a>
+        <a class="active" href="/msg_window">Messages</a>
+        <div class="line"></div>
+        <a class="profile" href="/profile"></a>
+    </div>
+    
+    
+    
+    <div id="msgWindow">
+        <div class="container msgContainer">
+    
+            <div class="leftMsgPanel">
+                <h2 class="panelLabel">Messages</h2>
+                <div class="button_theme inter" id="new_message_button" type="button" name="button" onclick="viewNewMessage()">New Message</div>
+                <div id="button_container">
+                    <div class="button_theme inter tag_button" id="all_tag" type="button" name="button" onclick="viewNewMessage()">All</div>
+                    <div class="button_theme inter tag_button" id="unread_tag" type="button" name="button" onclick="viewNewMessage()">Unread</div>
+                </div>
+                <div class="msgListPanel" id ="receivedMsgsPanel">
+                    <div class="messageBox container" id="messageTemplate">
+                        <div>
+                            <img src="/img/profile_icons/blue.png" class="profileIcons">
+                        </div>
+                        <div class="messageText">
+                            <div class="messageFromTime">
+                                <label class="msg_from">*User*</label>
+                                <label class="msg_time">*Time*</label>
+                            </div>
+                            <label class="msg_content">*Some content*</label>
+                        </div>
+                    </div>  
+                    
+                </div>
+        
+            </div>
+        
+            <div class="vertical_line"></div>
+        
+            <div class="rightMsgPanel">
+        
+                <div id="msgInputContainer">
+                    <form id="sendMessageForm" action="/msg_window" method="post" autocomplete="off">
+        
+                        <label id="senderField" class="msgFont inter_bold">From: *INSERT CURRENT USER*</label>
+                        
+                        <br><br>
+                        <div id="toBox">
+                            <label class="msgFont inter_bold" for="friendsList">To: </label>
+                            <input class="msgInputBox" id='recipientField' type="text" placeholder="Enter recipient"/>
+                        </div>
+        
+                        <label class="msgFont" id="recipientError" class="msgFont" style="color: red;"></label>
+        
+                        <br><br>
+                        <hr>
+                        <br>
+        
+                        <input class="msgInputBox" id="msgTextField" type="text" placeholder="Enter message"/>
+        
+                        <br><br>
+        
+                        <button id="msgSubmit" onclick="sendMessage(event);">Send</button>
+        
+                    </form>
+                </div>
+        
+                <div id="msgViewContainer">
+                    <label class="msgFont">From: </label> <label class="msgFont" id="msgView_From">From: </label>
+                    <br><br>
+                    <label class="msgFont">To: </label> <label class="msgFont" id="msgView_To"></label>
+                    <hr>
+                    <p class="msgFont" id="msgView_Message">Twenty-five hours had passed since the incident. It seemed to be a lot longer than that. That twenty-five hours seemed more like a week in her mind.
+                        The fact that she still was having trouble comprehending exactly what took place wasn't helping the matter. She thought if she could just get a little
+                        rest the entire incident might make a little more sense.</p>
+                </div>
+        
+            </div>
+        
+        </div>
+        
+        <div class="container" id="friendsContainer">
+            <h2 class="panelLabel">Friend</h2>
+            <div id="friendsList">
+                <div class="friend container" id="friendTemplate">
+                    <div>
+                        <img src="/img/profile_icons/blue.png" class="profileIcons friendProfileIcons">
+                    </div>
+                    <div class="friendText">
+                        <p class="msg_from">*Fake Friend*</p>
+                    </div>
+                </div>
+                <div class="friend container" id="friendTemplate">
+                    <div>
+                        <img src="/img/profile_icons/blue.png" class="profileIcons friendProfileIcons">
+                    </div>
+                    <div class="friendText">
+                        <p class="msg_from">*Fake Friend*</p>
+                    </div>
+                </div>
+                <div class="friend container" id="friendTemplate">
+                    <div>
+                        <img src="/img/profile_icons/blue.png" class="profileIcons friendProfileIcons">
+                    </div>
+                    <div class="friendText">
+                        <p class="msg_from">*Fake Friend*</p>
+                    </div>
+                </div>
+                <div class="friend container" id="friendTemplate">
+                    <div>
+                        <img src="/img/profile_icons/blue.png" class="profileIcons friendProfileIcons">
+                    </div>
+                    <div class="friendText">
+                        <p class="msg_from">*Fake Friend*</p>
+                    </div>
+                </div>
+                <div class="friend container" id="friendTemplate">
+                    <div>
+                        <img src="/img/profile_icons/blue.png" class="profileIcons friendProfileIcons">
+                    </div>
+                    <div class="friendText">
+                        <p class="msg_from">*Fake Friend*</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    

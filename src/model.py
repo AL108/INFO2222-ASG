@@ -218,7 +218,15 @@ def about():
     '''
     return page_view("about", garble=about_garble())
 
-
+#-----------------------------------------------------------------------------
+# Forums
+#-----------------------------------------------------------------------------
+def about():
+    '''
+        about
+        Returns the view for the about page
+    '''
+    return page_view("forums")
 
 # Returns a random string each time
 def about_garble():
