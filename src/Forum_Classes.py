@@ -87,5 +87,23 @@ class Post:
     
     def get_timestamp(self):
         return self.timestamp
+
+class Comment:
+    def __init__(self, username, body):
+        self.username = username
+        self.body = body
     
+    # username functions
+    def set_username(self, username):
+        self.username = username
+    
+    def get_username(self):
+        return self.username
+
+    # body functions
+    def set_body(self, body):
+        self.body = body
+    
+    def get_body(self):
+        return self.body
 
