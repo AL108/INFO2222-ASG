@@ -204,12 +204,7 @@ def get_home():
 # forum page
 #-----------------------------------------------------------------------------
 @get('/forums')
-def get_home():
-    '''
-        get_home
-
-        Serves the home page
-    '''
+def get_forums():
     return model.forums()
 
 
@@ -225,6 +220,7 @@ def get_msg_window():
         Serves the friends page
     '''
     return model.msg_window()
+
 
 #-----------------------------------------------------------------------------
 
