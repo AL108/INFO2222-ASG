@@ -8,25 +8,21 @@
 </head>
 
 <div class="bordered">
-    <div class="border_outline">
-        <h1>EdStem</h1>
-        <h3>Login</h3>
-        <h4>Start your university education today</h4>
+    <h1>EdStem</h1>
+    <h3>Login</h3>
+    <h4>Start your university adventure today</h4>
+    </br>
+    <form name="loginForm">
+        <input class="username_field" name="username" id="l_username" type="text" placeholder="Enter Username" required/>
         </br>
-        <form name="loginForm">
-            <input class="username_field" name="username" id="l_username" type="text" placeholder="Enter Username" required/>
-            </br>
-            <input class="password_field" name="password" id="l_password" type="password" placeholder="Enter Password" required/>
-            </br>
-            </br>
-            <label id="loginInfo"></label>
-            </br>
-            </br>
-            <input class="login_button" value="Login" type="submit" onclick="loginPost(event)"/>
-            <a class="register_button" href="/register">Need an account?</a>
-            </br>
-        </form>
-    </div>
+        <input class="password_field" name="password" id="l_password" type="password" placeholder="Enter Password" required/>
+        </br>
+        </br>
+        <label id="loginInfo"></label>
+        </br>
+        </br>
+        <input class="login_button" value="Login" type="submit" onclick="loginPost(event)"/>
+        <a class="register_button" href="/register">Need an account?</a>
+        </br>
+    </form>
 </div>
-
-<p></p>
