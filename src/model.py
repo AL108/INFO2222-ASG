@@ -23,15 +23,15 @@ pubkey_db_path = os.path.join(cur_path, 'db/public_key_database.txt')
 page_view = view.View()
 
 #-----------------------------------------------------------------------------
-# Index
+# Homepage
 #-----------------------------------------------------------------------------
 
-def index():
+def home():
     '''
-        index
-        Returns the view for the index
+        home
+        Returns the view for the home
     '''
-    return page_view("index")
+    return page_view("home")
 
 #-----------------------------------------------------------------------------
 # Login

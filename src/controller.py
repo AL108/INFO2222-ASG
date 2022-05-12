@@ -63,21 +63,6 @@ def serve_js(js):
     return static_file(js, root='static/js/')
 
 #-----------------------------------------------------------------------------
-# Index Page
-#-----------------------------------------------------------------------------
-
-# Redirect to login
-# @get('/')
-@get('/home')
-def get_index():
-    '''
-        get_index
-
-        Serves the index page
-    '''
-    return model.index()
-
-#-----------------------------------------------------------------------------
 # Login Page
 #-----------------------------------------------------------------------------
 
@@ -187,6 +172,18 @@ def add_user():
 
     response.headers['Content-Type'] = 'application/json'
     return json.dumps({'status': "success"})
+
+#-----------------------------------------------------------------------------
+# Landing / Home Page
+#-----------------------------------------------------------------------------
+@get('/home')
+def get_home():
+    '''
+        get_home
+
+        Serves the home page
+    '''
+    return model.home()
 
 #-----------------------------------------------------------------------------
 # Message Window Page
