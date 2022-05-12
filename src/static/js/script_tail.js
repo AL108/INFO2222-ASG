@@ -77,12 +77,7 @@ async function registerPost(event) {
            }
            else {
                generateKeyPair(formUser);
-               document.getElementById("registerInfo").style.top = 0;
-               document.getElementById("registerInfo").style.left = 0;
-               //document.getElementById("registerInfo").style.width = '100%';
-               //document.getElementById("registrInfo").style.fontSize = 42;
                document.getElementById("registerInfo").style.color = "green";
-               //document.getElementById("registerInfo").style.position = 'absolute'
                document.getElementById("registerInfo").textContent = "Successfully created your account";
                document.getElementById("registerFormId").reset();
            }
