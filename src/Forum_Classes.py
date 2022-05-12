@@ -1,6 +1,3 @@
-from gettext import dgettext
-
-
 class Forum:
     def __init__(self, name, creator):
         self.name = name
