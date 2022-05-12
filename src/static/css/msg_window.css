@@ -368,19 +368,74 @@ html, body {
     /* outline-color: #6399D1; */
 }
 
-/* .msgInputBox:focus, textarea: {
-    color: #6399D1;
-} */
+.recipientFont {
+    height: auto;
+    text-align: center;
+    font-size: large;
+    color: white;
+}
+
+.infoError {
+    /* visibility: visible; */
+    background-color: #ca3e3e;
+    color: #fa9696;
+    font-size: large;
+}
+
+.infoSuccess {
+    /* visibility: visible; */
+    background-color: #368d25;
+    color: #afff9f;
+    font-size: large;
+}
+
+.infoInform {
+    /* visibility: visible; */
+    background-color: #3182c4;
+    color: #96d7fd;
+    font-size: large;
+}
+
+
+
+.msgTextArea {
+    resize: none;
+}
+
+#picNameTime {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#picName {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+#senderProfileIcon {
+    width: 60px;
+    height: 60px;
+    margin: 0px;
+}
+
+.msgSenderTitle {
+    font-size: 1.5em;
+    color: #626262;
+}
 
 .msgFont {
     font-size: large;
-    color: #505050;
+    color: #626262;
 }
 
 
 #msgViewContainer {
-    width: 90%;
-    padding: 50px;
+    width: 100%;
+    /* padding: 50px; */
     display: none;
 }
 

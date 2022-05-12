@@ -52,23 +52,38 @@
             <div id="msgInputContainer">
                 <form id="sendMessageForm" action="/msg_window" method="post" autocomplete="off">
     
+                    <div>
+                        <h1 class="recipientFont inter" id="recipientError">_</h1>
+                    </div>
+
                     <label id="senderField" class="msgFont inter_bold">From: *INSERT CURRENT USER*</label>
                     
                     <br><br>
                     <div id="toBox">
                         <label class="msgFont inter_bold" for="friendsList">To: </label>
-                        <input class="msgInputBox" id='recipientField' type="text" placeholder="Enter recipient"/>
+                        <input class="msgInputBox" id='recipientField' type="text" placeholder="Enter recipients"/>
+                        <script>
+                            // Stops enter to submit
+                            var recipientField = document.getElementById("recipientField");
+                            recipientField.addEventListener("keypress", function(event) {
+                                if (event.key === "Enter") {
+                                    if ( !(recipientField.value === "") && !((recipientField.value).slice(-2) === "; ") ) {
+                                        recipientField.value = recipientField.value + "; ";
+                                    }
+                                    event.preventDefault();
+                                }
+                            });
+                        </script>
                     </div>
+                    <br>
+
     
-                    <label class="msgFont" id="recipientError" class="msgFont" style="color: red;"></label>
-    
-                    <br><br>
+
                     <hr>
                     <br>
     
-                    <input class="msgInputBox" id="msgTextField" type="text" placeholder="Enter message"/>
-    
-                    <br><br>
+                    <!-- <input class="msgInputBox" id="msgTextField" type="text" placeholder="Enter message"/> -->
+                    <textarea class="msgTextArea" id="msgTextField" type="text" placeholder="Enter your message" rows="10" cols="5"></textarea>
     
                     <button id="msgSubmit" onclick="sendMessage(event);">Send</button>
     
@@ -76,12 +91,19 @@
             </div>
     
             <div id="msgViewContainer">
-                <div class="picNameTime">
-                    <label class="msgFont inter_bold">From: </label> <label class="msgFont inter" id="msgView_From">From: </label>
+                <div id="picNameTime">
+                    <div id="picName">
+                        <img src="/img/profile_icons/blue.png" id="senderProfileIcon">
+                        <label class="msgSenderTitle inter" id="msgView_From">From: </label>
+                    </div>
+                    <div>
+                        <!-- <label class="msgFont inter_bold">From: </label>  -->
+                        <label class="msgFont inter" id="msgView_Time">Time: </label>
+                    </div>
                 </div>
                 <div class="msgFont inter">
                     <!-- <label class="msgFont inter_bold">To: </label> <label class="msgFont inter" id="msgView_To"></label> -->
-                    <p id="msgView_To">To: </p>
+                    <p id="msgView_To">To:</p>
                 </div>
                 <hr>
                 <p class="msgFont inter" id="msgView_Message">Twenty-five hours had passed since the incident. It seemed to be a lot longer than that. That twenty-five hours seemed more like a week in her mind.

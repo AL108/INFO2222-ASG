@@ -233,6 +233,16 @@ function viewNewMessage() {
     senderField.textContent = "From: " + sessionStorage.getItem("currentUser");
 }
 
+function catchInputSubmit() {
+    var recipientField = document.getElementById("recipientField");
+    recipientField.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            console.log("Caught?");
+            event.preventDefault();
+        }
+    });
+}
+
 var lastMessageTime;
 const ONE_SECOND = 1000;
 var delay = 0.5;
@@ -252,8 +262,49 @@ async function sendMessage(event) {
     var recipientField = document.getElementById("recipientField").value;
     var msgField = document.getElementById("msgTextField").value;
 
-    
+    const recipientFieldArray = recipientField.split("; ");
+    var i = 0;
+    while (i < recipientFieldArray.length) {
+        if (recipientFieldArray[i] === "") {
+            recipientFieldArray.splice(i, 1);
+        }
+        else {
+            ++i;
+        }
+    }
 
+    if (recipientFieldArray.length == 0) {
+        document.getElementById("recipientError").textContent = "Please add at least one valid person and try again.";
+        setInfoColours("infoInform");
+        return;
+    }
+
+    var failedRecipients = [];
+
+    for (const recpt of recipientFieldArray) {
+        const recipient_publicKey = await getPublicKey(recpt);
+        if (recipient_publicKey == null) {
+            failedRecipients.push(recpt);
+        }
+    }
+
+    if (failedRecipients.length == 0) {
+        for (const recpt of recipientFieldArray) {
+            sendMessageEncryption(senderField, recpt, msgField);
+        }
+    
+        document.getElementById("recipientError").textContent = "Message Sent!";
+        setInfoColours("infoSuccess");    
+    }
+    else {
+        document.getElementById("recipientError").textContent = "One or more usernames not found";
+        setInfoColours("infoError");
+    }
+
+    
+}
+
+async function sendMessageEncryption(senderField, recipientField, msgField) {
     // Generates session key if needed
     await sessionKeyHelper(senderField, recipientField);
 
@@ -292,7 +343,7 @@ async function sendMessage(event) {
 
     if (HMACKey == null) {
         // console.log("hmac failed");
-        return;
+        return 0;
     }
     //
     //
@@ -306,6 +357,8 @@ async function sendMessage(event) {
     postNewMessage(senderField, recipientField, convertArrayBufferToBase64(encryptedMessage), convertArrayBufferToBase64(MACsignature));
     
     lastMessageTime = Date.now();
+
+    return;
 }
 
 function postNewMessage(senderField, recipientField, enc_Message, sig) {
@@ -360,6 +413,7 @@ async function sessionKeyHelper(senderField, recipientField) {
             // Not exist:
             // console.log("User not found");
             document.getElementById("recipientError").textContent = "Username not found";
+            setInfoColours("infoError");
         }
         else if (recipient_publicKey != null){
             // User exists: Generate session key
@@ -390,8 +444,25 @@ async function sessionKeyHelper(senderField, recipientField) {
                 let hmacString = await generateHMACString(HMACKey);
                 postNewSessionKey(senderField, sender_Enc_String, recipientField, recipient_Enc_String, convertArrayBufferToBase64(hmacString), convertArrayBufferToBase64(iv));
             }
-
         }
+    }
+}
+
+function setInfoColours(infoStatus) {
+    if (infoStatus.match("infoError")) {
+        document.getElementById("recipientError").classList.remove("infoSuccess");
+        document.getElementById("recipientError").classList.remove("infoInform");
+        document.getElementById("recipientError").classList.add("infoError");
+    }
+    else if (infoStatus.match("infoSuccess")) {
+        document.getElementById("recipientError").classList.remove("infoError");
+        document.getElementById("recipientError").classList.remove("infoInform");
+        document.getElementById("recipientError").classList.add("infoSuccess");
+    }
+    else if (infoStatus.match("infoInform")) {
+        document.getElementById("recipientError").classList.remove("infoError");
+        document.getElementById("recipientError").classList.remove("infoSuccess");
+        document.getElementById("recipientError").classList.add("infoInform");
     }
 }
 
@@ -661,7 +732,7 @@ async function retrieveMessages(){
             const msgClone = createMessageClone(msgTemplate, sender, timeFiltered, message, profileInt);
             msgClone.addEventListener("click", () => {
                 removeSelectedMessageHighlight();
-                viewSelectedMessage(msgClone, sender, recipient, message);
+                viewSelectedMessage(msgClone, sender, recipient, message, time, profileInt);
             });
 
             msgPanel.appendChild(msgClone);
@@ -676,10 +747,9 @@ function getRandomInt(max) {
 }
 
 // Views message
-function viewSelectedMessage(msgClone, sender, recipient, message) {
+function viewSelectedMessage(msgClone, sender, recipient, message, time, profileInt) {
     msgClone.setAttribute('id', 'messageBoxSelected');
     
-
     var inputContainer = document.getElementById("msgInputContainer");
     inputContainer.style.display = "none";
 
@@ -687,11 +757,10 @@ function viewSelectedMessage(msgClone, sender, recipient, message) {
     messageContainer.style.display = "block";
 
     document.getElementById("msgView_From").innerHTML = sender;
-    document.getElementById("msgView_To").innerHTML = recipient;
+    document.getElementById("msgView_To").innerHTML = "To: " + recipient;
     document.getElementById("msgView_Message").innerHTML = message;
-    // messageContainer.children[0].innerHTML = sender;
-    // messageContainer.children[1].innerHTML = recipient;
-    // messageContainer.children[2].innerHTML = message;
+    document.getElementById("msgView_Time").innerHTML = time;
+    document.getElementById("senderProfileIcon").src = getRandomProfileIcon(profileInt);
 }
 
 function removeSelectedMessageHighlight() {
@@ -706,8 +775,9 @@ function createMessageClone(msgTemplate, sender, time, message, profileInt) {
     msgClone.removeAttribute('id', "messageTemplate");
 
     const messageProfile = msgClone.querySelector('.profileIcons');
-    const colours = ["blue", "green", "grey", "orange", "red"];
-    messageProfile.src = "/img/profile_icons/" + colours[profileInt] + ".png";
+    // const colours = ["blue", "green", "grey", "orange", "red"];
+    // messageProfile.src = "/img/profile_icons/" + colours[profileInt] + ".png";
+    messageProfile.src = getRandomProfileIcon(profileInt);
 
     const messageText = msgClone.querySelector('.messageText');
     const senderTime = messageText.children[0];
@@ -715,6 +785,11 @@ function createMessageClone(msgTemplate, sender, time, message, profileInt) {
     senderTime.children[1].innerHTML = time;
     messageText.children[1].innerHTML = message;
     return msgClone;
+}
+
+function getRandomProfileIcon(profileInt) {
+    const colours = ["blue", "green", "grey", "orange", "red"];
+    return "/img/profile_icons/" + colours[profileInt] + ".png";
 }
 
 async function processMessage(msgData) {
