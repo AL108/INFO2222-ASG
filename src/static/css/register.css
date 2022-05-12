@@ -124,6 +124,23 @@ h3 {
     color: #323232;
 }
 
+#registerInfo {
+    position: absolute;
+    width: 400px;
+    height: 18px;
+    left: 26px;
+    top: 407px;
+    text-align: center;
+
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 18px;
+
+    color: #323232;
+}
+
 h4 {
     position: absolute;
     width: 279px;
@@ -158,6 +175,7 @@ body {
     background: linear-gradient(91deg, rgb(196, 196, 196), #000000);
     background-size: 400% 400%;
 
+
     -webkit-animation: AnimationName 0s ease infinite;
     -moz-animation: AnimationName 0s ease infinite;
     -o-animation: AnimationName 0s ease infinite;
@@ -185,7 +203,3 @@ body {
     100%{background-position:0% 50%}
 }
 
-.registerContainer {
-    display: flex;
-    flex-direction: column;
-}
