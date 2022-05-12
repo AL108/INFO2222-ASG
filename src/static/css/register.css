@@ -74,8 +74,6 @@
 
     position: absolute;
     background: #6399D1;
-    /*background: #6399D1;
-    border-radius: 7px;*/
 }
 
 
@@ -185,4 +183,9 @@ body {
     0%{background-position:0% 50%}
     50%{background-position:100% 50%}
     100%{background-position:0% 50%}
+}
+
+.registerContainer {
+    display: flex;
+    flex-direction: column;
 }

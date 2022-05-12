@@ -1,9 +1,10 @@
 <head>
+<link rel="stylesheet" type="text/css" href="css/common.css">
 <link rel="stylesheet" type="text/css" href="css/msg_window.css">
 <script src="js/script_head.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 <title>Messages</title>
 </head>
 
@@ -21,10 +22,10 @@
 
         <div class="leftMsgPanel">
             <h2 class="panelLabel">Messages</h2>
-            <div class="button_theme os" id="new_message_button" type="button" name="button" onclick="viewNewMessage()">New Message</div>
+            <div class="button_theme inter" id="new_message_button" type="button" name="button" onclick="viewNewMessage()">New Message</div>
             <div id="button_container">
-                <div class="button_theme os tag_button" id="all_tag" type="button" name="button" onclick="viewNewMessage()">All</div>
-                <div class="button_theme os tag_button" id="unread_tag" type="button" name="button" onclick="viewNewMessage()">Unread</div>
+                <div class="button_theme inter tag_button" id="all_tag" type="button" name="button" onclick="viewNewMessage()">All</div>
+                <div class="button_theme inter tag_button" id="unread_tag" type="button" name="button" onclick="viewNewMessage()">Unread</div>
             </div>
             <div class="msgListPanel" id ="receivedMsgsPanel">
                 <div class="messageBox container" id="messageTemplate">
@@ -51,11 +52,11 @@
             <div id="msgInputContainer">
                 <form id="sendMessageForm" action="/msg_window" method="post" autocomplete="off">
     
-                    <label id="senderField" class="msgFont os_bold">From: *INSERT CURRENT USER*</label>
+                    <label id="senderField" class="msgFont inter_bold">From: *INSERT CURRENT USER*</label>
                     
                     <br><br>
                     <div id="toBox">
-                        <label class="msgFont os_bold" for="friendsList">To: </label>
+                        <label class="msgFont inter_bold" for="friendsList">To: </label>
                         <input class="msgInputBox" id='recipientField' type="text" placeholder="Enter recipient"/>
                     </div>
     
