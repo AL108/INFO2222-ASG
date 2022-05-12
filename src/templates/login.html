@@ -1,25 +1,30 @@
 <head>
-<link rel="stylesheet" type="text/css" href="css/temp.css">
+<link rel="stylesheet" type="text/css" href="css/login.css">
 <script src="js/script_head.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
 <title>Login</title>
 </head>
 
-
-<div class="bordered" style="text-align: center;">
-    <h3>Login</h3>
-    </br>
-
-    <form name="loginForm">
-        <input class="loginRegisterTextFields" id="l_username" name="username" type="text" placeholder="Enter Username" style="width: 200px;" required/>
+<div class="bordered">
+    <div class="border_outline">
+        <h1>EdStem</h1>
+        <h3>Login</h3>
+        <h4>Start your university education today</h4>
         </br>
-        <input class="loginRegisterTextFields" id="l_password" name="password" type="password" placeholder="Enter Password" style="width: 200px;" required/>
-        </br>
-        </br>
-        <label id="loginInfo"></label>
-        </br>
-        </br>
-        <input class="button" value="Login" type="submit" onclick="loginPost(event)"/>
-        <a class="button" href="/register">Create Account</a>
-        </br>
-    </form>
+        <form name="loginForm">
+            <input class="username_field" name="username" id="l_username" type="text" placeholder="Enter Username" required/>
+            </br>
+            <input class="password_field" name="password" id="l_password" type="password" placeholder="Enter Password" required/>
+            </br>
+            </br>
+            <label id="loginInfo"></label>
+            </br>
+            </br>
+            <input class="login_button" value="Login" type="submit" onclick="loginPost(event)"/>
+            <a class="register_button" href="/register">Need an account?</a>
+            </br>
+        </form>
+    </div>
 </div>

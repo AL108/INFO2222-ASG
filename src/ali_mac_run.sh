@@ -1,0 +1,1 @@
+python3 run.py /Users/Ali/desktop/127.0.0.1-key.pem /Users/Ali/desktop/127.0.0.1.pem
