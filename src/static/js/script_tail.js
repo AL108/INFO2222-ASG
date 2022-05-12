@@ -618,7 +618,7 @@ async function retrieveMessages(){
 
         var senderDict = {};
 
-        for (var i = 0; i < mDataLen; i++) {
+        for (var i = mDataLen - 1; i >= 0; i--) {
             var processedMsg = await processMessage(messagesData[i]);
             if (processedMsg == null){
                 return;
@@ -636,8 +636,28 @@ async function retrieveMessages(){
             const message = processedMsg[0];
             const timestamp = processedMsg[1];
             const time = new Date(parseInt(timestamp, 10)).toLocaleString();
+            
+            const timestampDate = new Date(parseInt(timestamp, 10));
+            const currentDate = new Date();
 
-            const msgClone = createMessageClone(msgTemplate, sender, time.split(",")[0], message, profileInt);
+            const dateDiff = Math.abs(timestampDate.getTime() - currentDate.getTime());
+            const hoursDiff = dateDiff / (60 * 60 * 1000);
+            // console.log(hoursDiff);
+
+
+            var timeFiltered;
+            if (hoursDiff < 24) {
+                // console.log("Date within 24 hours");
+                timeFiltered = time.split(",")[1];
+            }
+            else {
+                // console.log("Date over 24 hours");
+                timeFiltered = time.split(",")[0];
+            }
+
+
+
+            const msgClone = createMessageClone(msgTemplate, sender, timeFiltered, message, profileInt);
             msgClone.addEventListener("click", () => {
                 removeSelectedMessageHighlight();
                 viewSelectedMessage(msgClone, sender, recipient, message);
