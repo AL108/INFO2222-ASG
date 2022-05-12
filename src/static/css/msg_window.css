@@ -1,29 +1,36 @@
-.topnav {
-    background-color: rgb(253, 250, 250);
-    overflow: hidden;
+.navbar {
+    /* overflow: hidden; */
     font-family: 'Inter';
+    font-weight: 400;
   }
-  
-  /* Style the links inside the navigation bar */
-  .topnav a {
+
+  .line {
+    position: absolute;
+    width: 1440px;
+    height: 0px;
+    left: 0px;
+    top: 40px;
+    background-color: #c4c4c4;
+    border: 2px solid #C4C4C4;
+  }
+  .navbar a {
     float: left;
     color: #312e2e;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
-    font-size: 17px;
+    font-size: 20px;
+    top: 22px;
+    left: 50px;
   }
   
-  /* Change the color of links on hover */
-  .topnav a:hover {
-    background-color: rgb(50, 50, 1);
-    color: black;
+  .navbar a:hover {
+    color: rgb(99, 153, 209);
   }
   
-  /* Add a color to the active/current link */
-  .topnav a.active {
-    background-color: #04AA6D;
-    color: rgb(50, 50, 1);
+  .navbar a.active {
+    color: rgb(99, 153, 209);
+
   }
 
   #friendsContainer {
