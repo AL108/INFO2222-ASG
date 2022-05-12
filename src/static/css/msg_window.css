@@ -2,35 +2,62 @@
     /* overflow: hidden; */
     font-family: 'Inter';
     font-weight: 400;
+    color: rgb(50, 50, 50);
+    position: relative;
+    border-bottom: 3px solid rgb(196, 196, 196);
   }
 
-  .line {
-    position: absolute;
+  /* .line {
+    position: relative;
     width: 1440px;
     height: 0px;
     left: 0px;
-    top: 40px;
+    top: 57px;
     background-color: #c4c4c4;
     border: 2px solid #C4C4C4;
+    z-index: 1 !important;
+  } */
+
+  .website_name {
+    font-size: 27px !important;
+    font-weight: 700 !important;
+    padding: 12px !important;
+    pointer-events: none !important;
+    margin-left: 20px;
   }
+
   .navbar a {
+    position: relative;
     float: left;
     color: #312e2e;
     text-align: center;
-    padding: 14px 16px;
+    padding: 17px 26px;
     text-decoration: none;
     font-size: 20px;
-    top: 22px;
-    left: 50px;
   }
   
   .navbar a:hover {
     color: rgb(99, 153, 209);
+    border-bottom: 3px solid rgb(99, 153, 209);
+  }
+
+  .profile {
+    background-image: url(../img/profile_icons/blue.png);
+    border-bottom: none !important;
+    float: right  !important;
+    background-size: 100% !important;
+    display: flex;
+    margin-left: auto;
+    margin-right: 10px;
+    margin-top: 14px;
+    padding: 17px 16px !important;
   }
   
   .navbar a.active {
     color: rgb(99, 153, 209);
-
+    border-bottom: 3px solid rgb(99, 153, 209) !important;
+    /* margin-bottom: -3px; */
+    /* z-index: -1 !important; */
   }
 
   #friendsContainer {
