@@ -126,13 +126,41 @@ def register_new(username, hashed, salt):
 
 
     print("successfully created user: " + username)
-    database.create_table_entry("users", [username, hashed, salt])
+    database.create_table_entry("users", [username, hashed, salt, ""])
 
     return ("success", page_view("register_success"))
 
 #-----------------------------------------------------------------------------
 # Database Helpers
 #-----------------------------------------------------------------------------
+# Friends list
+def add_friend(username, friend):
+    database = no_sql_db.database
+    # entryList = database.search_table('users', 'friends', username)
+
+    curEntryList = get_friends_list(username)
+    print(curEntryList)
+    # newFriendsList = curEntryList[3] + ";" + friend
+    # curEntryList
+
+    entryList = database.override_existing_entry('users', 'username', username, curEntryList)
+    # if entryList:
+    #     return entryList[3]
+
+    return None
+
+def get_friends_list(username):
+    database = no_sql_db.database
+    # entryList = database.search_table('users', 'friends', username)
+    entryList = database.get_entries('users', 'username', username)[0]     #[0] needed because returned value is a list of all found entries
+    
+    if len(entryList) == 4:
+        print("Returning: " + entryList[3])
+        return entryList[3]
+
+
+    return None
+
 
 # Public keys database
 def store_public_key(username, public_key):

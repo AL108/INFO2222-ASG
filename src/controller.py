@@ -113,14 +113,9 @@ def post_login():
     username = loginForm["username"]
     password = loginForm["password"]
 
-    print(username)
-    print(password)
-
     if username and password:
         retPage = model.login_check(username, password)
-        print("retPage: ", retPage)
         if retPage[0]:
-            print("Valid username or password")
             response.set_cookie("currentUser", username)
 
             response.headers['Content-Type'] = 'application/json'
@@ -129,12 +124,9 @@ def post_login():
         else:
             response.headers['Content-Type'] = 'application/json'
             return json.dumps({'failed': "Invalid username or password"})
-            # print("Invalid username or password")
-            # return retPage[1]
 
-    redirect('/login')
     # Call the appropriate method
-    # return model.login_form()
+    redirect('/login')
 
 #-----------------------------------------------------------------------------
 # Register
@@ -181,7 +173,6 @@ def post_register():
 
 @post('/add_user')
 def add_user():
-    # print(request.json)
     userDetails = request.json;
     model.store_public_key(userDetails["username"], userDetails["publicKey"])
 
@@ -234,7 +225,6 @@ def post_msg_window():
 
 @post('/add_sessionkeysEntry')
 def add_sessionkeysEntry():
-    # print(request.json)
     sessionKeys = request.json
 
     hmacKeyString = sessionKeys["hmacKeyString"]
@@ -255,13 +245,10 @@ def post_getMessages():
 
     recipientObj = request.json
     recipient = recipientObj["recipient"]
-    # print(recipient)
 
     messagesList = model.get_messages(recipient)
-    print(messagesList)
 
     if messagesList:
-        # print(messagesJson)
         response.headers['Content-Type'] = 'application/json'
         return json.dumps({'messages': messagesList})
 
@@ -310,7 +297,7 @@ def get_public_key():
 
 @post('/get_session_key')
 def get_session_key():
-    userJson = request.json;
+    userJson = request.json
     sessionKeyEntry = model.get_session_key(userJson["sender"], userJson["recipient"])
 
     if (sessionKeyEntry != None):
@@ -320,7 +307,35 @@ def get_session_key():
         response.headers['Content-Type'] = 'application/json'
         return json.dumps({'error': "Username not found"})
 
+@post('/add_friend')
+def add_friend():
+    print("Reached add friend")
+    print(request.json)
+    userJson = request.json
+    addFriendEntry = model.add_friend(userJson["username"], userJson["friend"])
 
+
+    if (addFriendEntry != None):
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'Status': "Success"})
+    else:
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'Status': "Failed"})
+
+@post('/get_friends_list')
+def get_friends_list():
+    print("Reached get friends list")
+    print(request.json)
+    userJson = request.json
+    friendsList = model.get_friends_list(userJson["username"])
+    print("friendsList: " + friendsList)
+
+    if (friendsList != None):
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'friendsList': friendsList})
+    else:
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'error': "Username not found"})
 
 #-----------------------------------------------------------------------------
 # About Page

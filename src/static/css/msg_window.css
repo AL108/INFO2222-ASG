@@ -4,8 +4,8 @@
     font-family: 'Inter';
   }
   
-  /* Style the links inside the navigation bar */
-  .topnav a {
+/* Style the links inside the navigation bar */
+.topnav a {
     float: left;
     color: #312e2e;
     text-align: center;
@@ -14,49 +14,17 @@
     font-size: 17px;
   }
   
-  /* Change the color of links on hover */
-  .topnav a:hover {
+/* Change the color of links on hover */
+.topnav a:hover {
     background-color: rgb(50, 50, 1);
     color: black;
   }
   
-  /* Add a color to the active/current link */
-  .topnav a.active {
+/* Add a color to the active/current link */
+.topnav a.active {
     background-color: #04AA6D;
     color: rgb(50, 50, 1);
   }
-
-  #friendsContainer {
-    position: relative;
-}
-
-#friendsList {
-    /* position: relative; */
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    /* background-color: red; */
-}
-
-.friend {
-    padding: 5px 10px;
-    /* width: 100%; */
-    height: auto;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    background-color: white;
-}
-
-.friendProfileIcons {
-    height: 30px;
-    width: 30px;
-}
-
-.friendText > p {
-    margin: 0;
-}
 
 .button {
     font: bold 13px Arial;
@@ -185,13 +153,16 @@ html, body {
     font-family: Helvetica;
     font-weight: 700;
     margin-top: 0;
-    margin-bottom: 5%;
+    margin-bottom: 0;
 }
 
 /*  ------------ Left Panel ---------------*/
 .leftMsgPanel {
     flex: 1;
     margin: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .msgListPanel {
@@ -207,7 +178,7 @@ html, body {
 
 #new_message_button {
     font-size: 100%;
-    margin-bottom: 3%;
+    /* margin-bottom: 3%; */
     width: 100%;
     height: 30px;
     padding-top: 2px;
@@ -315,28 +286,37 @@ html, body {
 
 /*  ------------ Right Panel ---------------*/
 .rightMsgPanel {
-    /* height: 100%;
-    width: 75%; */
     flex: 4;
     margin: 20px;
-    /* float: right; */
 }
 
 #msgInputContainer {
     width: 100%;
-    /* padding: 2em; */
-    /* display: block; */
+}
+
+.divPlaceholder:empty:not(:focus):before {
+    content: attr(msgPlaceHolder);
+    color: #626262;
+}
+
+.divPlaceholder:focus {
+    color: #626262;
+    border: 2px solid #6399D1;
+    outline: none;
 }
 
 #msgTextField {
-    width: 100%;
-    height: 30px;
-    /* background-color: ORANGE; */
+    padding: 10px;
+    min-height: 200px;
+    max-height: 500px;
+    overflow: scroll;
 }
 
 #msgSubmit {
-    width: 9%;
+    width: 80px;
     height: 25px;
+    float: right;
+    margin-top: 15px;
 }
 
 #toBox {
@@ -348,24 +328,25 @@ html, body {
 .msgInputBox {
     height: 30px;
     width: 100%;
-    font-size: 1em;
-    border-width: 2px;
-    border-style: solid;
-    border-color: #777777;
-    border-radius: 6px;
-    color: #626262;
     padding-left: 10px;
 }
 
 .msgInputBox::placeholder {
-    color: #505050;
+    color: #626262;
 }
 
 .msgInputBox:focus {
     color: #626262;
     border: 2px solid #6399D1;
     outline: none;
-    /* outline-color: #6399D1; */
+}
+
+.errorInputBox:focus {
+    border: 2px solid #ca3e3e;
+}
+
+.successInputBox:focus {
+    border: 2px solid #368d25;
 }
 
 .recipientFont {
@@ -400,6 +381,12 @@ html, body {
 
 .msgTextArea {
     resize: none;
+}
+
+.msgTextArea:focus {
+    color: #626262;
+    border: 2px solid #6399D1;
+    outline: none;
 }
 
 #picNameTime {
@@ -446,4 +433,67 @@ html, body {
     width: 0;
     margin-left: 10px;
     margin-right: 10px;
+}
+
+/*  ------------------------------- Friends List Panel -------------------------------*/
+
+.addFriendContainer {
+    display: flex;
+    flex-direction: row;
+    /* align-items: center;
+    vertical-align: middle; */
+    gap: 5px;
+    margin-bottom: 10px;
+    /* flex: 5; */
+}
+
+#friendTextField {
+    flex: 4;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding: 0px;
+    padding-left: 10px;
+    font-size: 12;
+}
+
+#addFriendButton {
+    flex: 1;
+    width: 30px;
+    height: 30px;
+}
+
+#friendsContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#friendsList {
+    /* position: relative; */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* background-color: red; */
+}
+
+.friend {
+    padding: 5px 10px;
+    /* width: 100%; */
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    background-color: white;
+}
+
+.friendProfileIcons {
+    height: 30px;
+    width: 30px;
+}
+
+.friendText > p {
+    margin: 0;
 }

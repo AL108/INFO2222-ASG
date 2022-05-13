@@ -26,11 +26,17 @@
     justify-content: center;
     align-content: center;
     align-items: center;
-    /* width: 50px; */
     border-color: #6399D1;
     background-color: #6399D1;
     color: WHITE;
     font-size: large;
+}
+
+.inputBoxStyle {
+    border: 2px solid #777777;
+    border-radius: 6px;
+    color: #626262;
+    vertical-align: middle;
 }
 
 /* -----------------------------------------------------------------------------

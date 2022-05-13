@@ -218,6 +218,42 @@ function loginPost(user, publicK) {
 /* -----------------------------------------------------------------------------
                                 Message Window
  -----------------------------------------------------------------------------*/
+/*  ------------------------------- Friends List Panel -------------------------------*/
+function loadFriends() {
+    const friendsList = getFriendsList(sessionStorage.getItem("currentUser"));
+
+    var friendsListSplit = friendsList.split(";");
+
+    for (const friend of friendsListSplit) {
+        console.log(friend);
+    }
+}
+
+async function addFriend() {
+    const friendTextField = document.getElementById("friendTextField");
+    const friendName = friendTextField.value;
+    friendTextField.classList.remove("successInputBox");
+    friendTextField.classList.remove("errorInputBox");
+
+    // console.log("Sending: " + sessionStorage.getItem("currentUser") + "->" + friendName);
+    postAddFriend(sessionStorage.getItem("currentUser"), friendName);
+
+    // getFriendsList(sessionStorage.getItem("currentUser"));
+
+    // const publicKey = await getPublicKey(friendName);
+    // if (publicKey == null) {
+    //      alert("Username not found");
+    //      friendTextField.classList.add("errorInputBox");
+    // }
+    // else {
+    //     // postAddFriend(sessionStorage.getItem("currentUser"), friendName);
+    //     friendTextField.value = "";
+    //     friendTextField.classList.remove("successInputBox");
+    // }
+    
+}
+
+/*  ------------------------------- Message Panel -------------------------------*/
 // Views container to send messages
 function viewNewMessage() {
     removeSelectedMessageHighlight();
@@ -671,6 +707,7 @@ if (sessionStorage.getItem("currentUser") != null && document.getElementById("fr
 
 function msg_window_OnLoad(){
     checkLogin();
+    loadFriends();
     
     document.getElementById("senderField").textContent = "From: " + sessionStorage.getItem("currentUser");
     // selectedMessage = null;
@@ -899,6 +936,68 @@ function getMessages(target){
 /* -----------------------------------------------------------------------------
                                 Database Calls.
  -----------------------------------------------------------------------------*/
+ function getFriendsList(user) {
+
+    var getFriends = {
+         username: user
+    };
+
+    return fetch('/get_friends_list', {
+         method: 'POST',
+         headers: {
+             'content-type': 'application/json'
+         },
+         body: JSON.stringify(getFriends),
+    })
+    .then(response => response.json())
+    .then(retData => {
+        // return retData;
+        if ("error" in retData){
+            // console.log(retData["error"]);
+            return null;
+        }
+        else {
+            // console.log(retData["friendsList"]);
+            return retData;
+        }
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
+    });
+}
+
+function postAddFriend(user, friendName) {
+    
+    var addFriendJson = {
+         username: user,
+         friend: friendName
+    };
+    console.log("Received: " + JSON.stringify(addFriendJson));
+
+    return fetch('/add_friend', {
+         method: 'POST',
+         headers: {
+             'content-type': 'application/json'
+         },
+         body: JSON.stringify(addFriendJson),
+    })
+    .then(response => response.json())
+    .then(retData => {
+        if ("Status" in retData){
+            console.log("Got status: " + retData["Status"]);
+            if (retDate["Status"].match("Success")) {
+                console.log("Success!");
+            }
+            else {
+                console.log("Failed");
+            }
+        }
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
+    });
+}
+
 
 function getPublicKey(user) {
 

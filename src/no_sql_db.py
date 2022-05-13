@@ -105,7 +105,7 @@ class DB():
         self.tables = {}
 
         # Setup your tables
-        self.add_table('users', user_db_path,"username", "hash_string", "salt")
+        self.add_table('users', user_db_path,"username", "hash_string", "salt", "friends")
         self.add_table('public_keys', pubkey_db_path,'username', 'public_key')
         self.add_table('session_keys', sesskey_db_path,'A_username', 'enc_Apub_sk', 'B_username', 'enc_Bpub_sk', "hmac_key",'iv')
         self.add_table('messages', messages_db_path,'sender', 'recipient', 'enc_msg_ts', 'mac_enc_msg_ts')
@@ -143,6 +143,20 @@ class DB():
             Calls the create entry method on the appropriate table
         '''
         return self.tables[table_name].create_entry(data)
+
+    def override_existing_entry(self, table_name, target_field_name, target_value, data):
+        '''
+            Calls the edit entry method on the appropriate table
+        '''
+        print("Overriding entry with: ")
+        if data:
+            print("data: ")
+            print(data)
+        else:
+            print("data: none")
+        
+        return "blargh"
+        # return self.tables[table_name].create_entry(data)
 
     def print_table(self, table_name):
         self.tables[table_name].print_table()

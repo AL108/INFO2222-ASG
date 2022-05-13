@@ -61,7 +61,7 @@
                     <br><br>
                     <div id="toBox">
                         <label class="msgFont inter_bold" for="friendsList">To: </label>
-                        <input class="msgInputBox" id='recipientField' type="text" placeholder="Enter recipients"/>
+                        <input class="msgInputBox inputBoxStyle" id='recipientField' type="text" placeholder="Enter recipients"/>
                         <script>
                             // Stops enter to submit
                             var recipientField = document.getElementById("recipientField");
@@ -77,15 +77,14 @@
                     </div>
                     <br>
 
-    
-
                     <hr>
                     <br>
     
                     <!-- <input class="msgInputBox" id="msgTextField" type="text" placeholder="Enter message"/> -->
-                    <textarea class="msgTextArea" id="msgTextField" type="text" placeholder="Enter your message" rows="10" cols="5"></textarea>
+                    <!-- <textarea class="msgTextArea inter" id="msgTextField" type="text" placeholder="Enter your message" rows="10" cols="5"></textarea> -->
+                    <div class="divPlaceholder inter inputBoxStyle" id="msgTextField" msgPlaceHolder="Enter your message" contentEditable="true"></div>
     
-                    <button id="msgSubmit" onclick="sendMessage(event);">Send</button>
+                    <button class="button_theme" id="msgSubmit" onclick="sendMessage(event);">Send</button>
     
                 </form>
             </div>
@@ -117,7 +116,15 @@
     </div>
     
     <div class="container" id="friendsContainer">
+        
         <h2 class="panelLabel">Friend</h2>
+
+        <div class="addFriendContainer">
+            <!-- <div class="divPlaceholder inter msgInputBox inputBoxStyle" id="friendTextField" msgPlaceHolder="Friend Name" contentEditable="true"></div> -->
+            <input class="msgInputBox inputBoxStyle" id='friendTextField' type="text" placeholder="Enter name"/>
+            <div class="button_theme inter_bold" id="addFriendButton" type="button" name="button" onclick="addFriend()">+</div>
+        </div>
+
         <div id="friendsList">
             <div class="friend container" id="friendTemplate">
                 <div>
