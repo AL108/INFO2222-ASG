@@ -249,7 +249,25 @@ def get_comments(post_id):
         returns the comments for the post in the following format:
         [username, body, timestamp]
     '''
+    # TODO
 
+def add_post(forum_id, author, title, body, timestamp, tags):
+    '''
+        adds a post to the forum
+    '''
+    # TODO
+
+def add_comment(post_id, author, body, timestamp):
+    '''
+        adds a comment to the post    
+    '''
+    # TODO
+
+def add_forum(creator, name, description=""):
+    '''
+        add a forum
+    '''
+    # TODO
 
 # Returns a random string each time
 def about_garble():
