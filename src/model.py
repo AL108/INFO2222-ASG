@@ -10,8 +10,10 @@ import hashlib
 import view
 import string
 import random
+from ID_generator import ID_generator
 
 MIN_PASSWORD_LENGTH = 8
+id_generator = ID_generator()
 
 # Initialise our views, all arguments are defaults for the template
 import no_sql_db
@@ -236,8 +238,74 @@ def about():
     '''
     return page_view("about", garble=about_garble())
 
+#-----------------------------------------------------------------------------
+# Forums
+#-----------------------------------------------------------------------------
+def forums():
+    '''
+        about
+        Returns the view for the about page
+    '''
+    return page_view("forums")
 
+def get_forums(username):
+    '''
+        Returns the forum_ids of the forums that the user is subscribed to.
+    '''
+    database = no_sql_db.database
+    res = database.getEntries('forums_subscriptions', 'subscriber', username)
+    forum_ids = []
+    for i in res:
+        forum_ids.append(i[1])
+    return forum_ids
 
+def get_posts(forum_id):
+    '''
+        returns the posts for the forum in the following format:
+        ['post_id', 'author', 'title', 'body', 'timestamp']
+    '''
+    database = no_sql_db.database
+    return database.get_entries('posts', 'forum_id', forum_id)
+
+def get_comments(post_id):
+    '''
+        returns the comments for the post in the following format:
+        ['post_id', 'author', 'body', 'timestamp']
+    '''
+    database = no_sql_db.database
+    return database.get_entries('comments', 'post_id', post_id)
+
+def get_tags(post_id):
+    '''
+        returns the tags for the post
+    '''
+    database = no_sql_db.database
+    res = database.get_entries('post_tags', 'post_id', post_id)
+    return [tag[1] for tag in res]
+
+def add_post(forum_id, author, title, body, timestamp, tags=None):
+    '''
+        adds a post to the forum
+    '''
+    database = no_sql_db.database
+    id = id_generator.generate_id()
+    database.create_table_entry('posts', id, forum_id, author, title, body, timestamp)
+
+def add_comment(post_id, author, body, timestamp):
+    '''
+        adds a comment to the post    
+    '''
+    database = no_sql_db.database
+    database.create_table_entry('commments', post_id, author, body, timestamp)
+
+def add_forum(creator, name, description=""):
+    '''
+        add a forum
+    '''
+    database = no_sql_db.database
+    id = id_generator.generate_id()
+    database.create_table_entry('forums', id, name, description, creator)
+    
 # Returns a random string each time
 def about_garble():
     '''
@@ -251,6 +319,8 @@ def about_garble():
     "ensure the end of the day advancement, a new normal that has evolved from epistemic management approaches and is on the runway towards a streamlined cloud solution.",
     "provide user generated content in real-time will have multiple touchpoints for offshoring."]
     return garble[random.randint(0, len(garble) - 1)]
+
+ 
 
 #-----------------------------------------------------------------------------
 # Friends
