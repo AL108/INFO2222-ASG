@@ -123,7 +123,7 @@ class DB():
         self.add_table('post_tags', post_tags_db_path, 'post_id', 'tag')
         self.add_table('forum_subscriptions', forum_subscriptions_db_path, 'subscriber', 'forum_id')
         # Loads user database
-        self.add_table('forum_subscriptions')
+        self.load_data_table('forum_subscriptions')
         self.load_data_table('tags')
         self.load_data_table('post_tags')
         self.load_data_table('forums')
