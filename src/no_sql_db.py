@@ -19,7 +19,8 @@ forums_db_path = os.path.join(cur_path, 'db/forums.txt')
 posts_db_path = os.path.join(cur_path, 'db/posts.txt')
 comments_db_path = os.path.join(cur_path, 'db/comments.txt')
 tags_db_path = os.path.join(cur_path, 'db/tags.txt')
-post_tags = os.path.join(cur_path, 'db/post_tags.txt')
+post_tags_db_path = os.path.join(cur_path, 'db/post_tags.txt')
+forum_subscriptions_db_path = os.path.join(cur_path, 'db/forum_subscriptions.txt')
 
 class Table():
     def __init__(self, table_name, db_path, *table_fields):
@@ -116,11 +117,13 @@ class DB():
         self.add_table('session_keys', sesskey_db_path,'A_username', 'enc_Apub_sk', 'B_username', 'enc_Bpub_sk', "hmac_key",'iv')
         self.add_table('messages', messages_db_path,'sender', 'recipient', 'enc_msg_ts', 'mac_enc_msg_ts')
         self.add_table('forums', forums_db_path, "forum_id", "desc", "creator")
-        self.add_table('posts', posts_db_path, 'post_id', 'username', 'title', 'body', 'timestamp')
-        self.add_table('comments', comments_db_path, 'post_id', 'username', 'body', 'timestamp')
+        self.add_table('posts', posts_db_path, 'post_id', 'author', 'title', 'body', 'timestamp')
+        self.add_table('comments', comments_db_path, 'post_id', 'author', 'body', 'timestamp')
         self.add_table('tags', tags_db_path, 'tag')
         self.add_table('post_tags', post_tags_db_path, 'post_id', 'tag')
+        self.add_table('forum_subscriptions', forum_subscriptions_db_path, 'subscriber', 'forum_id')
         # Loads user database
+        self.add_table('forum_subscriptions')
         self.load_data_table('tags')
         self.load_data_table('post_tags')
         self.load_data_table('forums')

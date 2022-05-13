@@ -233,41 +233,60 @@ def forums():
 
 def get_forums(username):
     '''
-        Returns the forum_ids of the forums that the user follows.
+        Returns the forum_ids of the forums that the user is subscribed to.
     '''
-    # TODO
+    database = no_sql_db.database
+    res = database.getEntries('forums_subscriptions', 'subscriber', username)
+    forum_ids = []
+    for i in res:
+        forum_ids.append(i[1])
+    return forum_ids
 
 def get_posts(forum_id):
     '''
         returns the posts for the forum in the following format:
-        [post_id, username, title, timestamp, [<tag1>, <tag2>, ...]]
+        ['post_id', 'author', 'title', 'body', 'timestamp']
     '''
-    # TODO
+    database = no_sql_db.database
+    return database.get_entries('posts', 'forum_id', forum_id)
 
 def get_comments(post_id):
     '''
         returns the comments for the post in the following format:
-        [username, body, timestamp]
+        ['post_id', 'author', 'body', 'timestamp']
     '''
-    # TODO
+    database = no_sql_db.database
+    return database.get_entries('comments', 'post_id', post_id)
+
+def get_tags(post_id):
+    '''
+        returns the tags for the post
+    '''
+    database = no_sql_db.database
+    res = database.get_entries('post_tags', 'post_id', post_id)
+    return [tag[1] for tag in res]
 
 def add_post(forum_id, author, title, body, timestamp, tags):
     '''
         adds a post to the forum
     '''
-    # TODO
+    database = no_sql_db.database
 
 def add_comment(post_id, author, body, timestamp):
     '''
         adds a comment to the post    
     '''
     # TODO
+    database = no_sql_db.database
+
 
 def add_forum(creator, name, description=""):
     '''
         add a forum
     '''
     # TODO
+    database = no_sql_db.database
+
 
 # Returns a random string each time
 def about_garble():
