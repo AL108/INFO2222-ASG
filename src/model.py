@@ -10,11 +10,10 @@ import hashlib
 import view
 import string
 import random
-from Forum_Classes import Forum
-from Forum_Classes import Post
-from Forum_Classes import Comment
+from ID_generator import ID_generator
 
 MIN_PASSWORD_LENGTH = 8
+NEXT_UNIQUE_ID = "0"
 
 # Initialise our views, all arguments are defaults for the template
 import no_sql_db
@@ -271,6 +270,7 @@ def add_post(forum_id, author, title, body, timestamp, tags):
         adds a post to the forum
     '''
     database = no_sql_db.database
+
 
 def add_comment(post_id, author, body, timestamp):
     '''
