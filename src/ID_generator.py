@@ -11,6 +11,6 @@ class ID_generator:
         else:
             self.id[-1] = self.chars[self.chars_index]
             self.char_index = (1 + self.chars_index) % len(self.chars)
-
+        return self.id
 
                 
