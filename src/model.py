@@ -10,6 +10,9 @@ import hashlib
 import view
 import string
 import random
+from Forum_Classes import Forum
+from Forum_Classes import Post
+from Forum_Classes import Comment
 
 MIN_PASSWORD_LENGTH = 8
 
@@ -228,6 +231,26 @@ def forums():
     '''
     return page_view("forums")
 
+def get_forums(username):
+    '''
+        Returns the forum_ids of the forums that the user follows.
+    '''
+    # TODO
+
+def get_posts(forum_id):
+    '''
+        returns the posts for the forum in the following format:
+        [post_id, username, title, timestamp, [<tag1>, <tag2>, ...]]
+    '''
+    # TODO
+
+def get_comments(post_id):
+    '''
+        returns the comments for the post in the following format:
+        [username, body, timestamp]
+    '''
+
+
 # Returns a random string each time
 def about_garble():
     '''
@@ -241,6 +264,8 @@ def about_garble():
     "ensure the end of the day advancement, a new normal that has evolved from epistemic management approaches and is on the runway towards a streamlined cloud solution.",
     "provide user generated content in real-time will have multiple touchpoints for offshoring."]
     return garble[random.randint(0, len(garble) - 1)]
+
+ 
 
 #-----------------------------------------------------------------------------
 # Friends
