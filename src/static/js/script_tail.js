@@ -199,13 +199,11 @@ function loginPost(user, publicK) {
     })
     .then(response => response.json())
     .then(retData => {
-        // console.log(retData);
         if ("failed" in retData){
             document.getElementById("loginInfo").textContent = "Invalid username or password";
         }
         else if ("success" in retData){
             sessionStorage.setItem("currentUser", formUser);
-            // console.log("Set current user: " + formUser);
             window.location.href = "/msg_window";
         }
     })
@@ -279,10 +277,6 @@ function createFriendClone(friendTemplate, profileInt, friend) {
     const friendName = friendText.children[0];
     friendName.innerHTML = friend;
     return friendClone;
-}
-
-function createMessageClone(msgTemplate, sender, time, message, profileInt) {
-    
 }
 
 async function addFriend() {
@@ -439,7 +433,7 @@ async function sendMessageEncryption(senderField, recipientField, msgField) {
         PKSKString = DBsessionKeyDict["recipient_enc"]
     }
 
-    console.log("sessionKeyAB type: " + sessionKeyAB);
+    // console.log("sessionKeyAB type: " + sessionKeyAB);
     var sessionKeyAB = await generateDec_PKSK(localStorage.getItem(senderField), convertBase64ToArrayBuffer(PKSKString));
     
     let sessionKeyObj = await importSessionKeyObject(sessionKeyAB);
@@ -692,7 +686,6 @@ function importPrivateKey(stringKey){
 }
 
 async function exportCryptoKey(key) {
-    // console.log("Session Key before: " + key);
   const exported = await window.crypto.subtle.exportKey(
     "raw",
     key
@@ -700,8 +693,6 @@ async function exportCryptoKey(key) {
   const exportedKeyBuffer = new Uint8Array(exported);
 
   const keyString = `[${exportedKeyBuffer}]`;
-  // console.log("Session Key after: " + keyString);
-  // console.log("Session Key after: " + typeof keyString);
   return keyString;
 }
 
@@ -824,8 +815,6 @@ async function retrieveMessages(){
 
             const dateDiff = Math.abs(timestampDate.getTime() - currentDate.getTime());
             const hoursDiff = dateDiff / (60 * 60 * 1000);
-            // console.log(hoursDiff);
-
 
             var timeFiltered;
             if (hoursDiff < 24) {
@@ -1024,11 +1013,9 @@ function getMessages(target){
     .then(retData => {
         // return retData;
         if ("error" in retData){
-            // console.log(retData["error"]);
             return null;
         }
         else {
-            // console.log(retData["friendsList"]);
             return retData["friendsList"];
         }
     })
@@ -1054,13 +1041,10 @@ async function postAddFriend(user, friendName) {
     .then(response => response.json())
     .then(retData => {
         if ("Status" in retData){
-            // console.log("Got status: " + retData["Status"]);
             if (retData["Status"].match("Success")) {
-                // console.log("Success!");
                 return true;
             }
             else {
-                // console.log("Failed");
                 return false;
             }
         }
@@ -1086,13 +1070,10 @@ function getPublicKey(user) {
     })
     .then(response => response.json())
     .then(retData => {
-        // return retData;
         if ("error" in retData){
-            // console.log(retData["error"]);
             return null;
         }
         else {
-            // console.log(retData["public_key"]);
             return retData["public_key"];
         }
     })
@@ -1108,9 +1089,6 @@ function getSessionKey(sender, recipient) {
          recipient: recipient
     };
 
-    // console.log("sender: " + sender);
-    // console.log("recipient: " + recipient);
-
     return fetch('/get_session_key', {
          method: 'POST',
          headers: {
@@ -1121,7 +1099,6 @@ function getSessionKey(sender, recipient) {
     .then(response => response.json())
     .then(retData => {
         if ("error" in retData){
-            // console.log(retData["error"]);
             return null;
         }
         else {
@@ -1150,7 +1127,6 @@ function getSessionKey(sender, recipient) {
 
 function myFunction(){
     var inputVal = document.getElementById("msgTextField").value;
-    // console.log("Cookies: " + document.cookie);
     alert(inputVal);
     window.location.href = "/msg_window"
 }
