@@ -42,8 +42,8 @@ class Table():
         if len(data) != len(self.fields):
             raise ValueError('Wrong number of fields for table')
 
-        with open(self.db_path, 'a') as user_db:
-            user_db.write(",".join([str(field) for field in data]) + "\n")
+        with open(self.db_path, 'a') as table_db:
+            table_db.write(",".join([str(field) for field in data]) + "\n")
 
         self.entries.append(data)
         return
@@ -75,6 +75,22 @@ class Table():
                     entries.append(entry)
 
         return entries
+
+    def override_existing_entry(self, target_field_name, target_value, data):
+        '''
+            Search the table for given a field name and a target value
+            returns the entries found that match.
+        '''
+
+        success = False
+        for entry in self.entries:
+            for field_name, value in zip(self.fields, entry):
+                if target_field_name == field_name and target_value == value:
+                    entry = data
+                    self.save_table()
+                    return True        
+
+        return False
 
     def save_table(self):
         '''
@@ -148,15 +164,7 @@ class DB():
         '''
             Calls the edit entry method on the appropriate table
         '''
-        print("Overriding entry with: ")
-        if data:
-            print("data: ")
-            print(data)
-        else:
-            print("data: none")
-        
-        return "blargh"
-        # return self.tables[table_name].create_entry(data)
+        return self.tables[table_name].override_existing_entry(target_field_name, target_value, data)        
 
     def print_table(self, table_name):
         self.tables[table_name].print_table()

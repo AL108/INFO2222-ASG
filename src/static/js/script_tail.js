@@ -219,14 +219,70 @@ function loginPost(user, publicK) {
                                 Message Window
  -----------------------------------------------------------------------------*/
 /*  ------------------------------- Friends List Panel -------------------------------*/
-function loadFriends() {
-    const friendsList = getFriendsList(sessionStorage.getItem("currentUser"));
+async function loadFriends(friendsListArray) {
+    var friendsList;
+    if (friendsListArray == null) {
+        const retrievedfriendsList = await getFriendsList(sessionStorage.getItem("currentUser"));
 
-    var friendsListSplit = friendsList.split(";");
-
-    for (const friend of friendsListSplit) {
-        console.log(friend);
+        friendsList = retrievedfriendsList.split(";");
     }
+    else {
+        friendsList = friendsListArray;
+    }
+    // console.log(friendsList);
+
+
+    const friendsListPanel = document.getElementById("friendsList");
+    const friendTemplate = document.getElementById("friendTemplate");
+
+    // Clear existing friends list
+    var i = 0;
+    var friendsPanelChildren = friendsListPanel.children;
+
+    while (i < (friendsListPanel.children).length) {
+        if ( !(friendsPanelChildren[i].hasAttribute('id')) ){
+            friendsListPanel.removeChild(friendsPanelChildren[i]);
+        }
+        else {
+            i++;
+        }
+    }
+    
+    var friendDict = {};
+
+    for (const friend of friendsList) {
+        // console.log("Appending : " + friend);
+        var profileInt = 0;
+        if (!(friend in friendDict)){
+            friendDict[friend] = getRandomInt(5);
+        }
+        profileInt = friendDict[friend];
+        
+        
+        const friendClone = createFriendClone(friendTemplate, profileInt, friend);
+        friendClone.addEventListener("click", () => {
+            viewNewMessage(friend);
+        });
+
+        friendsListPanel.appendChild(friendClone);
+    }
+}
+
+function createFriendClone(friendTemplate, profileInt, friend) {
+    const friendClone = friendTemplate.cloneNode(true);
+    friendClone.removeAttribute('id', "friendTemplate");
+
+    const friendProfile = friendClone.querySelector('.profileIcons');
+    friendProfile.src = getRandomProfileIcon(profileInt);
+
+    const friendText = friendClone.querySelector('.friendText');
+    const friendName = friendText.children[0];
+    friendName.innerHTML = friend;
+    return friendClone;
+}
+
+function createMessageClone(msgTemplate, sender, time, message, profileInt) {
+    
 }
 
 async function addFriend() {
@@ -235,27 +291,43 @@ async function addFriend() {
     friendTextField.classList.remove("successInputBox");
     friendTextField.classList.remove("errorInputBox");
 
-    // console.log("Sending: " + sessionStorage.getItem("currentUser") + "->" + friendName);
-    postAddFriend(sessionStorage.getItem("currentUser"), friendName);
+    // Check if input empty
+    if (!friendName) {
+        alert("Please enter a username.");
+        return;
+    }
 
-    // getFriendsList(sessionStorage.getItem("currentUser"));
+    // Checks if user exists
+    const publicKey = await getPublicKey(friendName);
+    if (publicKey == null) {
+         alert("Username " + friendName + " not found.");
+         friendTextField.classList.add("errorInputBox");
+         return;
+    }
 
-    // const publicKey = await getPublicKey(friendName);
-    // if (publicKey == null) {
-    //      alert("Username not found");
-    //      friendTextField.classList.add("errorInputBox");
-    // }
-    // else {
-    //     // postAddFriend(sessionStorage.getItem("currentUser"), friendName);
-    //     friendTextField.value = "";
-    //     friendTextField.classList.remove("successInputBox");
-    // }
-    
+    // Checks if friend name is friend already
+    const curFriendsList = await getFriendsList(sessionStorage.getItem("currentUser"));
+
+    const friendsListArray = curFriendsList.split(";");
+    if (friendsListArray.includes(friendName)) {
+        // console.log("Already exists");
+        return;
+    }
+
+    if (postAddFriend(sessionStorage.getItem("currentUser"), friendName)) {
+        friendTextField.value = "";
+        friendTextField.classList.remove("successInputBox");
+        
+        // Update friends list
+        friendsListArray.push(friendName);
+        loadFriends(friendsListArray);
+    }   
 }
 
 /*  ------------------------------- Message Panel -------------------------------*/
 // Views container to send messages
-function viewNewMessage() {
+function viewNewMessage(recipient) {
+
     removeSelectedMessageHighlight();
 
     var inputContainer = document.getElementById("msgInputContainer");
@@ -265,8 +337,10 @@ function viewNewMessage() {
     messageContainer.style.display = "none";
 
     var senderField = document.getElementById("senderField");
-    // senderField.textContent = "From: " + getCookie("currentUser");
     senderField.textContent = "From: " + sessionStorage.getItem("currentUser");
+    if (!(recipient === null)) {
+        document.getElementById("recipientField").value = recipient + ";";
+    }
 }
 
 function catchInputSubmit() {
@@ -296,9 +370,9 @@ async function sendMessage(event) {
     var senderFieldLabel = document.getElementById("senderField").textContent;
     var senderField = senderFieldLabel.replace('From: ', '');
     var recipientField = document.getElementById("recipientField").value;
-    var msgField = document.getElementById("msgTextField").value;
+    var msgField = document.getElementById("msgTextField").innerHTML;
 
-    const recipientFieldArray = recipientField.split("; ");
+    const recipientFieldArray = recipientField.split(/; |;/);
     var i = 0;
     while (i < recipientFieldArray.length) {
         if (recipientFieldArray[i] === "") {
@@ -330,6 +404,7 @@ async function sendMessage(event) {
         }
     
         document.getElementById("recipientError").textContent = "Message Sent!";
+        document.getElementById("msgTextField").innerHTML = "";
         setInfoColours("infoSuccess");    
     }
     else {
@@ -703,11 +778,9 @@ if (sessionStorage.getItem("currentUser") != null && document.getElementById("fr
     document.getElementById("fromLabel").textContent = "From: " + sessionStorage.getItem("currentUser");
 }
 
-// var selectedMessage = null;
-
 function msg_window_OnLoad(){
     checkLogin();
-    loadFriends();
+    loadFriends(null);
     
     document.getElementById("senderField").textContent = "From: " + sessionStorage.getItem("currentUser");
     // selectedMessage = null;
@@ -812,8 +885,6 @@ function createMessageClone(msgTemplate, sender, time, message, profileInt) {
     msgClone.removeAttribute('id', "messageTemplate");
 
     const messageProfile = msgClone.querySelector('.profileIcons');
-    // const colours = ["blue", "green", "grey", "orange", "red"];
-    // messageProfile.src = "/img/profile_icons/" + colours[profileInt] + ".png";
     messageProfile.src = getRandomProfileIcon(profileInt);
 
     const messageText = msgClone.querySelector('.messageText');
@@ -936,13 +1007,13 @@ function getMessages(target){
 /* -----------------------------------------------------------------------------
                                 Database Calls.
  -----------------------------------------------------------------------------*/
- function getFriendsList(user) {
+ async function getFriendsList(user) {
 
     var getFriends = {
          username: user
     };
 
-    return fetch('/get_friends_list', {
+    return await fetch('/get_friends_list', {
          method: 'POST',
          headers: {
              'content-type': 'application/json'
@@ -958,7 +1029,7 @@ function getMessages(target){
         }
         else {
             // console.log(retData["friendsList"]);
-            return retData;
+            return retData["friendsList"];
         }
     })
     .catch((error) => {
@@ -966,15 +1037,14 @@ function getMessages(target){
     });
 }
 
-function postAddFriend(user, friendName) {
+async function postAddFriend(user, friendName) {
     
     var addFriendJson = {
          username: user,
          friend: friendName
     };
-    console.log("Received: " + JSON.stringify(addFriendJson));
 
-    return fetch('/add_friend', {
+    return await fetch('/add_friend', {
          method: 'POST',
          headers: {
              'content-type': 'application/json'
@@ -984,12 +1054,14 @@ function postAddFriend(user, friendName) {
     .then(response => response.json())
     .then(retData => {
         if ("Status" in retData){
-            console.log("Got status: " + retData["Status"]);
-            if (retDate["Status"].match("Success")) {
-                console.log("Success!");
+            // console.log("Got status: " + retData["Status"]);
+            if (retData["Status"].match("Success")) {
+                // console.log("Success!");
+                return true;
             }
             else {
-                console.log("Failed");
+                // console.log("Failed");
+                return false;
             }
         }
     })

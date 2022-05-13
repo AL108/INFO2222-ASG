@@ -309,13 +309,10 @@ def get_session_key():
 
 @post('/add_friend')
 def add_friend():
-    print("Reached add friend")
-    print(request.json)
     userJson = request.json
-    addFriendEntry = model.add_friend(userJson["username"], userJson["friend"])
+    addFriendStatus = model.add_friend(userJson["username"], userJson["friend"])
 
-
-    if (addFriendEntry != None):
+    if addFriendStatus:
         response.headers['Content-Type'] = 'application/json'
         return json.dumps({'Status': "Success"})
     else:
@@ -324,11 +321,8 @@ def add_friend():
 
 @post('/get_friends_list')
 def get_friends_list():
-    print("Reached get friends list")
-    print(request.json)
     userJson = request.json
     friendsList = model.get_friends_list(userJson["username"])
-    print("friendsList: " + friendsList)
 
     if (friendsList != None):
         response.headers['Content-Type'] = 'application/json'

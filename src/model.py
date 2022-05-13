@@ -136,28 +136,18 @@ def register_new(username, hashed, salt):
 # Friends list
 def add_friend(username, friend):
     database = no_sql_db.database
-    # entryList = database.search_table('users', 'friends', username)
 
-    curEntryList = get_friends_list(username)
-    print(curEntryList)
-    # newFriendsList = curEntryList[3] + ";" + friend
-    # curEntryList
+    curEntryList = database.get_entries('users', 'username', username)[0]
+    curEntryList[3] = curEntryList[3] + ";" + friend
 
-    entryList = database.override_existing_entry('users', 'username', username, curEntryList)
-    # if entryList:
-    #     return entryList[3]
-
-    return None
+    return database.override_existing_entry('users', 'username', username, curEntryList)
 
 def get_friends_list(username):
     database = no_sql_db.database
-    # entryList = database.search_table('users', 'friends', username)
     entryList = database.get_entries('users', 'username', username)[0]     #[0] needed because returned value is a list of all found entries
     
     if len(entryList) == 4:
-        print("Returning: " + entryList[3])
         return entryList[3]
-
 
     return None
 

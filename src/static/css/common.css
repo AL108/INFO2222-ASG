@@ -32,6 +32,11 @@
     font-size: large;
 }
 
+.button_theme:hover {
+    border-color: #1f69b8;
+    background-color: #1f69b8;
+}
+
 .inputBoxStyle {
     border: 2px solid #777777;
     border-radius: 6px;

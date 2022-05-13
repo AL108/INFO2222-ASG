@@ -377,8 +377,6 @@ html, body {
     font-size: large;
 }
 
-
-
 .msgTextArea {
     resize: none;
 }
@@ -489,6 +487,15 @@ html, body {
     background-color: white;
 }
 
+.messageBox:focused {
+    background: #bde4ff;
+}
+
+.friend:hover {
+    background-color: #bde4ff;
+    cursor: pointer;
+}
+
 .friendProfileIcons {
     height: 30px;
     width: 30px;
@@ -496,4 +503,8 @@ html, body {
 
 .friendText > p {
     margin: 0;
+}
+
+#friendTemplate {
+    display: none;
 }
