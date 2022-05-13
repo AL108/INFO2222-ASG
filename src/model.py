@@ -13,7 +13,7 @@ import random
 from ID_generator import ID_generator
 
 MIN_PASSWORD_LENGTH = 8
-NEXT_UNIQUE_ID = "0"
+id_generator = ID_generator()
 
 # Initialise our views, all arguments are defaults for the template
 import no_sql_db
@@ -265,29 +265,29 @@ def get_tags(post_id):
     res = database.get_entries('post_tags', 'post_id', post_id)
     return [tag[1] for tag in res]
 
-def add_post(forum_id, author, title, body, timestamp, tags):
+def add_post(forum_id, author, title, body, timestamp, tags=None):
     '''
         adds a post to the forum
     '''
     database = no_sql_db.database
-
+    id = id_generator.generate_id()
+    database.create_table_entry('posts', id, forum_id, author, title, body, timestamp)
 
 def add_comment(post_id, author, body, timestamp):
     '''
         adds a comment to the post    
     '''
-    # TODO
     database = no_sql_db.database
-
+    database.create_table_entry('commments', post_id, author, body, timestamp)
 
 def add_forum(creator, name, description=""):
     '''
         add a forum
     '''
-    # TODO
     database = no_sql_db.database
-
-
+    id = id_generator.generate_id()
+    database.create_table_entry('forums', id, name, description, creator)
+    
 # Returns a random string each time
 def about_garble():
     '''
