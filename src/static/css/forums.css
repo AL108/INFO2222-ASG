@@ -165,7 +165,7 @@ body {
 #newPostContainer {
     width: 100%;
     display: none;
-    padding: 20px;
+    margin: 30px;
 }
 
 #postInputContainer {
@@ -176,7 +176,7 @@ body {
     gap: 10px;
 }
 
-.flexInput {
+.flexRowInput {
     display: flex;
     flex-direction: row;
     justify-content: start;
@@ -195,7 +195,7 @@ body {
 }
 
 .divPlaceholder:focus {
-    color: #bfbfbf;
+    color: #626262;
     border: 2px solid #6399D1;
     outline: none;
 }
@@ -215,11 +215,18 @@ body {
     width: 100%;
 }
 
-#msgSubmit {
+.rightButton {
     width: 80px;
     height: 25px;
     float: right;
-    margin-top: 15px;
+    /* margin-top: 15px; */
+}
+
+.leftButton {
+    width: 80px;
+    height: 25px;
+    /* float: right; */
+    /* margin-top: 15px; */
 }
 
 .newPostButtons {
@@ -242,7 +249,7 @@ body {
     gap: 10px;
     bottom: 0;
     /* padding-top: 5px; */
-    margin: 20px;
+    margin: 30px;
     /* border: 1px solid #dddddd; */
 }
 
@@ -352,6 +359,48 @@ body {
     padding-right: 10px;
 }
 
+#allPostContainer {
+    /* display: none; */
+}
+
+/*  ------------ Selected Post Panel ---------------*/
+#selectedPostContainer {
+    display: none;   
+    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 85vh;
+}
+
+#selectedPostPanel {
+    display: flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    gap: 10px;
+    margin: 30px;
+}
+
+#postMessage {
+    margin-bottom: 25px;
+}
+
+#commentContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#commentTextField {
+    font-size: 16px;
+    padding: 10px;
+    min-height: 40px;
+    max-height: 240px;
+    overflow: scroll;
+}
+
+/* .backButton {
+    
+} */
 
 
 /* #button_container {
@@ -377,7 +426,14 @@ body {
 }
 .infoHeader {
     color: #323232;
-    font-size: 0.9em;
+    font-size: 1em;
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+.infoDesc {
+    color: #323232;
+    font-size: 1.1em;
 }
 
 .infoPanel {
@@ -425,6 +481,168 @@ body {
     margin-bottom: 0;
 }
 
+/*  ------------------------------- Forums List Panel -------------------------------*/
+
+#forumsContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.addForumContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+#forumTextField {
+    flex: 4;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding: 0px;
+    padding-left: 10px;
+    font-size: 12;
+}
+
+#addForumButton {
+    flex: 1;
+    width: 30px;
+    height: 30px;
+}
+
+#forumsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+}
+
+.forumBox {
+    padding: 5px 10px;
+    /* width: 100%; */
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    background-color: white;
+}
+
+.forumBox:hover {
+    background-color: #bde4ff;
+    cursor: pointer;
+}
+
+.forumProfileIcons {
+    height: 30px;
+    width: 30px;
+}
+
+.forumText > p {
+    margin: 0;
+}
+
+#forumTemplate {
+    display: none;
+}
+
+/*  ------------------------------- Overlay Panel -------------------------------*/
+#overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #000;
+    opacity: 0.75;
+    z-index: 7;
+    width: 100%;
+    height: 100%;
+}
+
+#overlayBody {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    vertical-align: middle;
+    width: 100%;
+    height: 100%;
+}
+
+#overlayContainer {
+    width: 350px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    gap: 10px;
+    /* height: 300px; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: white;
+    text-align: center;
+}
+
+.flexColInput {
+    /* position: relative; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    text-align: left;
+    gap: 5px;
+    width: 100%;
+}
+
+#descField {
+    /* padding-top: 10px; */
+    /* position: relative; */
+    height: 100px;
+    line-height: 35px;
+    width: auto;
+}
+
+.createForumButton {
+    margin-top: 20px;
+    height: 30px;
+}
+
+.createForumLabel {
+    font-size: 1.5em;
+    color: #323232;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.createForumsXRow {
+    text-align: right;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.createForumX {
+    width: 30px;
+    height: 30px;
+    margin: 0px;
+    padding: 0;
+}
+
+#createForumXBackground {
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+}
+
+#createForumXBackground:hover {
+    background-color: #626262;
+}
 
 /*  ------------ Commented out functions ---------------*/
 

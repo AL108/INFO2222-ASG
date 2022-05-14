@@ -56,6 +56,8 @@
                     </div>
                 </div>
             </div>
+
+            <div class="button_theme inter_bold createForumButton" type="button" name="button" onclick='toggleOverlay("open");'>Create Forum</div>
         </div>
 
         <!-- 
@@ -65,17 +67,137 @@
         
             <!-- Post Panel -->
             <div class="postsPanel">
+
+                <!-- Selected Post -->
+                <div id="selectedPostContainer">
+                    <div id="selectedPostPanel">
+                        <div>
+                            <button class="button_theme leftButton backButton" onclick='viewPostPanel("all");'>Back</button>
+                        </div>
+                        <!-- Post title -->
+                        <h2 class="panelLabel inter_bold">Is magic real? (No cap asking for friend)</h2>
+
+                        <!-- Picture Name Timestamp -->
+                        <div class="picNameTimestamp">
+                            <div>
+                                <img src="/img/profile_icons/blue.png" class="profileIcons">
+                            </div>
+                            <div>
+                                <label class="post_user inter_bold">User</label>
+                            </div>
+                            <div>
+                                <label class="post_time inter">posted 14/05/2022 4:00pm</label>
+                            </div>
+                        </div>
+
+                        <!-- Post message -->
+                        <div class="inter infoDesc" id="postMessage">
+                            *This unit provides an integrated treatment of two critical topics for a computing professional: 
+                            human computer interaction (HCI) and security. The techniques and core ideas of HCI will be studied 
+                            with a particular focus on examples and case studies related to security.*
+                        </div>
+
+                        <!-- Post Comment Container -->
+                        <h2 class="infoHeader inter_bold">Make a Comment</h2>
+                        <div class="divPlaceholder inter inputBoxStyle" id="commentTextField" msgPlaceHolder="Write your post message" contentEditable="true"></div>
+                        <div class="newPostButtons" style="width: 100%; justify-content: flex-end;">
+                            <button class="button_theme rightButton" onclick='console.log("New comment");'>Post</button>
+                        </div>
+
+                        <!-- Post Comment Container -->
+                        <h2 class="infoHeader inter_bold">Answers</h2>
+                        <div id="commentContainer">
+                            <div class="commentBox" id="commentTemplate">
+                                <div class="picNameTimestamp">
+                                    <div>
+                                        <img src="/img/profile_icons/blue.png" class="profileIcons">
+                                    </div>
+                                    <div>
+                                        <label class="post_user inter_bold">User</label>
+                                    </div>
+                                    <div>
+                                        <label class="post_time inter">posted 14/05/2022 4:00pm</label>
+                                    </div>
+                                </div>
+    
+                                <div class="inter infoDesc">
+                                    Bruh what you talking about?
+                                </div>
+                            </div>
+
+                            <div class="commentBox" id="commentTemplate">
+                                <div class="picNameTimestamp">
+                                    <div>
+                                        <img src="/img/profile_icons/blue.png" class="profileIcons">
+                                    </div>
+                                    <div>
+                                        <label class="post_user inter_bold">User</label>
+                                    </div>
+                                    <div>
+                                        <label class="post_time inter">posted 14/05/2022 4:00pm</label>
+                                    </div>
+                                </div>
+    
+                                <div class="inter infoDesc">
+                                    There's the whips and by opposing end the name of resolution devoutly to be wish'd. 
+                                </div>
+                            </div>
+
+                            <div class="commentBox" id="commentTemplate">
+                                <div class="picNameTimestamp">
+                                    <div>
+                                        <img src="/img/profile_icons/blue.png" class="profileIcons">
+                                    </div>
+                                    <div>
+                                        <label class="post_user inter_bold">User</label>
+                                    </div>
+                                    <div>
+                                        <label class="post_time inter">posted 14/05/2022 4:00pm</label>
+                                    </div>
+                                </div>
+    
+                                <div class="inter infoDesc" style="margin-top: 10px;">
+                                    To die, to sleep; to sleep to sleep: perchance to dreams may come when we have, the native hue of resolution devoutly to others that sleep of death what dream: ay, the dreams may come when he himself might his quietus makes calamity of so long a life, but that flesh is heir currents turn awry
+                                </div>
+                            </div>
+    
+                            <div class="commentBox" id="commentTemplate">
+                                <div class="picNameTimestamp">
+                                    <div>
+                                        <img src="/img/profile_icons/blue.png" class="profileIcons">
+                                    </div>
+                                    <div>
+                                        <label class="post_user inter_bold">User</label>
+                                    </div>
+                                    <div>
+                                        <label class="post_time inter">posted 14/05/2022 4:00pm</label>
+                                    </div>
+                                </div>
+    
+                                <div class="inter infoDesc" style="margin-top: 10px;">
+                                    Bruh what you talking about?
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+
+                        
+                    </div>
+
+                </div>
                 
                 <!-- New Post -->
                 <div id="newPostContainer">
                     <div id="postInputContainer">
                         <h2 class="panelLabel inter_bold">New Post</h2>
-                        <div class="flexInput">
+                        
+                        <div class="flexRowInput">
                             <h3 class="inter panelLabel infoLabel">Title</h3>
                             <input class="forumInputBox inter inputBoxStyle" id='titleField' type="text" placeholder="Enter your post's title"/>
                         </div>
     
-                        <div class="flexInput">
+                        <div class="flexRowInput">
                             <h3 class="inter panelLabel infoLabel">Tag</h3>
                             <div class="divPlaceholder inter forumInputBox inputBoxStyle" id='tagField' msgPlaceHolder="Enter your post's tag" contentEditable="true"></div>
                         </div>
@@ -83,8 +205,8 @@
                         <div class="divPlaceholder inter inputBoxStyle" id="postTextField" msgPlaceHolder="Write your post message" contentEditable="true"></div>
                         <div class="newPostButtons">
                             <!-- <div class="backButton inter_bold button_theme" onclick="returnToAllPosts()">Back</div> -->
-                            <button class="button_theme" id="msgSubmit" onclick="viewAllPosts();">Back</button>
-                            <button class="button_theme" id="msgSubmit" onclick='console.log("New post");'>Post</button>
+                            <button class="button_theme leftButton" onclick='viewPostPanel("all");'>Back</button>
+                            <button class="button_theme rightButton" onclick='console.log("New post");'>Post</button>
                         </div>
                     </div>
                 </div>
@@ -96,7 +218,7 @@
                     <div class="postListPanel" id ="postList">
                         <div class="allPostsButton">
                             <h2 class="panelLabel inter_bold">All Posts</h2>
-                            <div class="button_theme inter_bold" id="newPostButton" type="button" name="button" onclick="viewNewPost()">New Post</div>
+                            <div class="button_theme inter_bold" id="newPostButton" type="button" name="button" onclick='viewPostPanel("new");'>New Post</div>
                         </div>
                         <div class="postBox container" id="postTemplate">
                             <!-- Title -->
@@ -136,13 +258,13 @@
                 <div class="infoSection">
                     <h2 class="panelLabel inter_bold">*Forum Name*</h2>
     
-                    <div class="inter">
+                    <div class="inter infoDesc">
                         *This unit provides an integrated treatment of two critical topics for a computing professional: 
                         human computer interaction (HCI) and security. The techniques and core ideas of HCI will be studied 
                         with a particular focus on examples and case studies related to security.*
                     </div>
 
-                    <div class="infoHeader inter_bold" style="margin-top: 10px;">Forum Admin:</div>
+                    <div class="infoHeader inter_bold">Forum Admin:</div>
                     
                     <div class="infoBox">
                         <div>
@@ -169,8 +291,34 @@
         Overlay
     -->
 
-    <!-- <div id="overlay">
-        This is an overlay
-    </div> -->
+    <div id="overlay">
+        <div id="overlayBody">
+            <div class="container" style="background-color: white; padding-top: 20;">
+
+                <div class="createForumsXRow">
+                    <div id="createForumXBackground" onclick='toggleOverlay("close")'>
+                        <img src="/img/whiteX.png" class="createForumX">
+                    </div>
+                </div>
+
+                <div id="overlayContainer">
+                    <h2 class="createForumLabel inter_bold">Create a forum</h2>
+
+                <div class="flexColInput">
+                    <h3 class="infoHeader inter_bold">Forum Name</h3>
+                    <input class="forumInputBox inputBoxStyle" type="text" placeholder="Enter forum name"/>
+                </div>
+
+                <div class="flexColInput">
+                    <h3 class="infoHeader inter_bold">Description</h3>
+                    <div class="divPlaceholder inter forumInputBox inputBoxStyle" id='descField' msgPlaceHolder="Enter forum description" contentEditable="true"></div>
+                </div>
+
+                <div class="button_theme inter_bold createForumButton" type="button" name="button" onclick="createForum()">Create Forum</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 </body>
