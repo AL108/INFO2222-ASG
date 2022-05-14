@@ -5,15 +5,15 @@
     color: rgb(50, 50, 50);
     position: relative;
     border-bottom: 3px solid rgb(196, 196, 196);
-  }
+}
 
-  .website_name {
+.website_name {
     font-size: 27px !important;
     font-weight: 700 !important;
     padding: 12px !important;
     pointer-events: none !important;
     margin-left: 20px;
-  }
+}
 
   /* .body {
     font-family: 'Inter', sans-serif;
@@ -30,7 +30,7 @@
     border-radius: 40px;
   } */
 
-  .navbar a {
+.navbar a {
     position: relative;
     float: left;
     color: #312e2e;
@@ -38,14 +38,14 @@
     padding: 17px 26px;
     text-decoration: none;
     font-size: 20px;
-  }
+}
   
-  .navbar a:hover {
+.navbar a:hover {
     color: rgb(99, 153, 209);
     border-bottom: 3px solid rgb(99, 153, 209);
-  }
+}
 
-  .profile {
+.profile {
     background-image: url(../img/profile_icons/blue.png);
     border-bottom: none !important;
     float: right  !important;
@@ -55,9 +55,531 @@
     margin-right: 10px;
     margin-top: 14px;
     padding: 17px 16px !important;
-  }
+}
   
-  .navbar a.active {
+.navbar a.active {
     color: rgb(99, 153, 209);
     border-bottom: 3px solid rgb(99, 153, 209) !important;
-  }
+}
+
+body {
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #FAFCFF;
+}
+
+
+  /* -----------------------------------------------------------------------------
+                                Forums Page
+ -----------------------------------------------------------------------------*/
+
+ /*  ------------------------------- Misc. Panel -------------------------------*/
+ .vertical_line {
+    flex: 0.05;
+    border-right: 1px solid #50505080;
+    height: 100%;
+    width: 0;
+    margin-left: 10px;
+    /* margin-right: 10px; */
+}
+
+.profileIcons {
+    width: 40px;
+    height: 40px;
+    margin: 0px;
+}
+
+#forumsWindow {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 70px;
+    padding-right: 70px;
+    gap: 20px;
+}
+
+#forumsWindow > div {
+    background-color: rgba(255, 255, 250, 0.4);
+}
+
+/*  ------------------------------- Forums List Panel -------------------------------*/
+#forumsContainer {
+    flex: 1;
+}
+
+.forumInputBox {
+    height: 35px;
+    width: 100%;
+    padding: 0px;
+    padding-left: 10px;
+    font-size: 16px;
+    justify-content: center;
+    vertical-align: middle;
+}
+
+.forumInputBox::placeholder {
+    color: #929292;
+}
+
+.forumInputBox:focus {
+    color: #929292;
+    border: 2px solid #6399D1;
+    outline: none;
+}
+
+/* .errorInputBox:focus {
+    border: 2px solid #ca3e3e;
+}
+
+.successInputBox:focus {
+    border: 2px solid #368d25;
+} */
+
+
+/*  ------------------------------- Post Panel -------------------------------*/
+.postInfoContainer {
+    flex: 4;
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+}
+
+.postsPanel {
+    display: flex;
+    flex-direction: row;
+}
+
+
+/* ----- New Post View  ----- */
+#postInputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 100%;
+    gap: 10px;
+}
+
+.flexInput {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    align-content: center;
+    gap: 10px;
+}
+
+.divPlaceholder {
+    vertical-align: middle;
+}
+
+.divPlaceholder:empty:not(:focus):before {
+    content: attr(msgPlaceHolder);
+    color: #bfbfbf;
+}
+
+.divPlaceholder:focus {
+    color: #bfbfbf;
+    border: 2px solid #6399D1;
+    outline: none;
+}
+
+#postTextField {
+    font-size: 16px;
+    padding: 10px;
+    min-height: 200px;
+    max-height: 500px;
+    overflow: scroll;
+}
+
+#tagField {
+    /* padding-top: 10px; */
+    height: 35px;
+    line-height: 35px;
+    width: 100%;
+}
+
+#msgSubmit {
+    width: 80px;
+    height: 25px;
+    float: right;
+    margin-top: 15px;
+}
+
+/* ----- All Posts View ----- */
+.postListPanel {
+    height: 70%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    bottom: 0;
+    padding-top: 5px;
+    /* border: 1px solid #dddddd; */
+}
+
+#picNameTime {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#picName {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+.picNameTimestamp {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    width: 100%;
+    vertical-align: middle;
+    align-items: center;
+    gap: 10px;
+}
+
+.postTitle {
+    margin: 0;
+    padding: 0;
+}
+
+.postBox {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    gap: 10px;
+}
+
+.postBox:focused {
+    background: #bde4ff;
+}
+
+.postBox:hover {
+    background-color: #bde4ff;
+    cursor: pointer;
+}
+
+.tagList {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.tag_button {
+    border-radius: 4px;
+    height: 20px;
+    width: 50px;
+    font-size: 0.7em;
+}
+
+.tag_button_selected {
+    height: 15px;
+    width: 30%;
+    display: inline;
+    /* font-size: 12px; */
+    margin-bottom: 3%;
+}
+
+.post_user, .post_time, .msg_content{
+    color: #323232;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    width: 100%;
+    height: 1em;
+    vertical-align: center;
+}
+
+.post_user {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.post_time {
+    font-size: 12px;
+    text-align: right;
+}
+
+
+
+
+
+
+#new_post_button {
+    font-size: 100%;
+    /* margin-bottom: 3%; */
+    width: 100%;
+    height: 30px;
+    padding-top: 2px;
+}
+
+/* #button_container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+} */
+
+
+/*  ------------ Info Panel ---------------*/
+.panelLabel {
+    font-size: 1.2em;
+    color: #323232;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.infoLabel {
+    padding: 0;
+    margin: 0;
+    height: auto;
+    width: 50px;
+}
+.infoHeader {
+    margin-top: 0;
+    font-size: 0.9em;
+}
+
+.infoPanel {
+    flex: 1.5;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.infoSection {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    gap: 10px;
+}
+
+.infoBox {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    background-color: white;
+}
+
+.dateCreatedInfo {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    font-size: 0.5em;
+}
+
+.horizontal_line {
+    flex: 0.05;
+    border-top: 1px solid #50505080;
+    height: 0;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+
+/*  ------------ Post Panel ---------------*/
+
+
+
+
+
+
+
+
+
+/* #toBox {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+} */
+
+
+
+/* .recipientFont {
+    height: auto;
+    text-align: center;
+    font-size: large;
+    color: white;
+} */
+
+/* .infoError {
+    background-color: #ca3e3e;
+    color: #fa9696;
+    font-size: large;
+} */
+
+/* .infoSuccess {
+    background-color: #368d25;
+    color: #afff9f;
+    font-size: large;
+} */
+
+/* .infoInform {
+    background-color: #3182c4;
+    color: #96d7fd;
+    font-size: large;
+} */
+
+/* .msgTextArea {
+    resize: none;
+} */
+
+/* .msgTextArea:focus {
+    color: #626262;
+    border: 2px solid #6399D1;
+    outline: none;
+} */
+
+
+
+/* #senderProfileIcon {
+    width: 60px;
+    height: 60px;
+    margin: 0px;
+} */
+
+/* .msgSenderTitle {
+    font-size: 1.5em;
+    color: #626262;
+} */
+
+/* .msgFont {
+    font-size: large;
+    color: #626262;
+} */
+
+
+/* #msgViewContainer {
+    width: 100%;
+    display: none;
+} */
+
+
+
+/* --- Individual Posts --- */
+
+
+
+/* #postBoxSelected {
+    background: #bde4ff;
+} */
+
+
+
+/* .messageFromTime {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+} */
+
+/* #postTemplate {
+    display: none;
+} */
+
+
+/* .msg_content {
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 150px;
+    font-size: 12px;
+} */
+
+/*  ------------------------------- Forums List Panel -------------------------------*/
+
+.addForumContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+#forumTextField {
+    flex: 4;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding: 0px;
+    padding-left: 10px;
+    font-size: 12;
+}
+
+#addForumButton {
+    flex: 1;
+    width: 30px;
+    height: 30px;
+}
+
+#forumsContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#forumsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.forumBox {
+    padding: 5px 10px;
+    /* width: 100%; */
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    background-color: white;
+}
+
+.forumBox:hover {
+    background-color: #bde4ff;
+    cursor: pointer;
+}
+
+.forumProfileIcons {
+    height: 30px;
+    width: 30px;
+}
+
+.forumText > p {
+    margin: 0;
+}
+
+/* #forumTemplate {
+    display: none;
+} */
+
+#overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #000;
+    opacity: 0.75;
+    z-index: 7;
+}

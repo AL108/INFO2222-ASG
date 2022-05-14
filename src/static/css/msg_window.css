@@ -88,13 +88,26 @@ li a:hover {
     background-color: #111;
 }
 
-html, body {
+html {
     height: 100%;
     margin: 0;
     padding: 0;
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
 }
 
 body {
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    height: 100%;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
     background-color: #FAFCFF;
@@ -112,14 +125,6 @@ body {
     max-height: 45%;
     max-width: 45%;
 } */
-
-html, body {
-    position:fixed;
-    top:0;
-    bottom:0;
-    left:0;
-    right:0;
-}
 
 .loginRegisterTextFields {
     width: 100%;
@@ -148,8 +153,11 @@ html, body {
     display: flex;
     flex-direction: row;
     height: 100%;
-    padding: 30px;
-    gap: 10px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 70px;
+    padding-right: 70px;
+    gap: 20px;
 }
 
 #msgWindow > div {
@@ -170,11 +178,11 @@ html, body {
 
 .panelLabel {
     font-size: 1.2em;
-    color: #505050;
+    color: #323232;
     font-family: Helvetica;
     font-weight: 700;
     margin-top: 0;
-    margin-bottom: 0;
+    margin-bottom: 5px;
 }
 
 /*  ------------ Left Panel ---------------*/
@@ -278,7 +286,7 @@ html, body {
 
 .msg_from, .msg_time, .msg_content{
     font-family: Helvetica;
-    color: #505050;
+    color: #323232;
     padding-top: 2px;
     padding-bottom: 2px;
     width: 100%;
@@ -327,6 +335,7 @@ html, body {
 }
 
 #msgTextField {
+    font-size: 16px;
     padding: 10px;
     min-height: 200px;
     max-height: 500px;
@@ -350,6 +359,7 @@ html, body {
     height: 30px;
     width: 100%;
     padding-left: 10px;
+    font-size: 16px;
 }
 
 .msgInputBox::placeholder {
@@ -447,7 +457,7 @@ html, body {
 
 .vertical_line {
     flex: 0.05;
-    border-left: 1px solid #50505080;
+    border-left: 1px solid #32323280;
     height: 100%;
     width: 0;
     margin-left: 10px;
@@ -506,10 +516,6 @@ html, body {
     align-items: center;
     gap: 10px;
     background-color: white;
-}
-
-.messageBox:focused {
-    background: #bde4ff;
 }
 
 .friend:hover {
