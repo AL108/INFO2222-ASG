@@ -1176,6 +1176,51 @@ function getSessionKey(sender, recipient) {
     });
 }
 
+async function addForum(event) {
+    //event.preventDefault();
+    let forum_id = document.getElementById("forumTextField").value;
+    var forum_id_data = {
+        forum_id: forum_id,
+        subscriber: sessionStorage.getItem("currentUser"),
+    };
+
+    fetch('/subscribe', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(forum_id_data),
+    })
+    .then(response => response.json())
+    .then(retData => {
+        if (retData["ret"] == "-1"){ 
+            document.getElementById("subscribeInfo").textContent = "Invalid forum code";
+            document.getElementById("subscribeInfo").style.color = "red";
+            document.getElementById("forumTextField").textContent = "";
+        }
+        else if (retData["ret"] == "1") {
+            document.getElementById("subscribeInfo").style.color = "green";
+            document.getElementById("subscribeInfo").textContent = "Subscription successful";
+            document.getElementById("forumTextField").textContent = "";
+        } 
+        else if (retData["ret"] == "0") {
+            document.getElementById("subscribeInfo").textContent = "Already subscribed";
+            document.getElementById("subscribeInfo").style.color = "orange";
+            document.getElementById("forumTextField").textContent = "";
+        }
+        else {
+            console.log("subscription failed");
+            document.getElementById("subscribeInfo").textContent = "Please try again";
+            document.getElementById("subscribeInfo").style.color = "red";
+            document.getElementById("forumTextField").textContent = "";
+        }
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
+    });
+     
+ }
+
 function getForums(){
     var user_logged_on = {
          user_logged_in: sessionStorage.getItem("currentUser"),

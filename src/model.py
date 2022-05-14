@@ -315,7 +315,29 @@ def add_forum(creator, name, description=""):
     database = no_sql_db.database
     id = id_generator.generate_id()
     database.create_table_entry('forums', id, name, description, creator)
-    
+
+def forum_exists(forum_id):
+    database = no_sql_db.database
+    return database.search_table('forums', 'forum_id', forum_id)
+
+def subscribe(subscriber, forum_id):
+    '''
+        subscribe subscriber to forum, returns:
+            1, if successful
+            -1, if forum does not exist
+            0, if already subscribed
+    '''
+    database = no_sql_db.database
+    # check if already subscribed
+    r = database.get_entries('forum_subscriptions', 'subscriber', subscriber)
+    if r.__contains__([subscriber, forum_id]):
+        return 0
+    if not forum_exists(forum_id):
+        return -1
+    database.create_table_entry('forum_subscriptions', [subscriber, forum_id])
+    return 1
+
+
 # Returns a random string each time
 def about_garble():
     '''

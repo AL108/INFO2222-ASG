@@ -144,6 +144,32 @@ def get_register_controller():
 
 #-----------------------------------------------------------------------------
 
+@post('/subscribe')
+def post_subscribe():
+    '''
+
+    '''
+    # Handle the form processing
+    req = request.json
+    forum_id = req["forum_id"]
+    subscriber = req["subscriber"]
+    ret = "error"
+    if forum_id:
+       ret = str(model.subscribe(subscriber, forum_id))
+    # Call the appropriate method
+    return json.dumps({'ret': ret})
+
+@post('/forum_exists')
+def post_forum_exists():
+    '''
+        returns whether the forum exists
+    '''
+    forum_id = request.json["forum_id"]
+    ret = False
+    if forum_id:
+        ret = model.forum_exists(forum_id)
+    return json.dumps({'forum_exists': ret})
+
 @post('/register')
 def post_register():
     '''
