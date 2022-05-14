@@ -839,7 +839,7 @@ function createForumClone(forumTemplate, forumName) {
     const forumClone = forumTemplate.cloneNode(true);
     forumClone.removeAttribute('id', "forumTemplate");
     const forumText = forumClone.querySelector('.forumText');
-    forumText.innerHTML = forumName;
+    forumText.children[0].innerHTML = forumName;
     return forumClone;
 }
 
@@ -848,14 +848,13 @@ async function retrieveForums(user) {
     if (forumIDs != null) {
         const forumPanel = document.getElementById('forumsList');
         const forumTemplate = document.getElementById('forumTemplate');
+        if (forumTemplate == null) return;
         for (var i = 0; i < forumIDs.length; i++) {
             console.log(forumIDs[i]);
             console.log(getForumName(forumIDs[i]))
             console.log('\n');
             forumName = await getForumName(forumIDs[i]);
-            if (forumTemplate == null){
-                console.log('sth null');
-            } 
+            if (forumName == null) continue;
             const forumClone = createForumClone(forumTemplate, forumName);
             // forumClone.addEventListener("click", () => {
             //     removeSelectedMessageHighlight();
@@ -867,7 +866,6 @@ async function retrieveForums(user) {
         console.log('no forums or forums failed to load');
     }
 }
-
 
 async function retrieveMessages(){
     // var messagesData = await getMessages(getCookie("currentUser"));
