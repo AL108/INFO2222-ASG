@@ -1196,17 +1196,17 @@ async function addForum(event) {
         if (retData["ret"] == "-1"){ 
             document.getElementById("subscribeInfo").textContent = "Invalid forum code";
             document.getElementById("subscribeInfo").style.color = "red";
-            document.getElementById("forumTextField").textContent = "";
+            document.getElementById("forumTextField").value = "";
         }
         else if (retData["ret"] == "1") {
             document.getElementById("subscribeInfo").style.color = "green";
             document.getElementById("subscribeInfo").textContent = "Subscription successful";
-            document.getElementById("forumTextField").textContent = "";
+            document.getElementById("forumTextField").value = "";
         } 
         else if (retData["ret"] == "0") {
             document.getElementById("subscribeInfo").textContent = "Already subscribed";
             document.getElementById("subscribeInfo").style.color = "orange";
-            document.getElementById("forumTextField").textContent = "";
+            document.getElementById("forumTextField").value = "";
         }
         else {
             console.log("subscription failed");
