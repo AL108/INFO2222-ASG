@@ -569,9 +569,9 @@ body {
     margin: 0;
 }
 
-/* #forumTemplate {
+#forumTemplate {
     display: none;
-} */
+}
 
 #overlay {
     position: fixed;
