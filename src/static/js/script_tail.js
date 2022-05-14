@@ -494,8 +494,6 @@ function postNewMessage(senderField, recipientField, enc_Message, sig) {
     });
 }
 
-
-
 async function sessionKeyHelper(senderField, recipientField) {
     let DBsessionKey = await getSessionKey(senderField, recipientField);
 
@@ -778,97 +776,6 @@ function msg_window_OnLoad(){
     retrieveMessages();
 }
 
-function forumsWindowOnLoad() {
-    retrieveForums();
-    //loadPosts();
-    //loadForumInfo();
-}
-
-async function getForumName(forum_id){
-    var forum_id_data = {
-        forum_id: forum_id,
-    };
-
-   const response = await fetch('/post_getForumName', {
-        method: 'POST',
-        headers: {
-            'content-type': 'application/json'
-        },
-        body: JSON.stringify(forum_id_data),
-    });
-    const returnData = await response.json();
-    if ("forum_name" in returnData) {
-        return returnData["forum_name"];
-    }
-    else if ("error" in returnData) {
-        console.log('sad1');
-        return null;
-    }
-}
-
-function getForums(){
-    var user_logged_on = {
-         user_logged_in: sessionStorage.getItem("currentUser"),
-    };
-
-    return fetch('/post_getForums', {
-         method: 'POST',
-         headers: {
-             'content-type': 'application/json'
-         },
-         body: JSON.stringify(user_logged_on),
-    })
-    .then(response => response.json())
-    .then(returnData => {
-        if ("forum_ids" in returnData) {
-            forum_ids = returnData["forum_ids"];
-            return forum_ids;
-        }
-        else if ("error" in returnData) {
-            console.log('sad1');
-            return null;
-        }
-    })
-    .catch((error) => {
-        console.error('Error: ', error);
-        console.log('sad2');
-    });
-}
-
-function createForumClone(forumTemplate, forumName) {
-    const forumClone = forumTemplate.cloneNode(true);
-    forumClone.removeAttribute('id', "forumTemplate");
-    const forumText = forumClone.querySelector('.forumText');
-    forumText.innerHTML = forumName;
-    return forumClone;
-}
-
-async function retrieveForums(user) {
-    var forumIDs = await getForums(user);
-    if (forumIDs != null) {
-        const forumPanel = document.getElementById('forumsList');
-        const forumTemplate = document.getElementById('forumTemplate');
-        for (var i = 0; i < forumIDs.length; i++) {
-            console.log(forumIDs[i]);
-            console.log(getForumName(forumIDs[i]))
-            console.log('\n');
-            forumName = await getForumName(forumIDs[i]);
-            if (forumTemplate == null){
-                console.log('sth null');
-            } 
-            const forumClone = createForumClone(forumTemplate, forumName);
-            // forumClone.addEventListener("click", () => {
-            //     removeSelectedMessageHighlight();
-            //     viewSelectedMessage(msgClone, sender, recipient, message, time, profileInt);
-            // });
-            forumPanel.appendChild(forumClone);
-        }
-    } else {
-        console.log('no forums or forums failed to load');
-    }
-}
-
-
 async function retrieveMessages(){
     // var messagesData = await getMessages(getCookie("currentUser"));
     var messagesData = await getMessages(sessionStorage.getItem("currentUser"));
@@ -1084,6 +991,67 @@ function getMessages(target){
 }
 
 /* -----------------------------------------------------------------------------
+                                Forums
+ -----------------------------------------------------------------------------*/
+ function forumsWindowOnLoad() {
+    retrieveForums();
+    //loadPosts();
+    //loadForumInfo();
+}
+
+function createForumClone(forumTemplate, forumName) {
+    const forumClone = forumTemplate.cloneNode(true);
+    forumClone.removeAttribute('id', "forumTemplate");
+    const forumText = forumClone.querySelector('.forumText');
+    forumText.innerHTML = forumName;
+    return forumClone;
+}
+
+async function retrieveForums(user) {
+    var forumIDs = await getForums(user);
+    if (forumIDs != null) {
+        const forumPanel = document.getElementById('forumsList');
+        const forumTemplate = document.getElementById('forumTemplate');
+        for (var i = 0; i < forumIDs.length; i++) {
+            console.log(forumIDs[i]);
+            console.log(getForumName(forumIDs[i]))
+            console.log('\n');
+            forumName = await getForumName(forumIDs[i]);
+            if (forumTemplate == null){
+                console.log('sth null');
+            } 
+            const forumClone = createForumClone(forumTemplate, forumName);
+            // forumClone.addEventListener("click", () => {
+            //     removeSelectedMessageHighlight();
+            //     viewSelectedMessage(msgClone, sender, recipient, message, time, profileInt);
+            // });
+            forumPanel.appendChild(forumClone);
+        }
+    } else {
+        console.log('no forums or forums failed to load');
+    }
+}
+
+// Views container to send messages
+function viewNewPost() {
+    var newPostContainer = document.getElementById("newPostContainer");
+    newPostContainer.style.display = "block";
+
+    var postListPanel = document.getElementById("allPostContainer");
+    postListPanel.style.display = "none";
+}
+
+// Views container of all posts
+function viewAllPosts() {
+    var newPostContainer = document.getElementById("newPostContainer");
+    newPostContainer.style.display = "none";
+
+    var postListPanel = document.getElementById("allPostContainer");
+    postListPanel.style.display = "block";
+}
+
+
+/* -----------------------------------------------------------------------------
                                 Database Calls.
  -----------------------------------------------------------------------------*/
  async function getFriendsList(user) {
@@ -1207,8 +1175,57 @@ function getSessionKey(sender, recipient) {
     .catch((error) => {
         console.error('Error: ', error);
     });
+}
 
+function getForums(){
+    var user_logged_on = {
+         user_logged_in: sessionStorage.getItem("currentUser"),
+    };
 
+    return fetch('/post_getForums', {
+         method: 'POST',
+         headers: {
+             'content-type': 'application/json'
+         },
+         body: JSON.stringify(user_logged_on),
+    })
+    .then(response => response.json())
+    .then(returnData => {
+        if ("forum_ids" in returnData) {
+            forum_ids = returnData["forum_ids"];
+            return forum_ids;
+        }
+        else if ("error" in returnData) {
+            console.log('sad1');
+            return null;
+        }
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
+        console.log('sad2');
+    });
+}
+
+async function getForumName(forum_id){
+    var forum_id_data = {
+        forum_id: forum_id,
+    };
+
+   const response = await fetch('/post_getForumName', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(forum_id_data),
+    });
+    const returnData = await response.json();
+    if ("forum_name" in returnData) {
+        return returnData["forum_name"];
+    }
+    else if ("error" in returnData) {
+        console.log('sad1');
+        return null;
+    }
 }
 
 /* -----------------------------------------------------------------------------
