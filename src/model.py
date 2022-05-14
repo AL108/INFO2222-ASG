@@ -337,6 +337,16 @@ def subscribe(subscriber, forum_id):
     database.create_table_entry('forum_subscriptions', [subscriber, forum_id])
     return 1
 
+def get_posts(forum_id):
+    '''
+        (note) post table format: 
+        ['post_id', 'forum_id', 'author', 'title', 'body', 'timestamp']
+    '''
+    database = no_sql_db.database
+    print("forum id:", forum_id)
+    ret = database.get_entries('posts', 'forum_id', forum_id)
+    print("posts", ret)
+    return ret
 
 # Returns a random string each time
 def about_garble():

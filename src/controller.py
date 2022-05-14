@@ -159,6 +159,15 @@ def post_subscribe():
     # Call the appropriate method
     return json.dumps({'ret': ret})
 
+@post('/get_posts')
+def get_posts():
+    forum_id = request.json["forum_id"]
+    postsList = model.get_posts(forum_id)
+    if postsList:
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'posts': postsList})
+    return json.dumps({'error': "did not find anything"})
+
 @post('/forum_exists')
 def post_forum_exists():
     '''

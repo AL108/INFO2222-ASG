@@ -595,6 +595,10 @@ body {
     display: none;
 }
 
+#postTemplate {
+    display: none;
+}
+
 #overlay {
     position: fixed;
     top: 0;

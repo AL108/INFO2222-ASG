@@ -1,10 +1,3 @@
-// class User{
-//     constructor(){
-//
-//     }
-// }
-
-
 var keyPair;
 
 checkLogin();
@@ -16,7 +9,6 @@ function toForums() {
     console.log("Set up to forums requried");
     window.location.href = "/forums";
 }
-
 
 /* -----------------------------------------------------------------------------
                                 Register
@@ -993,10 +985,116 @@ function getMessages(target){
 /* -----------------------------------------------------------------------------
                                 Forums
  -----------------------------------------------------------------------------*/
- function forumsWindowOnLoad() {
-    retrieveForums();
-    //loadPosts();
-    //loadForumInfo();
+ async function forumsWindowOnLoad() {
+    var currentForum = await retrieveForums();
+    loadPosts(currentForum);
+}
+
+async function getPosts(forum_id) {
+    var forum_id_data = {
+        forum_id: forum_id,
+   };
+
+   return fetch('/get_posts', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(forum_id_data),
+   })
+   .then(response => response.json())
+   .then(returnData => {
+       if ("posts" in returnData) {
+           posts = returnData["posts"];
+           return posts;
+       }
+       else if ("error" in returnData) {
+           console.log('fucking fuck');
+           return null;
+       }
+   })
+   .catch((error) => {
+       console.error('Error: ', error);
+   });
+}
+
+function createPostClone(postTemplate, author, time, title) {
+
+    // const msgClone = msgTemplate.cloneNode(true);
+    // msgClone.removeAttribute('id', "messageTemplate");
+
+    // const messageProfile = msgClone.querySelector('.profileIcons');
+    // messageProfile.src = getRandomProfileIcon(profileInt);
+
+    // const messageText = msgClone.querySelector('.messageText');
+    // const senderTime = messageText.children[0];
+    // senderTime.children[0].innerHTML = sender;
+    // senderTime.children[1].innerHTML = time;
+    // messageText.children[1].innerHTML = message;
+    // return msgClone;
+
+    const postClone = postTemplate.cloneNode(true);
+    postClone.removeAttribute('id', "postTemplate");
+    console.log(postClone);
+    const titleText = postClone.querySelector('.postTitle');
+    const picNameTimestamp = postClone.querySelector('.picNameTimestamp');
+    console.log(titleText);
+    titleText.textContent = title;
+    // postNameTimestamp.chiln[0].innerHTML = messageProfile;
+    picNameTimestamp.children[1].innerHTML = author;
+    picNameTimestamp.children[2].innerHTML = time;
+    return postClone;
+}
+
+async function loadPosts(forum_id) {
+    // var messagesData = await getMessages(getCookie("currentUser"));
+    var postsData = await getPosts(forum_id);
+    console.log(postsData);
+    console.log('hmm');
+    
+    if (postsData != null){
+        const postsPanel = document.getElementById("postList");
+        const postTemplate = document.getElementById("postTemplate");
+        var authorDict = {};
+        for (var i = postsData.length - 1; i >= 0; i--) {
+            const post_id = postsData[i][0];
+            const forum_id = postsData[i][1];
+            const author = postsData[i][2];
+            const title = postsData[i][3];
+            const body = postsData[i][4];
+            const ts = postsData[i][5];
+            
+            // var profileInt = 0;
+            // if (!(sender in senderDict)){
+            //     senderDict[sender] = getRandomInt(5);
+            // }
+            // profileInt = senderDict[sender];
+            
+            const time = new Date(parseInt(ts, 10)).toLocaleString();
+            const currentDate = new Date();
+            const timestampDate = new Date(parseInt(ts, 10));
+            const dateDiff = Math.abs(timestampDate.getTime() - currentDate.getTime());
+            const hoursDiff = dateDiff / (60 * 60 * 1000);
+
+            var timeFiltered;
+            if (hoursDiff < 24) {
+                timeFiltered = time.split(",")[1];
+            }
+            else {
+                timeFiltered = time.split(",")[0];
+            }
+
+            const postClone = createPostClone(postTemplate, author, timeFiltered, title);
+            // msgClone.addEventListener("click", () => {
+            //     removeSelectedMessageHighlight();
+            //     viewSelectedMessage(msgClone, sender, recipient, message, time, profileInt);
+            // });
+
+            postsPanel.appendChild(postClone);
+        }
+
+    }
+
 }
 
 function createForumClone(forumTemplate, forumName) {
@@ -1026,9 +1124,11 @@ async function retrieveForums(user) {
             // });
             forumPanel.appendChild(forumClone);
         }
+        return forumIDs[0]
     } else {
         console.log('no forums or forums failed to load');
     }
+    return null
 }
 
 // Views container to send messages
@@ -1176,7 +1276,7 @@ function getSessionKey(sender, recipient) {
     });
 }
 
-async function addForum(event) {
+async function addForum() {
     //event.preventDefault();
     let forum_id = document.getElementById("forumTextField").value;
     var forum_id_data = {
