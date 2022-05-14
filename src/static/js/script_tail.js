@@ -1031,22 +1031,53 @@ async function retrieveForums(user) {
     }
 }
 
-// Views container to send messages
-function viewNewPost() {
-    var newPostContainer = document.getElementById("newPostContainer");
-    newPostContainer.style.display = "block";
+// Change Between Different Panels on the Post Container
+function viewPostPanel(panel) {
+    var blockElementId = "";
+    const noneElementIds = ["newPostContainer", "allPostContainer", "commentContainer"];
+    switch (panel) {
+        case "new":
+            blockElementId = "newPostContainer";
+            break;
+        
+        case "all":
+            blockElementId = "allPostContainer";
+            break;
 
-    var postListPanel = document.getElementById("allPostContainer");
-    postListPanel.style.display = "none";
+        case "selected":
+            blockElementId = "commentContainer";
+            break;
+        
+        default:
+            console.log("Invalid panel trigger");
+    }
+
+    for (const id of noneElementIds) {
+        var idElement = document.getElementById(id);
+        if (id.match(blockElementId)) {
+            idElement.style.display = "block";
+        }
+        else {
+            idElement.style.display = "none";
+        }
+    }
 }
 
-// Views container of all posts
-function viewAllPosts() {
-    var newPostContainer = document.getElementById("newPostContainer");
-    newPostContainer.style.display = "none";
-
-    var postListPanel = document.getElementById("allPostContainer");
-    postListPanel.style.display = "block";
+function toggleOverlay(state) {
+    switch (state) {
+        case "close":
+            var idElement = document.getElementById("overlay");
+            idElement.style.display = "none";
+            break;
+        
+        case "open":
+            var idElement = document.getElementById("overlay");
+            idElement.style.display = "block";
+            break;
+        
+        default:
+            console.log("Invalid overlay toggle state");
+    }
 }
 
 
