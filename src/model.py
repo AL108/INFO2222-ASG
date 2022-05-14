@@ -253,12 +253,22 @@ def get_forums(username):
         Returns the forum_ids of the forums that the user is subscribed to.
     '''
     database = no_sql_db.database
-    res = database.getEntries('forums_subscriptions', 'subscriber', username)
+    res = database.get_entries('forum_subscriptions', 'subscriber', username)
     forum_ids = []
     for i in res:
         forum_ids.append(i[1])
     return forum_ids
 
+def get_forum_name(forum_id):
+    '''
+        returns the name of the forum with id: 'forum_id'
+    '''
+    print("|"+forum_id+"|")
+    res = no_sql_db.database.search_table('forums', 'forum_id', forum_id)
+    if res:
+        print(res[1])
+        return res[1]
+    return res
 def get_posts(forum_id):
     '''
         returns the posts for the forum in the following format:

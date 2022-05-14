@@ -251,7 +251,6 @@ def add_sessionkeysEntry():
 
 @post('/post_getMessages')
 def post_getMessages():
-
     recipientObj = request.json
     recipient = recipientObj["recipient"]
 
@@ -260,10 +259,27 @@ def post_getMessages():
     if messagesList:
         response.headers['Content-Type'] = 'application/json'
         return json.dumps({'messages': messagesList})
+    return json.dumps({'error': "did not find anything"})
 
+@post('/post_getForums')
+def post_getForums():
+    user_logged_in = request.json["user_logged_in"]
+    id_list = model.get_forums(user_logged_in)
+
+    if id_list:
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'forum_ids': id_list})
 
     return json.dumps({'error': "did not find anything"})
 
+@post('/post_getForumName')
+def post_getForumName():
+    forum_id = request.json['forum_id']
+    forum_name = model.get_forum_name(forum_id)
+    if forum_name:
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'forum_name': forum_name})
+    return json.dumps({'error': "hmm thats weird"})
 
 @post('/post_newMessage')
 def post_newMessage():
