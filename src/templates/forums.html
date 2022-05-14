@@ -27,11 +27,11 @@
         -->
         
         <div class="container" id="forumsContainer">
-            
+           
             <h2 class="panelLabel inter_bold">Forums</h2>
-
+            
             <div class="addForumContainer">
-                <input class="forumInputBox inputBoxStyle" id='forumTextField' type="text" placeholder="Enter forum name"/>
+                <input class="forumInputBox inputBoxStyle" id='forumTextField' type="text" placeholder="Enter forum code"/>
                 <script>
                     // Allows enter to submit
                     // var recipientField = document.getElementById("forumTextField");
@@ -43,9 +43,10 @@
                     // });
                     console.log("Attempting to add forum");
                 </script>
+                
                 <div class="button_theme inter_bold" id="addForumButton" type="button" name="button" onclick="addForum()">+</div>
             </div>
-
+            <p id="subscribeInfo" style="text-align: center;"></p>
             <div id="forumsList">
                 <div class="forumBox container" id="forumTemplate">
                     <div>
