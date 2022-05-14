@@ -1210,9 +1210,9 @@ async function addForum(event) {
         }
         else {
             console.log("subscription failed");
-            document.getElementById("subscribeInfo").textContent = "Please try again";
+            document.getElementById("subscribeInfo").textContent = "Invalid forum code";
             document.getElementById("subscribeInfo").style.color = "red";
-            document.getElementById("forumTextField").textContent = "";
+            document.getElementById("forumTextField").value = "";
         }
     })
     .catch((error) => {
