@@ -1009,7 +1009,6 @@ async function getPosts(forum_id) {
            return posts;
        }
        else if ("error" in returnData) {
-           console.log('fucking fuck');
            return null;
        }
    })
@@ -1018,32 +1017,55 @@ async function getPosts(forum_id) {
    });
 }
 
-function createPostClone(postTemplate, author, time, title) {
-
-    // const msgClone = msgTemplate.cloneNode(true);
-    // msgClone.removeAttribute('id', "messageTemplate");
-
-    // const messageProfile = msgClone.querySelector('.profileIcons');
-    // messageProfile.src = getRandomProfileIcon(profileInt);
-
-    // const messageText = msgClone.querySelector('.messageText');
-    // const senderTime = messageText.children[0];
-    // senderTime.children[0].innerHTML = sender;
-    // senderTime.children[1].innerHTML = time;
-    // messageText.children[1].innerHTML = message;
-    // return msgClone;
-
+function createPostClone(postTemplate, author, time, title, tags) {
     const postClone = postTemplate.cloneNode(true);
     postClone.removeAttribute('id', "postTemplate");
     console.log(postClone);
+    const tagList = postClone.querySelector('.tagList')
     const titleText = postClone.querySelector('.postTitle');
     const picNameTimestamp = postClone.querySelector('.picNameTimestamp');
     console.log(titleText);
+    var tag = tagList.querySelector('.tag_button');
+    if (tags != null) {
+        for (var i = 0; i < tags.length; i++) {
+            tagClone = tag.cloneNode(true);
+            tagClone.removeAttribute('id', 'tag');
+            tagClone.textContent = tags[i];
+            tagList.appendChild(tagClone);
+        }
+    }
     titleText.textContent = title;
-    // postNameTimestamp.chiln[0].innerHTML = messageProfile;
     picNameTimestamp.children[1].innerHTML = author;
     picNameTimestamp.children[2].innerHTML = time;
     return postClone;
+}
+
+function getTags(post_id) {
+    var post_id_data = {
+        post_id: post_id,
+   };
+
+   return fetch('/get_tags', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(post_id_data),
+   })
+   .then(response => response.json())
+   .then(returnData => {
+       if ("tags" in returnData) {
+           tags = returnData["tags"];
+           console.log(tags);
+           return tags;
+       }
+       else if ("error" in returnData) {
+           return null;
+       }
+   })
+   .catch((error) => {
+       console.error('Error: ', error);
+   });
 }
 
 async function loadPosts(forum_id) {
@@ -1083,8 +1105,9 @@ async function loadPosts(forum_id) {
             else {
                 timeFiltered = time.split(",")[0];
             }
-            console.log(ts);
-            const postClone = createPostClone(postTemplate, author, timeFiltered, title);
+            var tags = await getTags(post_id);
+            console.log(tags);
+            const postClone = createPostClone(postTemplate, author, timeFiltered, title, tags);
             // msgClone.addEventListener("click", () => {
             //     removeSelectedMessageHighlight();
             //     viewSelectedMessage(msgClone, sender, recipient, message, time, profileInt);

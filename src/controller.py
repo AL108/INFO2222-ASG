@@ -233,6 +233,15 @@ def get_home():
 def get_forums():
     return model.forums()
 
+@post('/get_tags')
+def get_tags():
+    post_id = request.json["post_id"]
+    tagsList = model.get_tags(post_id)
+    print("tgslist", tagsList)
+    if tagsList:
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'tags': tagsList})
+    return json.dumps({'error': "did not find anything"})
 
 #-----------------------------------------------------------------------------
 # Message Window Page

@@ -291,7 +291,8 @@ def get_tags(post_id):
     '''
     database = no_sql_db.database
     res = database.get_entries('post_tags', 'post_id', post_id)
-    return [tag[1] for tag in res]
+    ret = [tag[1] for tag in res]
+    return ret
 
 def add_post(forum_id, author, title, body, timestamp, tags=None):
     '''
