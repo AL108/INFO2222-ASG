@@ -804,7 +804,7 @@ async function retrieveMessages(){
 
             const dateDiff = Math.abs(timestampDate.getTime() - currentDate.getTime());
             const hoursDiff = dateDiff / (60 * 60 * 1000);
-
+            console.log(timestamp);
             var timeFiltered;
             if (hoursDiff < 24) {
                 // console.log("Date within 24 hours");
@@ -1083,7 +1083,7 @@ async function loadPosts(forum_id) {
             else {
                 timeFiltered = time.split(",")[0];
             }
-
+            console.log(ts);
             const postClone = createPostClone(postTemplate, author, timeFiltered, title);
             // msgClone.addEventListener("click", () => {
             //     removeSelectedMessageHighlight();
