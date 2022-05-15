@@ -67,7 +67,7 @@ def serve_js(js):
 #-----------------------------------------------------------------------------
 
 # Redirect to login
-# @get('/')
+@get('/')
 @get('/home')
 def get_index():
     '''
@@ -75,14 +75,14 @@ def get_index():
 
         Serves the index page
     '''
-    return model.login_form()
+    return model.home()
 
 #-----------------------------------------------------------------------------
 # Login Page
 #-----------------------------------------------------------------------------
 
 # Display the login page
-@get('/')
+# @get('/')
 @get('/login')
 def get_login_controller():
     '''
