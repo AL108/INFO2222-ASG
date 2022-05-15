@@ -326,6 +326,15 @@ def post_getForumName():
         return json.dumps({'forum_name': forum_name})
     return json.dumps({'error': "hmm thats weird"})
 
+@post('/post_getForumDesc')
+def post_getForumDesc():
+    forum_id = request.json['forum_id']
+    forum_desc = model.get_forum_desc(forum_id)
+    if forum_desc:
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'forum_desc': forum_desc})
+    return json.dumps({'error': "hmm thats weird"})
+
 @post('/post_newMessage')
 def post_newMessage():
     testDelay = 10000

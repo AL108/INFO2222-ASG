@@ -263,12 +263,22 @@ def get_forum_name(forum_id):
     '''
         returns the name of the forum with id: 'forum_id'
     '''
-    print("|"+forum_id+"|")
     res = no_sql_db.database.search_table('forums', 'forum_id', forum_id)
     if res:
         print(res[1])
         return res[1]
     return res
+
+def get_forum_desc(forum_id):
+    '''
+        returns the desc of the forum with id: 'forum_id'
+    '''
+    res = no_sql_db.database.search_table('forums', 'forum_id', forum_id)
+    if res:
+        print(res[2], "this is a description")
+        return res[2]
+    return res
+
 def get_posts(forum_id):
     '''
         returns the posts for the forum in the following format:

@@ -988,7 +988,7 @@ function getMessages(target){
  async function forumsWindowOnLoad() {
     var currentForum = await retrieveForums(null);
     localStorage.setItem('currentForum', currentForum)
-    loadPosts();
+    loadPostsAndRightPanel();
 }
 
 async function getPosts(forum_id) {
@@ -1109,14 +1109,17 @@ async function forumClick(element) {
     // console.log('forums loaded');
 }
 
-async function loadPosts() {
+async function loadPostsAndRightPanel() {
     // var messagesData = await getMessages(getCookie("currentUser"));
     console.log('we good? ');
     console.log(localStorage.getItem('currentForum'));
     var postsData = await getPosts(localStorage.getItem("currentForum"));
     console.log(postsData);
     console.log('hmm');
-    
+    var forumNameLabel = document.getElementById('info_panel_title');
+    forumNameLabel.textContent = await getForumName(localStorage.getItem('currentForum'));
+    var forumDescriptionLabel = document.getElementById('forum_description');
+    forumDescriptionLabel.textContent = await getForumDescription(localStorage.getItem('currentForum'));
     if (postsData != null){
         const postsPanel = document.getElementById("postList");
         const postTemplate = document.getElementsByClassName("postBox")[0];
@@ -1187,7 +1190,7 @@ async function retrieveForums(user, currentForum) {
             forumClone.addEventListener("click", () => {
                 localStorage.setItem('currentForum', forumIDs[j]);
                 removeVisiblePostsFromUI()
-                loadPosts()
+                loadPostsAndRightPanel()
                 console.log('forums loaded');
             });
         }
@@ -1464,6 +1467,28 @@ async function getForumName(forum_id){
     const returnData = await response.json();
     if ("forum_name" in returnData) {
         return returnData["forum_name"];
+    }
+    else if ("error" in returnData) {
+        console.log('sad1');
+        return null;
+    }
+}
+
+async function getForumDescription(forum_id){
+    var forum_id_data = {
+        forum_id: forum_id,
+    };
+
+   const response = await fetch('/post_getForumDesc', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(forum_id_data),
+    });
+    const returnData = await response.json();
+    if ("forum_desc" in returnData) {
+        return returnData["forum_desc"];
     }
     else if ("error" in returnData) {
         console.log('sad1');
