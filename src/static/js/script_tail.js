@@ -1024,6 +1024,16 @@ function createPostClone(postTemplate, author, time, title, tags) {
     postClone.style.display = "flex";
     console.log(postClone);
     const tagList = postClone.querySelector('.tagList')
+    for (var i = 0; tagList.children.length != 1; i++) {
+        tagList.removeChild(tagList.children[0]);
+    }
+    // tagList.children[0].style.display = 'none';
+
+    //var postsParent = document.getElementById('postList');
+    // for (var i = 0; postsParent.children.length != 2; i++) {
+    //     postsParent.removeChild(postsParent.children[1]);
+    // }
+    // postsParent.children[1].style.display = 'none';
     const titleText = postClone.querySelector('.postTitle');
     const picNameTimestamp = postClone.querySelector('.picNameTimestamp');
     console.log(titleText);
