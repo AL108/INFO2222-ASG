@@ -1,6 +1,37 @@
 var keyPair;
 
 checkLogin();
+setNavLinkTriggers();
+
+/* -----------------------------------------------------------------------------
+                                 Header
+ -----------------------------------------------------------------------------*/
+function setNavLinkTriggers() {
+    const forumLink = document.getElementById("forumLink");
+    const messageLink = document.getElementById("messageLink");
+
+    // forumLink.addEventListener("click", () => {
+    //     forumLink.style.borderBottom = "2px solid #6399D1";
+    //     messageLink.style.borderBottom = "none";
+    // });
+
+    // messageLink.addEventListener("click", () => {
+    //     messageLink.style.borderBottom = "2px solid #6399D1";
+    //     forumLink.style.borderBottom = "none";
+    // });
+
+    if (window.location.href.match('forums')) {
+        forumLink.style.borderBottom = "2px solid #6399D1";
+        messageLink.style.borderBottom = "none";
+    }
+    else if (window.location.href.match('msg_window')) {
+        messageLink.style.borderBottom = "2px solid #6399D1";
+        forumLink.style.borderBottom = "none";
+    }
+
+     
+}
+
 
 /* -----------------------------------------------------------------------------
                                 Home Page
@@ -389,8 +420,9 @@ async function sendMessage(event) {
             sendMessageEncryption(senderField, recpt, msgField);
         }
     
-        document.getElementById("recipientError").textContent = "Message Sent!";
-        document.getElementById("msgTextField").innerHTML = "";
+        document.getElementById("recipientError").innerHTML = "Message Sent!";
+        console.log(document.getElementById("recipientError").innerHTML);
+        // document.getElementById("msgTextField").innerHTML = "";
         setInfoColours("infoSuccess");    
     }
     else {
@@ -449,7 +481,7 @@ async function sendMessageEncryption(senderField, recipientField, msgField) {
         HMACKey,
         encryptedMessage
     );
-    document.getElementById("recipientError").textContent= "";
+    // document.getElementById("recipientError").textContent= "";
 
     postNewMessage(senderField, recipientField, convertArrayBufferToBase64(encryptedMessage), convertArrayBufferToBase64(MACsignature));
     
@@ -492,7 +524,7 @@ async function sessionKeyHelper(senderField, recipientField) {
     // Use decrypt encrypted session key to then encrypt a message
     if (DBsessionKey != null) {
         // console.log(DBsessionKey);
-        document.getElementById("recipientError").textContent = "";
+        // document.getElementById("recipientError").textContent = "";
         // console.log("Not null");
     }
 
