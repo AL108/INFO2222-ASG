@@ -279,6 +279,15 @@ def get_forum_desc(forum_id):
         return res[2]
     return res
 
+def get_forum_admin(forum_id):
+    '''
+        returns the desc of the forum with id: 'forum_id'
+    '''
+    res = no_sql_db.database.search_table('forums', 'forum_id', forum_id)
+    if res:
+        return res[3]
+    return res
+
 def get_posts(forum_id):
     '''
         returns the posts for the forum in the following format:

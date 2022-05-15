@@ -335,6 +335,15 @@ def post_getForumDesc():
         return json.dumps({'forum_desc': forum_desc})
     return json.dumps({'error': "hmm thats weird"})
 
+@post('/post_getForumAdmin')
+def post_getForumAdmin():
+    forum_id = request.json['forum_id']
+    forum_admin = model.get_forum_admin(forum_id)
+    if forum_admin:
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'forum_admin': forum_admin})
+    return json.dumps({'error': "hmm thats weird"})
+
 @post('/post_newMessage')
 def post_newMessage():
     testDelay = 10000

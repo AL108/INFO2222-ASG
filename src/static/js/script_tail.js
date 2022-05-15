@@ -1120,6 +1120,10 @@ async function loadPostsAndRightPanel() {
     forumNameLabel.textContent = await getForumName(localStorage.getItem('currentForum'));
     var forumDescriptionLabel = document.getElementById('forum_description');
     forumDescriptionLabel.textContent = await getForumDescription(localStorage.getItem('currentForum'));
+    var forumCodeLabel = document.getElementById('forum_code');
+    forumCodeLabel.textContent = localStorage.getItem("currentForum");
+    var forumAdminLabel = document.getElementById('admin');
+    forumAdminLabel.textContent = await getForumAdmin(localStorage.getItem('currentForum'));
     if (postsData != null){
         const postsPanel = document.getElementById("postList");
         const postTemplate = document.getElementsByClassName("postBox")[0];
@@ -1489,6 +1493,28 @@ async function getForumDescription(forum_id){
     const returnData = await response.json();
     if ("forum_desc" in returnData) {
         return returnData["forum_desc"];
+    }
+    else if ("error" in returnData) {
+        console.log('sad1');
+        return null;
+    }
+}
+
+async function getForumAdmin(forum_id){
+    var forum_id_data = {
+        forum_id: forum_id,
+    };
+
+   const response = await fetch('/post_getForumAdmin', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(forum_id_data),
+    });
+    const returnData = await response.json();
+    if ("forum_admin" in returnData) {
+        return returnData["forum_admin"];
     }
     else if ("error" in returnData) {
         console.log('sad1');
