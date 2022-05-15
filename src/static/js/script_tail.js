@@ -987,8 +987,8 @@ function getMessages(target){
  -----------------------------------------------------------------------------*/
  async function forumsWindowOnLoad() {
     var currentForum = await retrieveForums(null);
-
-    loadPosts(currentForum);
+    localStorage.setItem('currentForum', currentForum)
+    loadPosts();
 }
 
 async function getPosts(forum_id) {
@@ -1021,6 +1021,7 @@ async function getPosts(forum_id) {
 function createPostClone(postTemplate, author, time, title, tags) {
     const postClone = postTemplate.cloneNode(true);
     postClone.removeAttribute('id', "postTemplate");
+    postClone.style.display = "flex";
     console.log(postClone);
     const tagList = postClone.querySelector('.tagList')
     const titleText = postClone.querySelector('.postTitle');
@@ -1077,27 +1078,44 @@ function updateHighlight(toHighlight) {
     toHighlight.style.backgroundColor = '#bde4ff';
 }
 
-function forumClick(element) {
-    updateHighlight(element);
+function removeSubscriptionClick(element) {
+    var forumsParent = element.parentNode;
+    // TODO
 }
 
-async function loadPosts(forum_id) {
+function removeVisiblePostsFromUI() {
+    var postsParent = document.getElementById('postList');
+    for (var i = 0; postsParent.children.length != 2; i++) {
+        postsParent.removeChild(postsParent.children[1]);
+    }
+    postsParent.children[1].style.display = 'none';
+}
+
+async function forumClick(element) {
+    updateHighlight(element);
+    await removeVisiblePostsFromUI()
+    loadPosts()
+    console.log('forums loaded');
+}
+
+async function loadPosts() {
     // var messagesData = await getMessages(getCookie("currentUser"));
-    var postsData = await getPosts(forum_id);
+    console.log('we good? ');
+    console.log(localStorage.getItem('currentForum'));
+    var postsData = await getPosts(localStorage.getItem("currentForum"));
     console.log(postsData);
     console.log('hmm');
     
     if (postsData != null){
         const postsPanel = document.getElementById("postList");
-        const postTemplate = document.getElementById("postTemplate");
-        var authorDict = {};
+        const postTemplate = document.getElementsByClassName("postBox")[0];
         for (var i = postsData.length - 1; i >= 0; i--) {
-            const post_id = postsData[i][0];
-            const forum_id = postsData[i][1];
-            const author = postsData[i][2];
-            const title = postsData[i][3];
-            const body = postsData[i][4];
-            const ts = postsData[i][5];
+            var post_id = postsData[i][0];
+            var forum_id = postsData[i][1];
+            var author = postsData[i][2];
+            var title = postsData[i][3];
+            var body = postsData[i][4];
+            var ts = postsData[i][5];
             
             // var profileInt = 0;
             // if (!(sender in senderDict)){
@@ -1110,7 +1128,7 @@ async function loadPosts(forum_id) {
             const timestampDate = new Date(parseInt(ts, 10));
             const dateDiff = Math.abs(timestampDate.getTime() - currentDate.getTime());
             const hoursDiff = dateDiff / (60 * 60 * 1000);
-
+            
             var timeFiltered;
             if (hoursDiff < 24) {
                 timeFiltered = time.split(",")[1];
@@ -1119,12 +1137,8 @@ async function loadPosts(forum_id) {
                 timeFiltered = time.split(",")[0];
             }
             var tags = await getTags(post_id);
-            console.log(tags);
+            console.log(postTemplate);
             const postClone = createPostClone(postTemplate, author, timeFiltered, title, tags);
-            // msgClone.addEventListener("click", () => {
-            //     removeSelectedMessageHighlight();
-            //     viewSelectedMessage(msgClone, sender, recipient, message, time, profileInt);
-            // });
             postsPanel.appendChild(postClone);
         }
     }
@@ -1158,6 +1172,13 @@ async function retrieveForums(user, currentForum) {
             if (forumName == null) continue;
             const forumClone = createForumClone(forumTemplate, forumName, forumIDs[i] == currentForum);
             forumPanel.appendChild(forumClone);
+            const j = i; // for some reason the following lambda can't access i directly, hence this line
+            forumClone.addEventListener("click", () => {
+                console.log("cmon! "); 
+                console.log(forumIDs[j]);
+                localStorage.setItem('currentForum', forumIDs[j]);
+
+            });
         }
        
         return forumIDs[0]
