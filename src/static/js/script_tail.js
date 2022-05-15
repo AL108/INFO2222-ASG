@@ -986,15 +986,16 @@ function getMessages(target){
                                 Forums
  -----------------------------------------------------------------------------*/
  async function forumsWindowOnLoad() {
-    var currentForum = await retrieveForums();
+    var currentForum = await retrieveForums(null);
+
     loadPosts(currentForum);
 }
 
 async function getPosts(forum_id) {
+    console.log("here is it: " + forum_id);
     var forum_id_data = {
         forum_id: forum_id,
-   };
-
+    };
    return fetch('/get_posts', {
         method: 'POST',
         headers: {
@@ -1068,6 +1069,18 @@ function getTags(post_id) {
    });
 }
 
+function updateHighlight(toHighlight) {
+    forums = document.getElementsByClassName('forumBox');
+    for (var i = 0; i < forums.length; i++) {
+        forums[i].style.backgroundColor = 'white';
+    }
+    toHighlight.style.backgroundColor = '#bde4ff';
+}
+
+function forumClick(element) {
+    updateHighlight(element);
+}
+
 async function loadPosts(forum_id) {
     // var messagesData = await getMessages(getCookie("currentUser"));
     var postsData = await getPosts(forum_id);
@@ -1112,25 +1125,28 @@ async function loadPosts(forum_id) {
             //     removeSelectedMessageHighlight();
             //     viewSelectedMessage(msgClone, sender, recipient, message, time, profileInt);
             // });
-
             postsPanel.appendChild(postClone);
         }
-
     }
-
 }
 
-function createForumClone(forumTemplate, forumName) {
+function createForumClone(forumTemplate, forumName, highlighted) {
     const forumClone = forumTemplate.cloneNode(true);
     forumClone.removeAttribute('id', "forumTemplate");
+    if (highlighted) forumClone.style.backgroundColor = '#bde4ff';
     const forumText = forumClone.querySelector('.forumText');
     forumText.children[0].innerHTML = forumName;
     return forumClone;
 }
 
-async function retrieveForums(user) {
+async function unloadForums() {
+    // TODO
+}
+
+async function retrieveForums(user, currentForum) {
     var forumIDs = await getForums(user);
     if (forumIDs != null) {
+        if (currentForum == null) currentForum = forumIDs[0];
         const forumPanel = document.getElementById('forumsList');
         const forumTemplate = document.getElementById('forumTemplate');
         if (forumTemplate == null) return;
@@ -1140,13 +1156,10 @@ async function retrieveForums(user) {
             console.log('\n');
             forumName = await getForumName(forumIDs[i]);
             if (forumName == null) continue;
-            const forumClone = createForumClone(forumTemplate, forumName);
-            // forumClone.addEventListener("click", () => {
-            //     removeSelectedMessageHighlight();
-            //     viewSelectedMessage(msgClone, sender, recipient, message, time, profileInt);
-            // });
+            const forumClone = createForumClone(forumTemplate, forumName, forumIDs[i] == currentForum);
             forumPanel.appendChild(forumClone);
         }
+       
         return forumIDs[0]
     } else {
         console.log('no forums or forums failed to load');
