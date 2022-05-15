@@ -1093,9 +1093,9 @@ function removeVisiblePostsFromUI() {
 
 async function forumClick(element) {
     updateHighlight(element);
-    await removeVisiblePostsFromUI()
-    loadPosts()
-    console.log('forums loaded');
+    // await removeVisiblePostsFromUI()
+    // loadPosts()
+    // console.log('forums loaded');
 }
 
 async function loadPosts() {
@@ -1174,10 +1174,10 @@ async function retrieveForums(user, currentForum) {
             forumPanel.appendChild(forumClone);
             const j = i; // for some reason the following lambda can't access i directly, hence this line
             forumClone.addEventListener("click", () => {
-                console.log("cmon! "); 
-                console.log(forumIDs[j]);
                 localStorage.setItem('currentForum', forumIDs[j]);
-
+                removeVisiblePostsFromUI()
+                loadPosts()
+                console.log('forums loaded');
             });
         }
        
