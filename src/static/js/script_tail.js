@@ -163,7 +163,7 @@ function postNewUser(user, publicK) {
  -----------------------------------------------------------------------------*/
 // Makes sure that user is logged in
 function checkLogin() {
-    if (!window.location.href.match('login') && !window.location.href.match('register')) {
+    if (!window.location.href.match('login') && !window.location.href.match('register') && !window.location.href.match('home') && !window.location.href.match(new RegExp("^" + 'https:\/\/127.0.0.1:8081\/' + "$", "i"))) {
         if (sessionStorage.getItem("currentUser") == null){
             window.location.href = "/login";
         }
