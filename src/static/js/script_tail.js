@@ -1038,6 +1038,7 @@ function createPostClone(postTemplate, author, time, title, tags) {
     const picNameTimestamp = postClone.querySelector('.picNameTimestamp');
     console.log(titleText);
     var tag = tagList.querySelector('.tag_button');
+    tag.setAttribute('id', 'tag');
     if (tags != null) {
         for (var i = 0; i < tags.length; i++) {
             tagClone = tag.cloneNode(true);
