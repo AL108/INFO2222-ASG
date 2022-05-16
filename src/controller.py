@@ -255,6 +255,19 @@ def create_forum():
         return json.dumps({'forum_id': forum_id})
     return json.dumps({'error': "forum create failed"})
 
+@post('/create_post')
+def create_post():
+    req = request.json
+    creator = req['creator']
+    title = req['title']
+    body = req['body']
+    tag = req['tag']
+    forum_id = req['forum_id']
+    post_id = model.create_post(creator, title, body, tag, forum_id)
+    if post_id:
+        return json.dumps({'post_id': post_id})
+    return json.dumps({'error': "post create failed"})
+
 #-----------------------------------------------------------------------------
 # Message Window Page
 #-----------------------------------------------------------------------------

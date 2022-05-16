@@ -7,6 +7,7 @@
 '''
 import os
 import hashlib
+import time
 import view
 import string
 import random
@@ -335,6 +336,18 @@ def create_forum(creator, name, description=""):
     database = no_sql_db.database
     id = id_generator.generate_id()
     database.create_table_entry('forums', [id, name, description, creator])
+    return id
+
+def create_post(creator, title, body, tag, forum_id):
+    '''
+        note: posts table format:
+        ['post_id', 'forum_id', 'author', 'title', 'body', 'timestamp']
+    '''
+    database = no_sql_db.database
+    id = id_generator.generate_id()
+    database.create_table_entry('posts', [id, forum_id, creator, title, body, str(time.time())])
+    if tag:
+        database.create_table_entry('post_tags', [id, tag])
     return id
 
 def forum_exists(forum_id):

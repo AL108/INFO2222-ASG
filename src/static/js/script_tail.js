@@ -1253,6 +1253,19 @@ async function retrieveForums(user, currentForum) {
     return null
 }
 
+function newPost() {
+    console.log('new post function funning');
+    var title = document.getElementById('titleField');
+    var body = document.getElementById('postTextField');
+    var tag = document.getElementById('tagField');
+    if (title == null || body == null) {
+        console.log("title, body can't be empty [handle]");
+        return;
+    }
+    if (tag == null) createPost(title.value, body.textContent, tag);
+    else createPost(title.value, body.textContent, tag.textContent);
+}
+
 // Change Between Different Panels on the Post Container
 function viewPostPanel(panel) {
     var blockElementId = "";
@@ -1430,6 +1443,39 @@ function getSessionKey(sender, recipient) {
     .catch((error) => {
         console.error('Error: ', error);
     });
+}
+
+async function createPost(title, body, tag) {
+    var new_post_data = {
+        creator: sessionStorage.getItem("currentUser"),
+        title: title,
+        body: body,
+        tag: tag,
+        forum_id: localStorage.getItem('currentForum'),
+   };
+   console.log("for this new post we have:");
+   console.log(new_post_data);
+   return fetch('/create_post', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(new_post_data),
+   })
+   .then(response => response.json())
+   .then(returnData => {
+       if ("post_id" in returnData) {
+           console.log("post id: " + returnData['post_id']);
+       }
+       else if ("error" in returnData) {
+           console.log('sad1');
+           return null;
+       }
+   })
+   .catch((error) => {
+       console.error('Error: ', error);
+       console.log('sad2');
+   });
 }
 
 async function clickSubscribe() {
