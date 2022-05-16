@@ -330,6 +330,15 @@ def post_getMessages():
         return json.dumps({'messages': messagesList})
     return json.dumps({'error': "did not find anything"})
 
+@post('/post_getComments')
+def post_getComments():
+    post_id = request.json['post_id']
+    commentsList = model.get_comments(post_id)
+    if commentsList:
+        response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'comments': commentsList})
+    return json.dumps({'error': "did not find anything"})
+
 @post('/post_getForums')
 def post_getForums():
     user_logged_in = request.json["user_logged_in"]
@@ -430,6 +439,11 @@ def add_friend():
     else:
         response.headers['Content-Type'] = 'application/json'
         return json.dumps({'Status': "Failed"})
+    
+@post('/add_comment')
+def add_comment():
+    req = request.json
+    model.add_comment(req['post_id'], req['author'], req['comment'], str(int(time.time()*1000.0)))
 
 @post('/get_friends_list')
 def get_friends_list():

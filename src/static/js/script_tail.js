@@ -1156,6 +1156,67 @@ async function forumClick(element) {
     // console.log('forums loaded');
 }
 
+async function createCommentClone(commentTemplate, comment, author, time) {
+    const commentClone = commentTemplate.cloneNode(true);
+    commentClone.removeAttribute('id', "commentTemplate");
+    const messageProfile = commentClone.querySelector('.profileIcons');
+    messageProfile.src = getRandomProfileIcon(profileInt);
+    const picNameTime = commentClone.querySelector('.picNameTimestamp');
+    const commentText = commentClone.querySelector('infoDesc');
+    const senderTime = messageText.children[0];
+    picNameTime.children[1].innerHTML = author;
+    senderTime.children[2].innerHTML = time;
+    commentText.innerHTML = comment;
+    return commentClone;
+}
+
+async function retrieveComments() {
+        var commentsData = await getComments(sessionStorage.getItem("selectedPost"));
+        if (commentsData != null){
+            const commentsPanel = document.getElementById("commentContainer");
+            const commentTemplate = document.getElementById("commentTemplate");
+            for (var i = commentsData.length - 1; i >= 0; i--) {
+                var post_id = commentsData[i][0];
+                var author = commentsData[i][1];
+                var body = commentsData[i][2];
+                var ts = commentsData[i][3];
+                
+                // var profileInt = 0;
+                //'post_id', 'author', 'body', 'timestamp'
+                // if (!(sender in senderDict)){
+                //     senderDict[sender] = getRandomInt(5);
+                // }
+                // profileInt = senderDict[sender];
+                
+                const time = new Date(parseInt(ts, 10)).toLocaleString();
+                const currentDate = new Date();
+                const timestampDate = new Date(parseInt(ts, 10));
+                const dateDiff = Math.abs(timestampDate.getTime() - currentDate.getTime());
+                const hoursDiff = dateDiff / (60 * 60 * 1000);
+                
+                var timeFiltered;
+                if (hoursDiff < 24) {
+                    timeFiltered = time.split(",")[1];
+                }
+                else {
+                    timeFiltered = time.split(",")[0];
+                }
+                
+                const commentClone = createCommentClone(commentTemplate, comment, author, timeFiltered);
+                commentsPanel.appendChild(commentClone);
+                
+                // postClone.addEventListener("click", () => {
+                //     document.getElementById('selectedPostTitle').textContent = title;
+                //     document.getElementById('selectedPostAuthor').textContent = author;
+                //     document.getElementById('selectedPostTime').textContent = time;
+                //     document.getElementById('postMessage').textContent = body;
+                //     sessionStorage.setItem('selectedPost', post_id);
+                //     retrieveComments();
+                // });
+            }
+        }
+}
+
 async function loadPostsAndRightPanel() {
     // var messagesData = await getMessages(getCookie("currentUser"));
     console.log('we good? ');
@@ -1209,8 +1270,10 @@ async function loadPostsAndRightPanel() {
             postClone.addEventListener("click", () => {
                 document.getElementById('selectedPostTitle').textContent = title;
                 document.getElementById('selectedPostAuthor').textContent = author;
-                document.getElementById('selectedPostTime').textContent = timeFiltered;
+                document.getElementById('selectedPostTime').textContent = time;
                 document.getElementById('postMessage').textContent = body;
+                sessionStorage.setItem('selectedPost', post_id);
+                retrieveComments();
             });
         }
     }
@@ -1329,6 +1392,33 @@ function toggleOverlay(state) {
 /* -----------------------------------------------------------------------------
                                 Database Calls.
  -----------------------------------------------------------------------------*/
+
+ function getComments() {
+    var comment_data = {
+        post_id: sessionStorage.getItem('selectedPost'),
+   };
+   return fetch('/post_getComments', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(comment_data),
+   })
+   .then(response => response.json())
+   .then(returnData => {
+       if ("comments" in returnData) {
+           commentsData = returnData["comments"];
+           return commentsData['comments'];
+       }
+       else if ("error" in returnData) {
+           return null;
+       }
+   })
+   .catch((error) => {
+       console.error('Error: ', error);
+   });
+}
+
  async function getFriendsList(user) {
 
     var getFriends = {
@@ -1355,6 +1445,28 @@ function toggleOverlay(state) {
     .catch((error) => {
         console.error('Error: ', error);
     });
+}
+
+async function addComment() {
+    var commentElement = document.getElementById('commentTextField');
+    if (commentElement == null) return;
+    var commentData = {
+        comment: commentElement.textContent,
+        author: sessionStorage.getItem('currentUser'),
+        post_id: sessionStorage.getItem('selectedPost'),
+   };
+   console.log("SDJFDJSAKFDSDF");
+   document.getElementById('commentTextField').textContent = "";
+   return await fetch('/add_comment', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(commentData),
+   })
+   .catch((error) => {
+       console.error('Error: ', error);
+   });
 }
 
 async function postAddFriend(user, friendName) {

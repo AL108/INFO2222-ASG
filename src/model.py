@@ -320,14 +320,14 @@ def add_post(forum_id, author, title, body, timestamp, tags=None):
     '''
     database = no_sql_db.database
     id = id_generator.generate_id()
-    database.create_table_entry('posts', id, forum_id, author, title, body, timestamp)
+    database.create_table_entry('posts', [id, forum_id, author, title, body, timestamp])
 
 def add_comment(post_id, author, body, timestamp):
     '''
         adds a comment to the post    
     '''
     database = no_sql_db.database
-    database.create_table_entry('commments', post_id, author, body, timestamp)
+    database.create_table_entry('comments', [post_id, author, body, timestamp])
 
 def create_forum(creator, name, description=""):
     '''
