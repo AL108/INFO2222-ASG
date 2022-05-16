@@ -1,23 +1,40 @@
 <head>
-<link rel="stylesheet" type="text/css" href="css/common.css">
-<link rel="stylesheet" type="text/css" href="css/msg_window.css">
-<script src="js/script_head.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-<title>Messages</title>
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/msg_window.css">
+    <script src="js/script_head.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <title>Messages</title>
 </head>
 
 <body onload="msg_window_OnLoad()"/>
 
-<div class="navbar">
-    <a class="website_name">InStem</a>
-    <!-- <a href="/about">About</a> -->
-    <a href="/forums">Forums</a>
-    <a class="active" href="/msg_window">Messages</a>
-    <div class="line"></div>
-    <a class="profile" href="/profile"></a>
-</div>
+<!-- <div class="navBar">
+    <div class="navLinks inter">
+        <div class="website_name">InStem</div>
+        <div >
+            <a href="/forums">Forums</a>
+        </div>
+        <div >
+            <a class="active" href="/msg_window">Messages</a>
+        </div>
+    </div>
+    
+    <div class="profileDiv dropdown">
+        <img class="navProfile" src="/img/profile_icons/blue.png">
+
+        <div class="logoutDiv container">
+            <div class=" button_theme inter_bold logoutButton">
+                Log Out
+            </div>
+        </div>
+    </div>
+        
+    </div>
+</div> -->
+
+
 
 <div id="msgWindow">
 
@@ -57,12 +74,15 @@
         <div class="rightMsgPanel">
             
             <!-- New Message -->
+
+            <div>
+                <h1 class="recipientFont inter" id="recipientError"></h1>
+            </div>
+
             <div id="msgInputContainer">
                 <form id="sendMessageForm" action="/msg_window" method="post" autocomplete="off">
     
-                    <div>
-                        <h1 class="recipientFont inter" id="recipientError">_</h1>
-                    </div>
+
 
                     <label id="senderField" class="msgFont inter_bold">From: *INSERT CURRENT USER*</label>
                     
@@ -74,8 +94,9 @@
                             // Process enter to format send list
                             var recipientField = document.getElementById("recipientField");
                             recipientField.addEventListener("keypress", function(event) {
+                                
                                 if (event.key === "Enter") {
-                                    if ( !(recipientField.value === "") && !((recipientField.value).slice(-2) === "; ") ) {
+                                    if ( !(recipientField.value === "") && !((recipientField.value).slice(-2) === "; ") ) {                                        
                                         recipientField.value = recipientField.value + "; ";
                                     }
                                     event.preventDefault();
@@ -90,7 +111,7 @@
     
                     <div class="divPlaceholder inter inputBoxStyle" id="msgTextField" msgPlaceHolder="Enter your message" contentEditable="true"></div>
     
-                    <button class="button_theme" id="msgSubmit" onclick="sendMessage(event);">Send</button>
+                    <button class="button_theme inter" id="msgSubmit" onclick="sendMessage(event);">Send</button>
     
                 </form>
             </div>
@@ -135,8 +156,8 @@
             <input class="msgInputBox inputBoxStyle" id='friendTextField' type="text" placeholder="Enter name"/>
             <script>
                 // Allows enter to submit
-                var recipientField = document.getElementById("friendTextField");
-                recipientField.addEventListener("keypress", function(event) {
+                var friendTextField = document.getElementById("friendTextField");
+                friendTextField.addEventListener("keypress", function(event) {
                     if (event.key === "Enter") {
                         addFriend();
                         event.preventDefault();
