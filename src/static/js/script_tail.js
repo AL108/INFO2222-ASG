@@ -1156,38 +1156,37 @@ async function forumClick(element) {
     // console.log('forums loaded');
 }
 
-async function createCommentClone(commentTemplate, comment, author, time) {
+async function createCommentClone(commentTemplate, comment, author, time, profileInt) {
+    console.log('thisiscomment template: ');
+    console.log(commentTemplate); 
     const commentClone = commentTemplate.cloneNode(true);
     commentClone.removeAttribute('id', "commentTemplate");
+    commentClone.setAttribute('display', "block");
     const messageProfile = commentClone.querySelector('.profileIcons');
     messageProfile.src = getRandomProfileIcon(profileInt);
     const picNameTime = commentClone.querySelector('.picNameTimestamp');
-    const commentText = commentClone.querySelector('infoDesc');
-    const senderTime = messageText.children[0];
+    const commentText = commentClone.querySelector('.infoDesc');
     picNameTime.children[1].innerHTML = author;
-    senderTime.children[2].innerHTML = time;
+    picNameTime.children[2].innerHTML = time;
     commentText.innerHTML = comment;
+    console.log('this is cmtclone');
+    console.log(commentClone);
     return commentClone;
 }
 
 async function retrieveComments() {
         var commentsData = await getComments(sessionStorage.getItem("selectedPost"));
+        console.log('comments are');
+        console.log(commentsData);
         if (commentsData != null){
             const commentsPanel = document.getElementById("commentContainer");
+            commentsPanel.style.display = flex;
             const commentTemplate = document.getElementById("commentTemplate");
             for (var i = commentsData.length - 1; i >= 0; i--) {
                 var post_id = commentsData[i][0];
                 var author = commentsData[i][1];
                 var body = commentsData[i][2];
                 var ts = commentsData[i][3];
-                
-                // var profileInt = 0;
-                //'post_id', 'author', 'body', 'timestamp'
-                // if (!(sender in senderDict)){
-                //     senderDict[sender] = getRandomInt(5);
-                // }
-                // profileInt = senderDict[sender];
-                
                 const time = new Date(parseInt(ts, 10)).toLocaleString();
                 const currentDate = new Date();
                 const timestampDate = new Date(parseInt(ts, 10));
@@ -1202,7 +1201,7 @@ async function retrieveComments() {
                     timeFiltered = time.split(",")[0];
                 }
                 
-                const commentClone = createCommentClone(commentTemplate, comment, author, timeFiltered);
+                const commentClone = await createCommentClone(commentTemplate, body, author, timeFiltered, 1);
                 commentsPanel.appendChild(commentClone);
                 
                 // postClone.addEventListener("click", () => {
@@ -1267,13 +1266,13 @@ async function loadPostsAndRightPanel() {
             const postClone = createPostClone(postTemplate, author, timeFiltered, title, tags);
             postsPanel.appendChild(postClone);
             
-            postClone.addEventListener("click", () => {
+            postClone.addEventListener("click", async () => {
                 document.getElementById('selectedPostTitle').textContent = title;
                 document.getElementById('selectedPostAuthor').textContent = author;
                 document.getElementById('selectedPostTime').textContent = time;
                 document.getElementById('postMessage').textContent = body;
                 sessionStorage.setItem('selectedPost', post_id);
-                retrieveComments();
+                await retrieveComments();
             });
         }
     }
@@ -1408,7 +1407,7 @@ function toggleOverlay(state) {
    .then(returnData => {
        if ("comments" in returnData) {
            commentsData = returnData["comments"];
-           return commentsData['comments'];
+           return commentsData;
        }
        else if ("error" in returnData) {
            return null;

@@ -310,9 +310,14 @@
 }
 
 #commentContainer {
-    display: flex;
+    /* display: flex; */
+    display: block !important;
     flex-direction: column;
     gap: 20px;
+}
+
+#commentTemplate {
+    /* display: none; */
 }
 
 #commentTextField {
