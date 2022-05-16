@@ -317,7 +317,7 @@
 }
 
 #commentTemplate {
-    /* display: none; */
+    display: none; 
 }
 
 #commentTextField {
