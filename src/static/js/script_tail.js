@@ -287,20 +287,23 @@ async function loadFriends(friendsListArray) {
     var friendDict = {};
 
     for (const friend of friendsList) {
-        // console.log("Appending : " + friend);
-        var profileInt = 0;
-        if (!(friend in friendDict)){
-            friendDict[friend] = getRandomInt(5);
-        }
-        profileInt = friendDict[friend];
-        
-        
-        const friendClone = createFriendClone(friendTemplate, profileInt, friend);
-        friendClone.addEventListener("click", () => {
-            viewNewMessage(friend);
-        });
+        if (!(friend === "")) {
+            // console.log("Appending : " + friend);
+            var profileInt = 0;
+            if (!(friend in friendDict)){
+                friendDict[friend] = getRandomInt(5);
+            }
+            profileInt = friendDict[friend];
+            
+            
+            const friendClone = createFriendClone(friendTemplate, profileInt, friend);
+            friendClone.addEventListener("click", () => {
+                viewNewMessage(friend);
+            });
 
-        friendsListPanel.appendChild(friendClone);
+            friendsListPanel.appendChild(friendClone);
+        }
+        
     }
 }
 
