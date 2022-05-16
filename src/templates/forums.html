@@ -17,25 +17,27 @@
         -->
         
         <div class="container" id="forumsContainer">
-           
-            <h2 class="panelLabel inter_bold">Forums</h2>
-            
-            <div class="addForumContainer">
-                <input class="forumInputBox inputBoxStyle" id='forumTextField' type="text" placeholder="Enter forum code"/>
-                <script>
-                    // Allows enter to submit
-                    // var recipientField = document.getElementById("forumTextField");
-                    // recipientField.addEventListener("keypress", function(event) {
-                    //     if (event.key === "Enter") {
-                    //         addforum();
-                    //         event.preventDefault();
-                    //     }
-                    // });
-                    console.log("Attempting to add forum");
-                </script>
+            <div class="forumInfoPanel">
+                <h2 class="panelLabel inter_bold">Forums</h2>
                 
-                <div class="button_theme inter_bold" id="addForumButton" type="button" name="button" onclick="clickSubscribe()">+</div>
+                <div class="addForumContainer">
+                    <input class="forumInputBox inputBoxStyle" id='forumTextField' type="text" placeholder="Enter forum code"/>
+                    <script>
+                        // Allows enter to submit
+                        // var recipientField = document.getElementById("forumTextField");
+                        // recipientField.addEventListener("keypress", function(event) {
+                        //     if (event.key === "Enter") {
+                        //         addforum();
+                        //         event.preventDefault();
+                        //     }
+                        // });
+                        console.log("Attempting to add forum");
+                    </script>
+                    
+                    <div class="button_theme inter_bold" id="addForumButton" type="button" name="button" onclick="clickSubscribe()">+</div>
+                </div>
             </div>
+
             <p id="subscribeInfo" style="text-align: center;"></p>
             <div id="forumsList">
                 <div class="forumBox container" id="forumTemplate" onclick="forumClick(this)">
@@ -206,11 +208,12 @@
 
                 <!-- All Posts -->
                 <div id="allPostContainer">
+                    <div class="allPostsButton">
+                        <h2 class="panelLabel inter_bold">All Posts</h2>
+                        <div class="button_theme inter_bold" id="newPostButton" type="button" name="button" onclick='viewPostPanel("new");'>New Post</div>
+                    </div>
                     <div class="postListPanel" id ="postList">
-                        <div class="allPostsButton">
-                            <h2 class="panelLabel inter_bold">All Posts</h2>
-                            <div class="button_theme inter_bold" id="newPostButton" type="button" name="button" onclick='viewPostPanel("new");'>New Post</div>
-                        </div>
+                        
                         <div class="postBox container" onclick="viewPostPanel('selected');" id="postTemplate">
                             <!-- Title -->
                             <h3 class="postTitle inter_bold">Is magic real? (No cap asking for a friend)</h3>
