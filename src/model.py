@@ -345,7 +345,7 @@ def create_post(creator, title, body, tag, forum_id):
     '''
     database = no_sql_db.database
     id = id_generator.generate_id()
-    database.create_table_entry('posts', [id, forum_id, creator, title, body, str(time.time())])
+    database.create_table_entry('posts', [id, forum_id, creator, title, body, str(int(time.time()*1000.0))])
     if tag:
         database.create_table_entry('post_tags', [id, tag])
     return id
