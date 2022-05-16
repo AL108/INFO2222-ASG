@@ -1,24 +1,19 @@
 var keyPair;
 
 checkLogin();
-setNavLinkTriggers();
+runHeaderFunctions();
 
 /* -----------------------------------------------------------------------------
                                  Header
  -----------------------------------------------------------------------------*/
+function runHeaderFunctions() {
+    setNavLinkTriggers();
+    setLoginLogoutButton();
+}
+
 function setNavLinkTriggers() {
     const forumLink = document.getElementById("forumLink");
     const messageLink = document.getElementById("messageLink");
-
-    // forumLink.addEventListener("click", () => {
-    //     forumLink.style.borderBottom = "2px solid #6399D1";
-    //     messageLink.style.borderBottom = "none";
-    // });
-
-    // messageLink.addEventListener("click", () => {
-    //     messageLink.style.borderBottom = "2px solid #6399D1";
-    //     forumLink.style.borderBottom = "none";
-    // });
 
     if (window.location.href.match('forums')) {
         forumLink.style.borderBottom = "2px solid #6399D1";
@@ -28,8 +23,28 @@ function setNavLinkTriggers() {
         messageLink.style.borderBottom = "2px solid #6399D1";
         forumLink.style.borderBottom = "none";
     }
+}
 
-     
+function setLoginLogoutButton() {
+    const loginLogoutButton = document.getElementById("loginLogoutButton");
+    if (sessionStorage.getItem("currentUser") === ""){
+        loginLogoutButton.innerHTML = "Login";
+        loginLogoutButton.addEventListener("click", toLogin);
+    }
+    else {
+        loginLogoutButton.innerHTML = "Logout";
+        loginLogoutButton.removeEventListener("click", toLogin);
+        loginLogoutButton.addEventListener("click", logout);
+    }
+}
+
+function toLogin() {
+    window.location.href = "/login";
+}
+
+function logout() {
+    sessionStorage.setItem("currentUser", "");
+    window.location.href = "/home";
 }
 
 
