@@ -1256,7 +1256,7 @@ async function retrieveForums(user, currentForum) {
 // Change Between Different Panels on the Post Container
 function viewPostPanel(panel) {
     var blockElementId = "";
-    const noneElementIds = ["newPostContainer", "allPostContainer", "commentContainer"];
+    const noneElementIds = ["newPostContainer", "allPostContainer", "commentContainer", "selectedPostContainer"];
     switch (panel) {
         case "new":
             blockElementId = "newPostContainer";
@@ -1267,8 +1267,11 @@ function viewPostPanel(panel) {
             break;
 
         case "selected":
-            blockElementId = "commentContainer";
+            blockElementId = "selectedPostContainer";
             break;
+
+        case "comments":
+            blockElementId = "commentContainer";
         
         default:
             console.log("Invalid panel trigger");
