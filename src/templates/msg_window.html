@@ -10,32 +10,6 @@
 
 <body onload="msg_window_OnLoad()"/>
 
-<!-- <div class="navBar">
-    <div class="navLinks inter">
-        <div class="website_name">InStem</div>
-        <div >
-            <a href="/forums">Forums</a>
-        </div>
-        <div >
-            <a class="active" href="/msg_window">Messages</a>
-        </div>
-    </div>
-    
-    <div class="profileDiv dropdown">
-        <img class="navProfile" src="/img/profile_icons/blue.png">
-
-        <div class="logoutDiv container">
-            <div class=" button_theme inter_bold logoutButton">
-                Log Out
-            </div>
-        </div>
-    </div>
-        
-    </div>
-</div> -->
-
-
-
 <div id="msgWindow">
 
     <!-- 
@@ -45,11 +19,13 @@
     <div class="container msgContainer">
 
         <div class="leftMsgPanel">
-            <h2 class="panelLabel">Messages</h2>
-            <div class="button_theme inter" id="new_message_button" type="button" name="button" onclick="viewNewMessage(null)">New Message</div>
-            <div id="button_container">
-                <div class="button_theme inter tag_button" id="all_tag" type="button" name="button" onclick="viewNewMessage(null)">All</div>
-                <div class="button_theme inter tag_button" id="unread_tag" type="button" name="button" onclick="viewNewMessage(null)">Unread</div>
+            <div class="titleButtonDiv">
+                <h2 class="panelLabel">Messages</h2>
+                <div class="button_theme inter" id="new_message_button" type="button" name="button" onclick="viewNewMessage(null)">New Message</div>
+                <div id="button_container">
+                    <div class="button_theme inter tag_button" id="all_tag" type="button" name="button" onclick="viewNewMessage(null)">All</div>
+                    <div class="button_theme inter tag_button" id="unread_tag" type="button" name="button" onclick="viewNewMessage(null)">Unread</div>
+                </div>
             </div>
             <div class="msgListPanel" id ="receivedMsgsPanel">
                 <div class="messageBox container" id="messageTemplate">
