@@ -1382,8 +1382,7 @@ function getSessionKey(sender, recipient) {
     });
 }
 
-async function addForum() {
-    //event.preventDefault();
+async function clickSubscribe() {
     let forum_id = document.getElementById("forumTextField").value;
     var forum_id_data = {
         forum_id: forum_id,
@@ -1399,17 +1398,17 @@ async function addForum() {
     })
     .then(response => response.json())
     .then(retData => {
-        if (retData["ret"] == "-1"){ 
+        if (retData["ret"] == -1){ 
             document.getElementById("subscribeInfo").textContent = "Invalid forum code";
             document.getElementById("subscribeInfo").style.color = "red";
             document.getElementById("forumTextField").value = "";
         }
-        else if (retData["ret"] == "1") {
+        else if (retData["ret"] == 1) {
             document.getElementById("subscribeInfo").style.color = "green";
             document.getElementById("subscribeInfo").textContent = "Subscription successful";
             document.getElementById("forumTextField").value = "";
         } 
-        else if (retData["ret"] == "0") {
+        else if (retData["ret"] == 0) {
             document.getElementById("subscribeInfo").textContent = "Already subscribed";
             document.getElementById("subscribeInfo").style.color = "orange";
             document.getElementById("forumTextField").value = "";
@@ -1420,11 +1419,59 @@ async function addForum() {
             document.getElementById("subscribeInfo").style.color = "red";
             document.getElementById("forumTextField").value = "";
         }
+        return retData['ret'];
     })
     .catch((error) => {
         console.error('Error: ', error);
     });
-     
+}
+
+async function createForum() {
+    var new_forum_data = {
+        forumName: document.getElementById('nameField').value,
+        desc: document.getElementById('descField').textContent,
+        creator: sessionStorage.getItem("currentUser"),
+    };
+    console.log('whatisthis ');
+    console.log(new_forum_data);
+    fetch('/create_forum', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(new_forum_data),
+    })
+    .then(response => response.json())
+    .then(returnData => {
+        if ("forum_id" in returnData) {
+            var forum_id_data = {
+                forum_id: returnData["forum_id"],
+                subscriber: sessionStorage.getItem("currentUser"),
+            };
+            fetch('/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(forum_id_data),
+            })
+            .catch((error) => {
+                console.error('Error: ', error);
+            });
+            document.getElementById('nameField').value = "";
+            document.getElementById('descField').textContent = "";
+        }
+        else if ("error" in returnData) {
+            console.log('sad1');
+            return null;
+        }
+    })
+    .catch((error) => {
+        console.error('Error: ', error);
+        console.log('sad2');
+    });
+
+    
  }
 
 function getForums(){

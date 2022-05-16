@@ -43,7 +43,7 @@
                     console.log("Attempting to add forum");
                 </script>
                 
-                <div class="button_theme inter_bold" id="addForumButton" type="button" name="button" onclick="addForum()">+</div>
+                <div class="button_theme inter_bold" id="addForumButton" type="button" name="button" onclick="clickSubscribe()">+</div>
             </div>
             <p id="subscribeInfo" style="text-align: center;"></p>
             <div id="forumsList">
@@ -307,7 +307,7 @@
 
                 <div class="flexColInput">
                     <h3 class="infoHeader inter_bold">Forum Name</h3>
-                    <input class="forumInputBox inputBoxStyle" type="text" placeholder="Enter forum name"/>
+                    <input class="forumInputBox inputBoxStyle" id='nameField' placeholder="Enter forum name"/>
                 </div>
 
                 <div class="flexColInput">

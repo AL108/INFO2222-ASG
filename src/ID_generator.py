@@ -3,13 +3,13 @@ class ID_generator:
     def __init__(self):
         self.char_index = 0
         self.chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVW!@#$%^&*()abcdefghijklmnopqrstuvwxyz"
-        self.id = ""
+        self.id = [""]
     
     def generate_id(self):
         if self.char_index == 0:
-            self.id.append(self.chars[self.chars_index])
+            self.id.append(self.chars[self.char_index])
             self.char_index += 1
         else:
-            self.id[-1] = self.chars[self.chars_index]
-            self.char_index = (1 + self.chars_index) % len(self.chars)
-        return self.id
+            self.id[-1] = self.chars[self.char_index]
+            self.char_index = (1 + self.char_index) % len(self.chars)
+        return "".join(self.id)

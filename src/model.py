@@ -328,13 +328,14 @@ def add_comment(post_id, author, body, timestamp):
     database = no_sql_db.database
     database.create_table_entry('commments', post_id, author, body, timestamp)
 
-def add_forum(creator, name, description=""):
+def create_forum(creator, name, description=""):
     '''
         add a forum
     '''
     database = no_sql_db.database
     id = id_generator.generate_id()
-    database.create_table_entry('forums', id, name, description, creator)
+    database.create_table_entry('forums', [id, name, description, creator])
+    return id
 
 def forum_exists(forum_id):
     database = no_sql_db.database

@@ -153,9 +153,9 @@ def post_subscribe():
     req = request.json
     forum_id = req["forum_id"]
     subscriber = req["subscriber"]
-    ret = "error"
+    ret = -1
     if forum_id:
-       ret = str(model.subscribe(subscriber, forum_id))
+       ret = model.subscribe(subscriber, forum_id)
     # Call the appropriate method
     return json.dumps({'ret': ret})
 
@@ -243,6 +243,17 @@ def get_tags():
         response.headers['Content-Type'] = 'application/json'
         return json.dumps({'tags': tagsList})
     return json.dumps({'error': "did not find anything"})
+
+@post('/create_forum')
+def create_forum():
+    req = request.json
+    creator = req['creator']
+    name = req['forumName']
+    desc = req['desc']
+    forum_id = model.create_forum(creator, name, desc)
+    if forum_id:
+        return json.dumps({'forum_id': forum_id})
+    return json.dumps({'error': "forum create failed"})
 
 #-----------------------------------------------------------------------------
 # Message Window Page
