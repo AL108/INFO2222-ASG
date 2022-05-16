@@ -1,14 +1,4 @@
 123,a forum name, this is a description, this is the creator
 321,info2222,it is info2222!,alien
-0,{},{},test
-1,{},{},test
-2,{},{},test
-3,,sdfsg,test
-4,,sdfsg,test
-5,,asdf,test
-6,,aasdf,test
-7,,asdf,test
-8,dfadf,asdfsf,test
-9,just-work,working,test
-0,Testing forum,this is the test forum,test
-170,life hacks,forum for life hacks,test
+
+70,test forum,for testing,aaaa
