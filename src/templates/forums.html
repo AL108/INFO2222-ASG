@@ -66,7 +66,7 @@
                             <button class="button_theme leftButton backButton" onclick='viewPostPanel("all");'>Back</button>
                         </div>
                         <!-- Post title -->
-                        <h2 class="panelLabel inter_bold">Is magic real? (No cap asking for friend)</h2>
+                        <h2 class="panelLabel inter_bold" id="selectedPostTitle">Is magic real? (No cap asking for friend)</h2>
 
                         <!-- Picture Name Timestamp -->
                         <div class="picNameTimestamp">
@@ -74,10 +74,10 @@
                                 <img src="/img/profile_icons/blue.png" class="profileIcons">
                             </div>
                             <div>
-                                <label class="post_user inter_bold">User</label>
+                                <label class="post_user inter_bold" id="selectedPostAuthor">User</label>
                             </div>
                             <div>
-                                <label class="post_time inter">posted 14/05/2022 4:00pm</label>
+                                <label class="post_time inter" id="selectedPostTime">posted 14/05/2022 4:00pm</label>
                             </div>
                         </div>
 
@@ -211,7 +211,7 @@
                             <h2 class="panelLabel inter_bold">All Posts</h2>
                             <div class="button_theme inter_bold" id="newPostButton" type="button" name="button" onclick='viewPostPanel("new");'>New Post</div>
                         </div>
-                        <div class="postBox container" onclick="viewPostPanel('selected')" id="postTemplate">
+                        <div class="postBox container" onclick="viewPostPanel('selected');" id="postTemplate">
                             <!-- Title -->
                             <h3 class="postTitle inter_bold">Is magic real? (No cap asking for a friend)</h3>
     

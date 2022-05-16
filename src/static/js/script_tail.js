@@ -1205,6 +1205,13 @@ async function loadPostsAndRightPanel() {
             console.log(postTemplate);
             const postClone = createPostClone(postTemplate, author, timeFiltered, title, tags);
             postsPanel.appendChild(postClone);
+            
+            postClone.addEventListener("click", () => {
+                document.getElementById('selectedPostTitle').textContent = title;
+                document.getElementById('selectedPostAuthor').textContent = author;
+                document.getElementById('selectedPostTime').textContent = timeFiltered;
+                document.getElementById('postMessage').textContent = body;
+            });
         }
     }
 }
