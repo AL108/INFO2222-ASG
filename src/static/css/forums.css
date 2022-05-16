@@ -35,37 +35,6 @@
 }
 
 /*  ------------------------------- Forums List Panel -------------------------------*/
-#forumsContainer {
-    flex: 1;
-}
-
-.forumInputBox {
-    height: 35px;
-    width: 100%;
-    padding: 0px;
-    padding-left: 10px;
-    font-size: 16px;
-    justify-content: center;
-    vertical-align: middle;
-}
-
-.forumInputBox::placeholder {
-    color: #929292;
-}
-
-.forumInputBox:focus {
-    color: #929292;
-    border: 2px solid #6399D1;
-    outline: none;
-}
-
-/* .errorInputBox:focus {
-    border: 2px solid #ca3e3e;
-}
-
-.successInputBox:focus {
-    border: 2px solid #368d25;
-} */
 
 
 /*  ------------------------------- Post Panel -------------------------------*/
@@ -88,8 +57,8 @@
 
 /* ----- New Post View  ----- */
 #newPostContainer {
-    width: 100%;
     display: none;
+    width: 100%;
     margin: 30px;
 }
 
@@ -310,14 +279,10 @@
 }
 
 #commentContainer {
-    /* display: flex; */
     display: block !important;
+    display: flex;
     flex-direction: column;
     gap: 20px;
-}
-
-#commentTemplate {
-    /* display: none; */
 }
 
 #commentTextField {
@@ -418,7 +383,37 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    flex: 1;
+    /* height: 100%; */
 }
+
+.forumInputBox {
+    height: 35px;
+    width: 100%;
+    padding: 0px;
+    padding-left: 10px;
+    font-size: 16px;
+    justify-content: center;
+    vertical-align: middle;
+}
+
+.forumInputBox::placeholder {
+    color: #929292;
+}
+
+.forumInputBox:focus {
+    color: #929292;
+    border: 2px solid #6399D1;
+    outline: none;
+}
+
+/* .errorInputBox:focus {
+    border: 2px solid #ca3e3e;
+}
+
+.successInputBox:focus {
+    border: 2px solid #368d25;
+} */
 
 .addForumContainer {
     display: flex;
@@ -444,8 +439,10 @@
 }
 
 #forumsList {
+    position: relative;
     display: flex;
     flex-direction: column;
+    overflow: scroll;
     gap: 10px;
     height: 100%;
 }
@@ -678,7 +675,7 @@
 
 /*  ------------------------------- Forums List Panel -------------------------------*/
 
-#forumsContainer {
+/* #forumsContainer {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -716,7 +713,7 @@
 
 .forumBox {
     padding: 5px 10px;
-    /* width: 100%; */
+    width: 100%;
     height: auto;
     display: flex;
     flex-direction: row;
@@ -756,4 +753,4 @@
     background-color: #000;
     opacity: 0.75;
     z-index: 7;
-}
+} */
