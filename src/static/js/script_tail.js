@@ -1181,9 +1181,9 @@ async function retrieveComments() {
         var commentsData = await getComments(sessionStorage.getItem("selectedPost"));
         console.log('comments are');
         console.log(commentsData);
+        if (commentsData == null) console.log("NO");
         if (commentsData != null){
             const commentsPanel = document.getElementById("commentContainer");
-            commentsPanel.style.display = flex;
             const commentTemplate = document.getElementById("commentTemplate");
             for (var i = commentsData.length - 1; i >= 0; i--) {
                 var post_id = commentsData[i][0];
