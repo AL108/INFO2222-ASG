@@ -6,3 +6,4 @@ with end-to-end encryption.
 
 How did I learn the basics of Javascript?
 - Stayed up two days straight coding up this thing with a group partner
+- It is total spagetti, but given the circumstances, this is reasonable.
